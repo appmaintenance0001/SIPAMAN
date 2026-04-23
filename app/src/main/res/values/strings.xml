@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SI-PAMAN</string>
+    <string name="title_dashboard">Maintenance Tasks</string>
+    <string name="add_task">Tambah Task</string>
+</resources>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:padding="16dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_card"
+        android:elevation="6dp"
+        android:layout_margin="12dp">
+
+        <!-- ID -->
+        <TextView
+            android:id="@+id/txtId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ID"
+            android:textStyle="bold"
+            android:textColor="#222222"
+            android:textSize="14sp"/>
+
+        <!-- PROJECT -->
+        <TextView
+            android:id="@+id/txtProject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Project"
+            android:textStyle="bold"
+            android:textColor="#222222"
+            android:textSize="14sp"/>
+
+        <!-- JENIS -->
+
+        <!-- MULAI -->
+        <TextView
+            android:id="@+id/txtJenis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Jenis Maintenance"
+            android:textColor="#888888"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/txtMulai"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mulai"
+            android:textColor="#666666"
+            android:layout_marginTop="8dp"/>
+
+        <!-- DUE -->
+        <TextView
+            android:id="@+id/txtDue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Due"
+            android:textColor="#666666"/>
+
+        <!-- STATUS -->
+        <TextView
+            android:id="@+id/txtStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ON PROGRESS"
+            android:layout_marginTop="8dp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:padding="6dp"/>
+
+        <!-- TANGGAL SELESAI -->
+        <TextView
+            android:id="@+id/txtSelesai"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selesai: -"
+            android:textSize="14sp"
+            android:textColor="#777777"
+            android:layout_marginTop="4dp"/>
+
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:text="DELETE"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#E53935"
+            android:textColor="#FFFFFF"/>
+
+        <Button
+            android:id="@+id/btnDone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DONE"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#43A047"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

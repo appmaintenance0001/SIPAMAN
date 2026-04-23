@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/abu_muda">
+
+
+    <!-- Judul -->
+    <TextView
+        android:id="@+id/tvJudul"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SI-PAMAN"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="@color/primary"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true"/>
+
+    <!-- Subtitle -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sistem Pantau Maintenance"
+        android:textSize="14sp"
+        android:textColor="@color/abu_teks"
+        android:layout_below="@id/tvJudul"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Tombol -->
+    <Button
+        android:id="@+id/btnMulai"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Masuk Aplikasi"
+        android:backgroundTint="@color/primary"
+        android:textColor="@color/putih"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>

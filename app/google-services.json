@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1084938068310",
+    "project_id": "si-paman",
+    "storage_bucket": "si-paman.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1084938068310:android:c23422f9abf5a45db0f6f7",
+        "android_client_info": {
+          "package_name": "com.sipaman.maintenance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgs8EVEbWYuTJHenhBreD2ila0APUU0MU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
