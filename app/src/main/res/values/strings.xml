@@ -2,4 +2,17 @@
     <string name="app_name">SI-PAMAN</string>
     <string name="title_dashboard">Maintenance Tasks</string>
     <string name="add_task">Tambah Task</string>
+
+    <string name="judul_task">Judul Task</string>
+    <string name="project">Project</string>
+    <string name="jenis">Jenis Maintenance</string>
+
+    <string name="hint_project">Pilih project</string>
+    <string name="hint_priority">Pilih priority</string>
+    <string name="hint_jenis">Pilih jenis maintenance</string>
+    <string name="hint_pic">Pilih PIC / Teknisi</string>
+    <string name="hint_mulai">Pilih tanggal mulai</string>
+    <string name="hint_due">Pilih due date</string>
+    <string name="hint_judul">Masukkan judul task</string>
+    <string name="hint_deskripsi">Masukkan deskripsi task</string>
 </resources>

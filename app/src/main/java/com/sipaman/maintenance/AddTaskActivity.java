@@ -17,8 +17,8 @@ import java.util.Calendar;
 
 public class AddTaskActivity extends AppCompatActivity {
 
-    EditText etProject, etMulai, etDue;
-    AutoCompleteTextView jenis;
+    AutoCompleteTextView spProject, spJenis, spPriority;
+    EditText etMulai, etDue;
     Button btnSimpan;
 
     DatabaseReference database;
@@ -30,26 +30,67 @@ public class AddTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_task);
 
         // 🔹 INIT VIEW
-        etProject = findViewById(R.id.etProject);
+        spProject = findViewById(R.id.spProject);
+        spJenis = findViewById(R.id.spJenis);
+        spPriority = findViewById(R.id.spPriority);
+
         etMulai = findViewById(R.id.etMulai);
         etDue = findViewById(R.id.etDue);
-        jenis = findViewById(R.id.spinnerJenis);
         btnSimpan = findViewById(R.id.btnSimpan);
 
+        // 🔹 DROPDOWN PROJECT
+        String[] projectList = {"Gedung Produksi", "Gudang", "Office"};
+        ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                projectList
+        );
+        spProject.setAdapter(projectAdapter);
+        spProject.setOnClickListener(v -> spProject.showDropDown());
+
         // 🔹 DROPDOWN JENIS
-        String[] items = {
+        String[] jenisList = {
                 "Preventive Maintenance",
                 "Corrective Maintenance"
         };
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        ArrayAdapter<String> jenisAdapter = new ArrayAdapter<>(
                 this,
-                android.R.layout.simple_dropdown_item_1line,
-                items
+                android.R.layout.simple_list_item_1,
+                jenisList
+        );
+        spJenis.setAdapter(jenisAdapter);
+        spJenis.setOnClickListener(v -> spJenis.showDropDown());
+
+        // 🔹 DROPDOWN PRIORITY
+        String[] priorityList = {
+                "High Priority",
+                "Medium Priority",
+                "Low Priority"
+        };
+        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                priorityList
+        );
+        spPriority.setAdapter(priorityAdapter);
+        spPriority.setOnClickListener(v -> spPriority.showDropDown());
+
+        AutoCompleteTextView spPic = findViewById(R.id.spPic);
+
+        String[] teknisi = {
+                "Mahmud Djafar",
+                "Rahmat Otoluwa",
+                "Maulana",
+                "Muliadi"
+        };
+
+        ArrayAdapter<String> picAdapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_list_item_1,
+                teknisi
         );
 
-        jenis.setAdapter(adapter);
-        jenis.setOnClickListener(v -> jenis.showDropDown());
+        spPic.setAdapter(picAdapter);
 
         // 🔹 DATE PICKER
         etMulai.setOnClickListener(v -> showDatePicker(etMulai));
@@ -63,11 +104,10 @@ public class AddTaskActivity extends AppCompatActivity {
 
         // 🔹 MODE EDIT
         if (getIntent().hasExtra("id")) {
-
             taskId = getIntent().getStringExtra("id");
 
-            etProject.setText(getIntent().getStringExtra("project"));
-            jenis.setText(getIntent().getStringExtra("jenis"));
+            spProject.setText(getIntent().getStringExtra("project"));
+            spJenis.setText(getIntent().getStringExtra("jenis"));
             etMulai.setText(getIntent().getStringExtra("mulai"));
             etDue.setText(getIntent().getStringExtra("due"));
 
@@ -77,13 +117,16 @@ public class AddTaskActivity extends AppCompatActivity {
         // 🔹 SIMPAN DATA
         btnSimpan.setOnClickListener(v -> {
 
-            String project = etProject.getText().toString();
-            String jenisText = jenis.getText().toString();
+            String project = spProject.getText().toString();
+            String jenis = spJenis.getText().toString();
+            String priority = spPriority.getText().toString();
             String mulai = etMulai.getText().toString();
             String due = etDue.getText().toString();
 
             // 🔥 VALIDASI
-            if (project.isEmpty() || jenisText.isEmpty() || mulai.isEmpty() || due.isEmpty()) {
+            if (project.isEmpty() || jenis.isEmpty() || priority.isEmpty()
+                    || mulai.isEmpty() || due.isEmpty()) {
+
                 Toast.makeText(this, "Semua field harus diisi!", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -95,7 +138,7 @@ public class AddTaskActivity extends AppCompatActivity {
             Task task = new Task(
                     id,
                     project,
-                    jenisText,
+                    jenis,
                     mulai,
                     due,
                     status,
@@ -110,26 +153,26 @@ public class AddTaskActivity extends AppCompatActivity {
         });
     }
 
-    // 🔥 DATE PICKER FUNCTION
+    // 🔥 DATE PICKER
     private void showDatePicker(EditText editText) {
         Calendar calendar = Calendar.getInstance();
 
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                (view, selectedYear, selectedMonth, selectedDay) -> {
+                (view, year, month, day) -> {
 
-                    String date = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
+                    String date = day + "/" + (month + 1) + "/" + year;
                     editText.setText(date);
 
-                }, year, month, day);
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        );
 
         datePickerDialog.show();
     }
 
-    // 🔥 AUTO STATUS
+    // 🔥 STATUS OTOMATIS
     private String getStatusOtomatis(String dueDate) {
         try {
             String[] parts = dueDate.split("/");
@@ -141,9 +184,7 @@ public class AddTaskActivity extends AppCompatActivity {
             Calendar due = Calendar.getInstance();
             due.set(year, month, day);
 
-            Calendar today = Calendar.getInstance();
-
-            if (today.after(due)) {
+            if (Calendar.getInstance().after(due)) {
                 return "OVERDUE";
             } else {
                 return "ON PROGRESS";
