@@ -199,32 +199,30 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- FOTO BEFORE -->
-                <TextView style="@style/label" android:text="9. Lampiran Foto Before *"
+                <TextView
+                    style="@style/label"
+                    android:text="9. Lampiran Foto Before *"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <LinearLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBefore"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:text="+ Foto"
-                        android:id="@+id/btnFotoBefore"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"/>
-                </LinearLayout>
+                    android:layout_marginTop="8dp"/>
 
                 <!-- FOTO AFTER -->
-                <TextView style="@style/label" android:text="10. Lampiran Foto After *"
+                <TextView
+                    style="@style/label"
+                    android:text="10. Lampiran Foto After *"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <Button
-                    android:text="+ Foto"
-                    android:id="@+id/btnFotoAfter"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAfter"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"/>
+                    android:layout_height="wrap_content"
+                    android:alpha="0.5"/> <!-- disable look -->
 
                 <!-- BUTTON -->
                 <Button

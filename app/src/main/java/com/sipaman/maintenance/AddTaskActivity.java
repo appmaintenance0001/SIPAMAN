@@ -1,6 +1,8 @@
 package com.sipaman.maintenance;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -9,20 +11,35 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class AddTaskActivity extends AppCompatActivity {
 
-    AutoCompleteTextView spProject, spJenis, spPriority;
+    AutoCompleteTextView spProject, spJenis, spPriority, spPic;
     EditText etMulai, etDue;
     Button btnSimpan;
 
     DatabaseReference database;
     String taskId;
+
+    // 🔥 FOTO GRID
+    RecyclerView rvBefore, rvAfter;
+    List<Uri> listBefore = new ArrayList<>();
+    List<Uri> listAfter = new ArrayList<>();
+
+    PhotoAdapter adapterBefore, adapterAfter;
+
+    boolean isTaskDone = false;
+
+    int currentType = 0; // 0 = before, 1 = after
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,64 +50,45 @@ public class AddTaskActivity extends AppCompatActivity {
         spProject = findViewById(R.id.spProject);
         spJenis = findViewById(R.id.spJenis);
         spPriority = findViewById(R.id.spPriority);
+        spPic = findViewById(R.id.spPic);
 
         etMulai = findViewById(R.id.etMulai);
         etDue = findViewById(R.id.etDue);
         btnSimpan = findViewById(R.id.btnSimpan);
 
-        // 🔹 DROPDOWN PROJECT
+        rvBefore = findViewById(R.id.rvBefore);
+        rvAfter = findViewById(R.id.rvAfter);
+
+        // 🔥 GRID SETUP
+        rvBefore.setLayoutManager(new GridLayoutManager(this, 3));
+        rvAfter.setLayoutManager(new GridLayoutManager(this, 3));
+
+        adapterBefore = new PhotoAdapter(this, listBefore, true, 0);
+        adapterAfter = new PhotoAdapter(this, listAfter, false, 1); // disable awal
+
+        rvBefore.setAdapter(adapterBefore);
+        rvAfter.setAdapter(adapterAfter);
+
+        rvAfter.setAlpha(0.5f); // efek disable
+
+        // 🔹 PROJECT
         String[] projectList = {"Gedung Produksi", "Gudang", "Office"};
-        ArrayAdapter<String> projectAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                projectList
-        );
-        spProject.setAdapter(projectAdapter);
+        spProject.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, projectList));
         spProject.setOnClickListener(v -> spProject.showDropDown());
 
-        // 🔹 DROPDOWN JENIS
-        String[] jenisList = {
-                "Preventive Maintenance",
-                "Corrective Maintenance"
-        };
-        ArrayAdapter<String> jenisAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                jenisList
-        );
-        spJenis.setAdapter(jenisAdapter);
+        // 🔹 JENIS
+        String[] jenisList = {"Preventive Maintenance", "Corrective Maintenance"};
+        spJenis.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, jenisList));
         spJenis.setOnClickListener(v -> spJenis.showDropDown());
 
-        // 🔹 DROPDOWN PRIORITY
-        String[] priorityList = {
-                "High Priority",
-                "Medium Priority",
-                "Low Priority"
-        };
-        ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                priorityList
-        );
-        spPriority.setAdapter(priorityAdapter);
+        // 🔹 PRIORITY
+        String[] priorityList = {"High Priority", "Medium Priority", "Low Priority"};
+        spPriority.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, priorityList));
         spPriority.setOnClickListener(v -> spPriority.showDropDown());
 
-        AutoCompleteTextView spPic = findViewById(R.id.spPic);
-
-        String[] teknisi = {
-                "Mahmud Djafar",
-                "Rahmat Otoluwa",
-                "Maulana",
-                "Muliadi"
-        };
-
-        ArrayAdapter<String> picAdapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                teknisi
-        );
-
-        spPic.setAdapter(picAdapter);
+        // 🔹 PIC (SEARCHABLE)
+        String[] teknisi = {"Mahmud Djafar", "Rahmat Otoluwa", "Maulana", "Muliadi"};
+        spPic.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, teknisi));
 
         // 🔹 DATE PICKER
         etMulai.setOnClickListener(v -> showDatePicker(etMulai));
@@ -102,19 +100,7 @@ public class AddTaskActivity extends AppCompatActivity {
         // 🔹 FIREBASE
         database = FirebaseDatabase.getInstance().getReference("tasks");
 
-        // 🔹 MODE EDIT
-        if (getIntent().hasExtra("id")) {
-            taskId = getIntent().getStringExtra("id");
-
-            spProject.setText(getIntent().getStringExtra("project"));
-            spJenis.setText(getIntent().getStringExtra("jenis"));
-            etMulai.setText(getIntent().getStringExtra("mulai"));
-            etDue.setText(getIntent().getStringExtra("due"));
-
-            btnSimpan.setText("UPDATE TASK");
-        }
-
-        // 🔹 SIMPAN DATA
+        // 🔹 SIMPAN
         btnSimpan.setOnClickListener(v -> {
 
             String project = spProject.getText().toString();
@@ -123,7 +109,6 @@ public class AddTaskActivity extends AppCompatActivity {
             String mulai = etMulai.getText().toString();
             String due = etDue.getText().toString();
 
-            // 🔥 VALIDASI
             if (project.isEmpty() || jenis.isEmpty() || priority.isEmpty()
                     || mulai.isEmpty() || due.isEmpty()) {
 
@@ -132,6 +117,17 @@ public class AddTaskActivity extends AppCompatActivity {
             }
 
             String status = getStatusOtomatis(due);
+
+            // 🔥 AKTIFKAN FOTO AFTER JIKA SELESAI
+
+            if (status.equals("DONE")) {
+                isTaskDone = true;
+                adapterAfter = new PhotoAdapter(this, listAfter, true, 1);
+                rvAfter.setAdapter(adapterAfter);
+                rvAfter.setAlpha(1f);
+            } else {
+                rvAfter.setAlpha(0.5f);
+            }
 
             String id = (taskId != null) ? taskId : database.push().getKey();
 
@@ -148,28 +144,55 @@ public class AddTaskActivity extends AppCompatActivity {
             database.child(id).setValue(task);
 
             Toast.makeText(this, "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
-
             finish();
         });
+    }
+
+    // 🔥 BUKA GALLERY
+    public void openGallery(int type) {
+        if (type == 1 && !isTaskDone) {
+            Toast.makeText(this, "Foto after hanya untuk task selesai", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        currentType = type;
+
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+
+        startActivityForResult(intent, 100);
+    }
+
+    // 🔥 HASIL FOTO
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK && data != null) {
+
+            Uri uri = data.getData();
+
+            if (currentType == 0) {
+                listBefore.add(uri);
+                adapterBefore.notifyDataSetChanged();
+            } else {
+                listAfter.add(uri);
+                adapterAfter.notifyDataSetChanged();
+            }
+        }
     }
 
     // 🔥 DATE PICKER
     private void showDatePicker(EditText editText) {
         Calendar calendar = Calendar.getInstance();
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                (view, year, month, day) -> {
-
-                    String date = day + "/" + (month + 1) + "/" + year;
-                    editText.setText(date);
-
-                },
+        new DatePickerDialog(this,
+                (view, year, month, day) ->
+                        editText.setText(day + "/" + (month + 1) + "/" + year),
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
-        );
-
-        datePickerDialog.show();
+        ).show();
     }
 
     // 🔥 STATUS OTOMATIS
@@ -177,12 +200,12 @@ public class AddTaskActivity extends AppCompatActivity {
         try {
             String[] parts = dueDate.split("/");
 
-            int day = Integer.parseInt(parts[0]);
-            int month = Integer.parseInt(parts[1]) - 1;
-            int year = Integer.parseInt(parts[2]);
-
             Calendar due = Calendar.getInstance();
-            due.set(year, month, day);
+            due.set(
+                    Integer.parseInt(parts[2]),
+                    Integer.parseInt(parts[1]) - 1,
+                    Integer.parseInt(parts[0])
+            );
 
             if (Calendar.getInstance().after(due)) {
                 return "OVERDUE";
