@@ -10,12 +10,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Firebase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,6 +35,8 @@ public class AddTaskActivity extends AppCompatActivity {
     EditText etMulai, etDue;
     Button btnSimpan;
 
+    StorageReference storage;
+
     DatabaseReference database;
     String taskId;
 
@@ -35,11 +45,18 @@ public class AddTaskActivity extends AppCompatActivity {
     List<Uri> listBefore = new ArrayList<>();
     List<Uri> listAfter = new ArrayList<>();
 
+    List<String> beforeUrls = new ArrayList<>();
+    List<String> afterUrls = new ArrayList<>();
+
     PhotoAdapter adapterBefore, adapterAfter;
 
     boolean isTaskDone = false;
 
     int currentType = 0; // 0 = before, 1 = after
+
+    interface OnUploadComplete {
+        void onComplete(List<String> urls);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +117,8 @@ public class AddTaskActivity extends AppCompatActivity {
         // 🔹 FIREBASE
         database = FirebaseDatabase.getInstance().getReference("tasks");
 
+        storage = FirebaseStorage.getInstance().getReference();
+
         // 🔹 SIMPAN
         btnSimpan.setOnClickListener(v -> {
 
@@ -117,34 +136,33 @@ public class AddTaskActivity extends AppCompatActivity {
             }
 
             String status = getStatusOtomatis(due);
-
-            // 🔥 AKTIFKAN FOTO AFTER JIKA SELESAI
-
-            if (status.equals("DONE")) {
-                isTaskDone = true;
-                adapterAfter = new PhotoAdapter(this, listAfter, true, 1);
-                rvAfter.setAdapter(adapterAfter);
-                rvAfter.setAlpha(1f);
-            } else {
-                rvAfter.setAlpha(0.5f);
-            }
-
             String id = (taskId != null) ? taskId : database.push().getKey();
 
-            Task task = new Task(
-                    id,
-                    project,
-                    jenis,
-                    mulai,
-                    due,
-                    status,
-                    null
-            );
+            // 🔥 upload BEFORE dulu
+            uploadImages(listBefore, "before", beforeUrls -> {
 
-            database.child(id).setValue(task);
+                // 🔥 lalu upload AFTER
+                uploadImages(listAfter, "after", afterUrls -> {
 
-            Toast.makeText(this, "Data berhasil disimpan!", Toast.LENGTH_SHORT).show();
-            finish();
+                    Task task = new Task(
+                            id,
+                            project,
+                            jenis,
+                            mulai,
+                            due,
+                            status,
+                            null, // 🔥 tanggal selesai (WAJIB ADA)
+                            beforeUrls,
+                            afterUrls
+                    );
+
+                    database.child(id).setValue(task);
+
+                    Toast.makeText(this, "Task + Foto berhasil disimpan!", Toast.LENGTH_SHORT).show();
+
+                    finish();
+                });
+            });
         });
     }
 
@@ -180,6 +198,21 @@ public class AddTaskActivity extends AppCompatActivity {
                 adapterAfter.notifyDataSetChanged();
             }
         }
+
+        if (resultCode == RESULT_OK && data != null) {
+
+            Uri imageUri = data.getData();
+
+            if (requestCode == 0) {
+                listBefore.add(imageUri);
+                adapterBefore.notifyDataSetChanged();
+            } else if (requestCode == 1) {
+                listAfter.add(imageUri);
+                adapterAfter.notifyDataSetChanged();
+            }
+
+        }
+
     }
 
     // 🔥 DATE PICKER
@@ -217,4 +250,41 @@ public class AddTaskActivity extends AppCompatActivity {
             return "ON PROGRESS";
         }
     }
+
+    private void uploadImages(List<Uri> listUri, String folder, OnUploadComplete callback) {
+
+        List<String> urls = new ArrayList<>();
+
+        if (listUri.isEmpty()) {
+            callback.onComplete(urls);
+            return;
+        }
+
+        final int total = listUri.size();
+        final int[] count = {0};
+
+        for (Uri uri : listUri) {
+
+            String fileName = System.currentTimeMillis() + ".jpg";
+
+            StorageReference ref = storage.child(folder + "/" + fileName);
+
+            ref.putFile(uri)
+                    .continueWithTask(task -> ref.getDownloadUrl())
+                    .addOnSuccessListener(downloadUri -> {
+
+                        urls.add(downloadUri.toString());
+                        count[0]++;
+
+                        if (count[0] == total) {
+                            callback.onComplete(urls);
+                        }
+
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Upload gagal", Toast.LENGTH_SHORT).show()
+                    );
+        }
+    }
+
 }

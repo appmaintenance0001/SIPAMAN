@@ -85,6 +85,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         holder.txtJenis.setText(task.getJenis());
         holder.txtMulai.setText("Mulai: " + task.getMulai());
         holder.txtDue.setText("Due: " + task.getDue());
+        holder.txtDue.setText(task.getDue());
+        holder.txtDue.setTextColor(Color.RED);
 
         // DELETE
         holder.btnDelete.setOnClickListener(v -> {

@@ -3,8 +3,10 @@ package com.sipaman.maintenance;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +24,9 @@ import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.*;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieData;
 
 
 public class DashboardActivity extends AppCompatActivity {
@@ -33,6 +38,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     PieChart pieChart;
 
+    TextView tvTotal, tvDone, tvProgress, tvOverdue;
 
     private boolean isFirstLoad = true;
     SharedPreferences prefs;
@@ -42,38 +48,37 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        // 🔹 INIT
         pieChart = findViewById(R.id.pieChart);
 
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.rvOverdue);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        database = FirebaseDatabase.getInstance().getReference("tasks");
-
-        taskList = new ArrayList<>();
+        taskList = new ArrayList<>(); // 🔥 WAJIB DULU
         adapter = new TaskAdapter(taskList);
         recyclerView.setAdapter(adapter);
 
+        database = FirebaseDatabase.getInstance().getReference("tasks");
+
         prefs = getSharedPreferences("notif_prefs", MODE_PRIVATE);
 
-        // 🔔 WORK MANAGER (BACKGROUND NOTIF)
-        PeriodicWorkRequest workRequest =
-                new PeriodicWorkRequest.Builder(TaskReminderWorker.class, 15, java.util.concurrent.TimeUnit.MINUTES)
-                        .build();
+        // 🔹 CARD TEXT
+        tvTotal = findViewById(R.id.cardTotal).findViewById(R.id.tvTotal);
+        tvDone = findViewById(R.id.cardDone).findViewById(R.id.tvTotal);
+        tvProgress = findViewById(R.id.cardProgress).findViewById(R.id.tvTotal);
+        tvOverdue = findViewById(R.id.cardOverdue).findViewById(R.id.tvTotal);
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                "TASK_REMINDER",
-                ExistingPeriodicWorkPolicy.KEEP,
-                workRequest
-        );
+        TextView labelTotal = findViewById(R.id.cardTotal).findViewById(R.id.tvLabel);
+        TextView labelDone = findViewById(R.id.cardDone).findViewById(R.id.tvLabel);
+        TextView labelProgress = findViewById(R.id.cardProgress).findViewById(R.id.tvLabel);
+        TextView labelOverdue = findViewById(R.id.cardOverdue).findViewById(R.id.tvLabel);
 
-        // 🔔 Permission Android 13+
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            if (checkSelfPermission("android.permission.POST_NOTIFICATIONS") != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 1);
-            }
-        }
+        labelTotal.setText("Total Task");
+        labelDone.setText("Selesai");
+        labelProgress.setText("On Progress");
+        labelOverdue.setText("Overdue");
 
-        // 🔥 FIREBASE LISTENER
+        // 🔥 FIREBASE
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -91,34 +96,26 @@ public class DashboardActivity extends AppCompatActivity {
                 for (DataSnapshot data : snapshot.getChildren()) {
 
                     Task task = data.getValue(Task.class);
-
                     if (task == null) continue;
 
                     taskList.add(task);
 
                     String status = task.getStatus();
+                    if (status == null) continue;
 
-// ✅ DONE
-                    if ("DONE".equals(status)) {
+                    if (status.equals("DONE")) {
                         doneCount++;
                         continue;
                     }
 
-// ✅ ON PROGRESS
-                    if ("ON_PROGRESS".equals(status)) {
+                    if (status.equals("ON_PROGRESS")) {
                         progressCount++;
                     }
 
-// tanggal logic
                     try {
                         Date dueDate = sdf.parse(task.getDue());
 
                         if (dueDate != null) {
-
-                            if (sdf.format(today).equals(sdf.format(dueDate))) {
-                                todayCount++;
-                            }
-
                             if (today.after(dueDate)) {
                                 overdueCount++;
                             }
@@ -129,112 +126,45 @@ public class DashboardActivity extends AppCompatActivity {
                     }
                 }
 
+                // 🔹 UPDATE CARD
+                tvTotal.setText(String.valueOf(taskList.size()));
+                tvDone.setText(String.valueOf(doneCount));
+                tvProgress.setText(String.valueOf(progressCount));
+                tvOverdue.setText(String.valueOf(overdueCount));
+
                 adapter.notifyDataSetChanged();
 
-                List<Integer> colors = new ArrayList<>();
-
+                // 🔹 PIE CHART
                 List<PieEntry> entries = new ArrayList<>();
-
-                if (overdueCount > 0) {
-                    entries.add(new PieEntry(overdueCount, "Overdue"));
-                    colors.add(android.graphics.Color.RED);
-                }
-
-                if (todayCount > 0) {
-                    entries.add(new PieEntry(todayCount, "Today"));
-                    colors.add(android.graphics.Color.YELLOW);
-                }
-
-                if (progressCount > 0) {
-                    entries.add(new PieEntry(progressCount, "On Progress"));
-                    colors.add(android.graphics.Color.BLUE);
-                }
+                List<Integer> colors = new ArrayList<>();
 
                 if (doneCount > 0) {
                     entries.add(new PieEntry(doneCount, "Done"));
-                    colors.add(android.graphics.Color.GREEN);
+                    colors.add(Color.GREEN);
                 }
 
-                PieDataSet dataSet = new PieDataSet(entries, "Task Status");
-                dataSet.setColors(colors);
+                if (progressCount > 0) {
+                    entries.add(new PieEntry(progressCount, "Progress"));
+                    colors.add(Color.YELLOW);
+                }
 
-// styling
-                dataSet.setValueTextSize(14f);
+                if (overdueCount > 0) {
+                    entries.add(new PieEntry(overdueCount, "Overdue"));
+                    colors.add(Color.RED);
+                }
+
+                PieDataSet dataSet = new PieDataSet(entries, "");
+                dataSet.setColors(colors);
+                dataSet.setValueTextSize(12f);
 
                 PieData data = new PieData(dataSet);
-                pieChart.setUsePercentValues(false);
-
-                data.setValueTextSize(14f);
-                data.setValueFormatter(new ValueFormatter() {
-                    @Override
-                    public String getFormattedValue(float value) {
-                        return String.valueOf((int) value);
-                    }
-                });
 
                 pieChart.setData(data);
-
-// animasi
-                pieChart.animateY(1000);
-
-// setting tambahan
+                pieChart.setUsePercentValues(false);
                 pieChart.getDescription().setEnabled(false);
                 pieChart.setCenterText("Task Status");
-                pieChart.setCenterTextSize(16f);
-                pieChart.setUsePercentValues(false);
-                pieChart.setDrawHoleEnabled(true);
-                pieChart.setHoleRadius(60f);
-                pieChart.setTransparentCircleRadius(65f);
+                pieChart.animateY(1000);
                 pieChart.invalidate();
-                pieChart.getLegend().setTextSize(12f);
-                pieChart.setEntryLabelTextSize(12f);
-
-// 🔔 NOTIF SUMMARY (1x per hari)
-                if (!isFirstLoad && !isTodayNotified()) {
-
-                    if (overdueCount > 0 || todayCount > 0) {
-
-                        StringBuilder message = new StringBuilder();
-
-                        if (overdueCount > 0) {
-                            message.append("🚨 ").append(overdueCount).append(" task overdue\n");
-                        }
-
-                        if (todayCount > 0) {
-                            message.append("⚠️ ").append(todayCount).append(" task deadline hari ini");
-                        }
-
-                        NotificationHelper.showNotification(
-                                DashboardActivity.this,
-                                "Reminder Task 📊",
-                                message.toString().trim(),
-                                "summary"
-                        );
-
-                        saveTodayNotif();
-                    }
-                }
-
-                // 🔥 HANDLE CLICK DARI NOTIF
-                String taskId = getIntent().getStringExtra("taskId");
-
-                if (taskId != null) {
-
-                    adapter.setHighlightedTask(taskId);
-
-                    recyclerView.post(() -> {
-                        for (int i = 0; i < taskList.size(); i++) {
-                            if (taskList.get(i).getId().equals(taskId)) {
-                                recyclerView.scrollToPosition(i);
-                                break;
-                            }
-                        }
-                    });
-
-                    getIntent().removeExtra("taskId");
-                }
-
-                isFirstLoad = false;
             }
 
             @Override
@@ -243,12 +173,13 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-        // 🔹 tombol tambah
+        // 🔹 BUTTON ADD
         FloatingActionButton btnAdd = findViewById(R.id.btnAdd);
         btnAdd.setOnClickListener(v -> {
-            startActivity(new Intent(DashboardActivity.this, AddTaskActivity.class));
+            startActivity(new Intent(this, AddTaskActivity.class));
         });
     }
+
 
     // 🔥 CEK SUDAH NOTIF HARI INI
     private boolean isTodayNotified() {
