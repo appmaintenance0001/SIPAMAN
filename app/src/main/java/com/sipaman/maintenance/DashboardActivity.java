@@ -35,10 +35,14 @@ public class DashboardActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     TaskAdapter adapter;
     List<Task> taskList;
+    List<Task> overdueList = new ArrayList<>();
+    OverdueAdapter overdueAdapter;
 
     PieChart pieChart;
 
     TextView tvTotal, tvDone, tvProgress, tvOverdue;
+
+    TextView tvLegendDone, tvLegendProgress, tvLegendPending, tvLegendOverdue;
 
     private boolean isFirstLoad = true;
     SharedPreferences prefs;
@@ -50,6 +54,14 @@ public class DashboardActivity extends AppCompatActivity {
 
         // 🔹 INIT
         pieChart = findViewById(R.id.pieChart);
+
+
+        RecyclerView rvOverdue = findViewById(R.id.rvOverdue);
+        rvOverdue.setLayoutManager(new LinearLayoutManager(this));
+
+        overdueAdapter = new OverdueAdapter(overdueList);
+        rvOverdue.setAdapter(overdueAdapter);
+
 
         recyclerView = findViewById(R.id.rvOverdue);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -77,6 +89,13 @@ public class DashboardActivity extends AppCompatActivity {
         labelDone.setText("Selesai");
         labelProgress.setText("On Progress");
         labelOverdue.setText("Overdue");
+
+        tvLegendDone = findViewById(R.id.tvLegendDone);
+        tvLegendProgress = findViewById(R.id.tvLegendProgress);
+        tvLegendPending = findViewById(R.id.tvLegendPending);
+        tvLegendOverdue = findViewById(R.id.tvLegendOverdue);
+
+
 
         // 🔥 FIREBASE
         database.addValueEventListener(new ValueEventListener() {
@@ -118,6 +137,7 @@ public class DashboardActivity extends AppCompatActivity {
                         if (dueDate != null) {
                             if (today.after(dueDate)) {
                                 overdueCount++;
+                                overdueList.add(task); // 🔥 masuk list overdue
                             }
                         }
 
@@ -132,14 +152,34 @@ public class DashboardActivity extends AppCompatActivity {
                 tvProgress.setText(String.valueOf(progressCount));
                 tvOverdue.setText(String.valueOf(overdueCount));
 
+
+                int total = doneCount + progressCount + overdueCount;
+
+
+
+// hindari divide by zero
+                if (total == 0) total = 1;
+
+// hitung persen
+                float donePercent = (doneCount * 100f) / total;
+                float progressPercent = (progressCount * 100f) / total;
+                float overduePercent = (overdueCount * 100f) / total;
+                float pendingPercent = 100 - (donePercent + progressPercent + overduePercent);
+
+                overdueAdapter.notifyDataSetChanged();
                 adapter.notifyDataSetChanged();
+
+                tvLegendDone.setText("🟢 Selesai " + Math.round(donePercent) + "%");
+                tvLegendProgress.setText("🟡 Progress " + Math.round(progressPercent) + "%");
+                tvLegendPending.setText("⚪ Pending " + Math.round(pendingPercent) + "%");
+                tvLegendOverdue.setText("🔴 Overdue " + Math.round(overduePercent) + "%");
 
                 // 🔹 PIE CHART
                 List<PieEntry> entries = new ArrayList<>();
                 List<Integer> colors = new ArrayList<>();
 
                 if (doneCount > 0) {
-                    entries.add(new PieEntry(doneCount, "Done"));
+                    entries.add(new PieEntry(doneCount, "Selesai"));
                     colors.add(Color.GREEN);
                 }
 
@@ -153,16 +193,30 @@ public class DashboardActivity extends AppCompatActivity {
                     colors.add(Color.RED);
                 }
 
+                if (pendingPercent > 0) {
+                    entries.add(new PieEntry(pendingPercent, "Pending"));
+                    colors.add(Color.GRAY);
+                }
+
                 PieDataSet dataSet = new PieDataSet(entries, "");
                 dataSet.setColors(colors);
                 dataSet.setValueTextSize(12f);
 
                 PieData data = new PieData(dataSet);
 
+// tampil persen di chart
+                pieChart.setUsePercentValues(true);
+
+                data.setValueFormatter(new ValueFormatter() {
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return Math.round(value) + "%";
+                    }
+                });
+
                 pieChart.setData(data);
-                pieChart.setUsePercentValues(false);
                 pieChart.getDescription().setEnabled(false);
-                pieChart.setCenterText("Task Status");
+                pieChart.setCenterText("Status Task");
                 pieChart.animateY(1000);
                 pieChart.invalidate();
             }

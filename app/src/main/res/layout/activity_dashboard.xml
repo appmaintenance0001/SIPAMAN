@@ -50,26 +50,29 @@
 
                 <!-- WELCOME -->
                 <TextView
-                    android:text="Selamat datang,"
-                    android:textSize="14sp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="Selamat datang,"
+                    android:textColor="#0B0202"
+                    android:textSize="14sp" />
 
                 <TextView
-                    android:text="Admin"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
-                    android:layout_marginBottom="16dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Admin"
+                    android:textColor="#0B0202"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <!-- RINGKASAN -->
                 <TextView
-                    android:text="Ringkasan Task"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Ringkasan Task"
+                    android:textColor="#0B0202"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -96,17 +99,18 @@
 
                 <!-- CHART -->
                 <TextView
-                    android:text="Task Berdasarkan Status"
-                    android:textStyle="bold"
-                    android:layout_marginTop="16dp"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Task Berdasarkan Status"
+                    android:textColor="#0B0202"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:background="@drawable/bg_card"
+                    android:orientation="horizontal"
                     android:padding="12dp">
 
                     <!-- PIE -->
@@ -114,7 +118,7 @@
                         android:id="@+id/pieChart"
                         android:layout_width="0dp"
                         android:layout_height="200dp"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" />
 
                     <!-- LEGEND -->
                     <LinearLayout
@@ -125,27 +129,36 @@
 
                         <TextView
                             android:id="@+id/tvLegendDone"
-                            android:text="🟢 Selesai 0%"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:paddingTop="40dp"
+                            android:paddingRight="20dp"
+                            android:paddingBottom="12dp"
+                            android:text="🟢 Selesai 0%"
+                            android:textColor="#0B0202" />
 
                         <TextView
                             android:id="@+id/tvLegendProgress"
-                            android:text="🟡 Progress 0%"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="12dp"
+                            android:text="🟡 Progress 0%"
+                            android:textColor="#0B0202" />
 
                         <TextView
                             android:id="@+id/tvLegendPending"
-                            android:text="⚪ Pending 0%"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="12dp"
+                            android:text="⚪ Pending 0%"
+                            android:textColor="#0B0202" />
 
                         <TextView
                             android:id="@+id/tvLegendOverdue"
-                            android:text="🔴 Overdue 0%"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:layout_height="wrap_content"
+                            android:text="🔴 Overdue 0%"
+                            android:textColor="#0B0202" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -158,11 +171,12 @@
                     android:layout_marginTop="16dp">
 
                     <TextView
-                        android:text="Task Overdue"
-                        android:textStyle="bold"
-                        android:layout_weight="1"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Task Overdue"
+                        android:textColor="#0B0202"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/btnLihatSemua"

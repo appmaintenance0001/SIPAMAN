@@ -18,4 +18,5 @@
         android:src="@android:drawable/ic_menu_close_clear_cancel"
         android:layout_gravity="top|end"
         android:visibility="gone"/>
+
 </FrameLayout>

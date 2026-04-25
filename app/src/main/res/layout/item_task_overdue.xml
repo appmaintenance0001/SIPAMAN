@@ -1,35 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card"
+    android:padding="12dp"
+    android:layout_marginBottom="8dp"
+    android:orientation="horizontal"
+    android:elevation="4dp">
 
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:background="@drawable/bg_card"
-android:padding="12dp"
-android:layout_marginBottom="8dp"
-android:orientation="horizontal">
+    <!-- KIRI -->
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
 
-<LinearLayout
-    android:layout_weight="1"
-    android:orientation="vertical"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/txtTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="Nama Task"
+            android:textSize="14sp" />
 
+        <TextView
+            android:id="@+id/txtTanggal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="20 Apr 2024"
+            android:textSize="12sp"
+            android:textColor="#666666" />
+
+    </LinearLayout>
+
+    <!-- KANAN (DUE DATE) -->
     <TextView
-        android:id="@+id/txtTitle"
+        android:id="@+id/txtDue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="22 Apr 2024"
+        android:textColor="#D32F2F"
         android:textStyle="bold"
-        android:text="Nama Task"/>
-
-    <TextView
-        android:id="@+id/txtTanggal"
-        android:text="20 Apr 2024"
-        android:textSize="12sp"/>
-</LinearLayout>
-
-<TextView
-    android:id="@+id/txtDue"
-    android:text="22 Apr 2024"
-    android:textColor="#D32F2F"
-    android:textStyle="bold"/>
+        android:textSize="12sp" />
 
 </LinearLayout>
-
