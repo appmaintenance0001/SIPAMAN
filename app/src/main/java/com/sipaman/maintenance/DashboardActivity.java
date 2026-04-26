@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.*;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,12 +47,47 @@ public class DashboardActivity extends AppCompatActivity {
 
     private boolean isFirstLoad = true;
     SharedPreferences prefs;
-
+    private String normalizeStatus(String status) {
+        if (status == null) return "";
+        return status.replace(" ", "_").toUpperCase();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+
+
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+
+// 🔥 PASANG LISTENER DULU
+        bottomNav.setOnItemSelectedListener(item -> {
+
+            int id = item.getItemId();
+
+            if (id == R.id.nav_dashboard) {
+                return true;
+            }
+            else if (id == R.id.nav_task) {
+                startActivity(new Intent(this, TaskActivity.class));
+                finish(); // 🔥 WAJIB
+                return true;
+            }
+            else if (id == R.id.nav_calendar) {
+                return true;
+            }
+            else if (id == R.id.nav_project) {
+                return true;
+            }
+            else if (id == R.id.nav_setting) {
+                return true;
+            }
+
+            return false;
+        });
+
+// 🔥 SET ACTIVE MENU PALING AKHIR
+        bottomNav.setSelectedItemId(R.id.nav_dashboard);
         // 🔹 INIT
         pieChart = findViewById(R.id.pieChart);
 
@@ -117,28 +153,34 @@ public class DashboardActivity extends AppCompatActivity {
                     Task task = data.getValue(Task.class);
                     if (task == null) continue;
 
+                    // 🔥 NORMALISASI STATUS
+                    String originalStatus = task.getStatus();
+                    String fixedStatus = normalizeStatus(originalStatus);
+
+                    // 🔥 UPDATE KE FIREBASE (AMAN)
+                    if (originalStatus != null && !fixedStatus.equals(originalStatus)) {
+                        data.getRef().child("status").setValue(fixedStatus);
+                    }
+
                     taskList.add(task);
 
-                    String status = task.getStatus();
-                    if (status == null) continue;
+                    String status = fixedStatus;
 
-                    if (status.equals("DONE")) {
+                    if ("DONE".equals(status)) {
                         doneCount++;
                         continue;
                     }
 
-                    if (status.equals("ON_PROGRESS")) {
+                    if ("ON_PROGRESS".equals(status)) {
                         progressCount++;
                     }
 
                     try {
                         Date dueDate = sdf.parse(task.getDue());
 
-                        if (dueDate != null) {
-                            if (today.after(dueDate)) {
-                                overdueCount++;
-                                overdueList.add(task); // 🔥 masuk list overdue
-                            }
+                        if (dueDate != null && today.after(dueDate)) {
+                            overdueCount++;
+                            overdueList.add(task);
                         }
 
                     } catch (Exception e) {
@@ -225,12 +267,6 @@ public class DashboardActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError error) {
                 Toast.makeText(DashboardActivity.this, "Gagal ambil data", Toast.LENGTH_SHORT).show();
             }
-        });
-
-        // 🔹 BUTTON ADD
-        FloatingActionButton btnAdd = findViewById(R.id.btnAdd);
-        btnAdd.setOnClickListener(v -> {
-            startActivity(new Intent(this, AddTaskActivity.class));
         });
     }
 

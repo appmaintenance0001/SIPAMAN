@@ -84,11 +84,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         holder.txtProject.setText("Project: " + task.getProject());
         holder.txtJenis.setText(task.getJenis());
         holder.txtMulai.setText("Mulai: " + task.getMulai());
+
+        // 🔥 FIX txtDue
         holder.txtDue.setText("Due: " + task.getDue());
-        holder.txtDue.setText(task.getDue());
         holder.txtDue.setTextColor(Color.RED);
 
-        // DELETE
+        // 🔥 RESET STATE (PENTING)
+        holder.btnDone.setVisibility(View.VISIBLE);
+        holder.txtStatus.setBackgroundResource(0);
+
+        // =========================
+        // 🔥 DELETE
+        // =========================
         holder.btnDelete.setOnClickListener(v -> {
 
             new AlertDialog.Builder(v.getContext())
@@ -96,8 +103,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                     .setMessage("Yakin ingin menghapus task ini?")
                     .setPositiveButton("Hapus", (dialog, which) -> {
 
-                        DatabaseReference db = FirebaseDatabase.getInstance().getReference("tasks");
-                        db.child(task.getId()).removeValue();
+                        FirebaseDatabase.getInstance()
+                                .getReference("tasks")
+                                .child(task.getId())
+                                .removeValue();
 
                         Toast.makeText(v.getContext(), "Data berhasil dihapus", Toast.LENGTH_SHORT).show();
                     })
@@ -105,7 +114,9 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                     .show();
         });
 
-        // DONE + DATE PICKER
+        // =========================
+        // 🔥 DONE + DATE PICKER
+        // =========================
         holder.btnDone.setOnClickListener(v -> {
 
             Calendar calendar = Calendar.getInstance();
@@ -122,7 +133,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                         db.child(task.getId()).child("tanggalSelesai").setValue(tanggalSelesai);
 
                         Toast.makeText(v.getContext(), "Task selesai ✔", Toast.LENGTH_SHORT).show();
-
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
@@ -130,14 +140,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             ).show();
         });
 
-        // TANGGAL SELESAI
+        // =========================
+        // 🔥 TANGGAL SELESAI
+        // =========================
         if (task.getTanggalSelesai() != null) {
             holder.txtSelesai.setText("Selesai: " + task.getTanggalSelesai());
         } else {
             holder.txtSelesai.setText("Selesai: -");
         }
 
-        // CLICK EDIT
+        // =========================
+        // 🔥 CLICK EDIT
+        // =========================
         holder.itemView.setOnClickListener(v -> {
 
             Intent intent = new Intent(v.getContext(), AddTaskActivity.class);
@@ -152,14 +166,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             v.getContext().startActivity(intent);
         });
 
-        // STATUS LOGIC
+        // =========================
+        // 🔥 STATUS LOGIC
+        // =========================
         String status = task.getStatus();
 
-        if (status != null && status.equals("DONE")) {
+        if (status != null) {
+            status = status.replace(" ", "_").toUpperCase();
+        }
+
+        if ("DONE".equals(status)) {
 
             holder.txtStatus.setText("DONE");
             holder.txtStatus.setBackgroundResource(R.drawable.bg_status_done);
             holder.btnDone.setVisibility(View.GONE);
+            holder.btnDone.setEnabled(false);
 
         } else {
 
@@ -173,40 +194,39 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                     holder.txtStatus.setBackgroundResource(R.drawable.bg_status_overdue);
                 } else {
                     holder.txtStatus.setText("ON PROGRESS");
+                    status = "ON_PROGRESS";
                     holder.txtStatus.setBackgroundResource(R.drawable.bg_status_progress);
                 }
-
-                holder.btnDone.setVisibility(View.VISIBLE);
 
             } catch (Exception e) {
                 holder.txtStatus.setText("UNKNOWN");
             }
+        }
 
-            if (task.getId().equals(highlightedTaskId)) {
+        // =========================
+        // 🔥 HIGHLIGHT ANIMATION
+        // =========================
+        if (task.getId().equals(highlightedTaskId)) {
 
-                // 🔥 BACKGROUND GLOW
-                holder.itemView.setBackgroundResource(R.drawable.bg_highlight);
+            holder.itemView.setBackgroundResource(R.drawable.bg_highlight);
 
-                // 🔥 ANIMASI ZOOM
-                holder.itemView.setScaleX(0.9f);
-                holder.itemView.setScaleY(0.9f);
+            holder.itemView.setScaleX(0.9f);
+            holder.itemView.setScaleY(0.9f);
 
-                holder.itemView.animate()
-                        .scaleX(1.05f)
-                        .scaleY(1.05f)
-                        .setDuration(300)
-                        .withEndAction(() -> {
+            holder.itemView.animate()
+                    .scaleX(1.05f)
+                    .scaleY(1.05f)
+                    .setDuration(300)
+                    .withEndAction(() ->
                             holder.itemView.animate()
                                     .scaleX(1f)
                                     .scaleY(1f)
                                     .setDuration(200)
-                                    .start();
-                        })
-                        .start();
+                                    .start()
+                    ).start();
 
-            } else {
-                holder.itemView.setBackgroundResource(R.drawable.bg_card);
-            }
+        } else {
+            holder.itemView.setBackgroundResource(android.R.color.transparent);
         }
     }
 

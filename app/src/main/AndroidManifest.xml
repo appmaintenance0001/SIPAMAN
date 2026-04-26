@@ -8,6 +8,8 @@
     <!-- Android 13+ -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <!-- Android <= 12 -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -35,6 +37,8 @@
             android:exported="false" />
 
         <activity android:name=".PreviewActivity"/>
+
+        <activity android:name=".TaskActivity"/>
 
         <activity
             android:name=".DashboardActivity"

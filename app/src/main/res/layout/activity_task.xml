@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F6FA">
+
+    <!-- ISI UTAMA -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- HEADER -->
+        <TextView
+            android:text="Tasks"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="#173A6A"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- SEARCH -->
+        <EditText
+            android:id="@+id/etSearch"
+            android:hint="Cari task..."
+            android:textSize="14sp"
+            android:layout_margin="12dp"
+            android:background="@drawable/bg_rounded"
+            android:padding="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- 🔥 FILTER CHIP -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            app:singleSelection="true"
+            app:chipSpacing="8dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Semua"
+                android:textColor="#FFFFFF"
+                app:chipBackgroundColor="#173A6A"
+                app:checkedIconVisible="true"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipDone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selesai"
+                android:textColor="#FFFFFF"
+                app:chipBackgroundColor="#4CAF50"
+                app:checkedIconVisible="true"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="On Progress"
+                android:textColor="#000000"
+                app:chipBackgroundColor="#FFC107"
+                app:checkedIconVisible="true"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipOverdue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Overdue"
+                android:textColor="#FFFFFF"
+                app:chipBackgroundColor="#F44336"
+                app:checkedIconVisible="true"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
+        <!-- LIST -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTask"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="120dp"/>
+
+        <!-- BOTTOM NAV -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu"/>
+
+    </LinearLayout>
+
+    <!-- 🔥 FLOATING BUTTON (SUDAH AMAN POSISI) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnAddTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="105dp"
+        android:src="@android:drawable/ic_input_add"
+        android:elevation="10dp"
+        android:translationZ="10dp"
+        android:contentDescription="Tambah Task"
+        app:backgroundTint="#173A6A"/>
+
+</FrameLayout>

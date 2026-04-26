@@ -33,14 +33,15 @@
     </LinearLayout>
 
     <!-- CONTENT + FAB -->
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <!-- SCROLL AREA -->
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_above="@id/bottomNav">
 
             <LinearLayout
                 android:padding="16dp"
@@ -193,21 +194,20 @@
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"/>
 
+
             </LinearLayout>
         </ScrollView>
 
-        <!-- FLOATING BUTTON -->
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/btnAdd"
-            android:layout_width="wrap_content"
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:src="@android:drawable/ic_input_add"
-            android:contentDescription="Tambah Task"
-            app:backgroundTint="#173A6A"
-            app:elevation="8dp"/>
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            app:menu="@menu/bottom_nav_menu"
+            app:labelVisibilityMode="labeled"/>
 
-    </FrameLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>
