@@ -13,4 +13,7 @@
     <color name="putih">#FFFFFF</color>
     <color name="abu_muda">#F5F5F5</color>
     <color name="abu_teks">#757575</color>
+
+    <color name="chip_stroke">#D1D5DB</color>
+    <color name="chip_ripple">#22000000</color>
 </resources>

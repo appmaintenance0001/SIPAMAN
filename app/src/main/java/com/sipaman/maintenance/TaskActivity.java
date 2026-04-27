@@ -5,6 +5,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.content.Intent;
 import android.view.View;
+import android.view.KeyEvent;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,8 +41,38 @@ public class TaskActivity extends AppCompatActivity {
 
     String currentFilter = "ALL";
 
-    // 🔥 CHIP FILTER
     Chip chipAll, chipDone, chipProgress, chipOverdue;
+
+    // 🔥 ANIMASI CHIP PREMIUM
+    private void animateChipPremium(View chip) {
+        chip.animate()
+                .scaleX(1.08f)
+                .scaleY(1.08f)
+                .alpha(0.9f)
+                .translationZ(12f)
+                .setDuration(120)
+                .withEndAction(() ->
+                        chip.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .alpha(1f)
+                                .translationZ(6f)
+                                .setDuration(120)
+                );
+    }
+
+    // 🔥 SET CHIP AKTIF
+    private void setActiveChip(View selected, View... chips) {
+        for (View chip : chips) {
+            chip.setScaleX(1f);
+            chip.setScaleY(1f);
+            chip.setAlpha(0.8f);
+        }
+
+        selected.setScaleX(1.15f);
+        selected.setScaleY(1.15f);
+        selected.setAlpha(1f);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,37 +87,52 @@ public class TaskActivity extends AppCompatActivity {
 
         etSearch = findViewById(R.id.etSearch);
 
+        // 🔥 DISABLE ENTER DI SEARCH
+        etSearch.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_ENTER) return true;
+            return false;
+        });
+
         // 🔥 INIT CHIP
         chipAll = findViewById(R.id.chipAll);
         chipDone = findViewById(R.id.chipDone);
         chipProgress = findViewById(R.id.chipProgress);
         chipOverdue = findViewById(R.id.chipOverdue);
 
-        // default
+        // DEFAULT
         chipAll.setChecked(true);
+        setActiveChip(chipAll, chipDone, chipProgress, chipOverdue);
 
         // 🔥 CLICK FILTER
         chipAll.setOnClickListener(v -> {
             currentFilter = "ALL";
-            animateChip(v);
+            chipAll.setChecked(true);
+            animateChipPremium(v);
+            setActiveChip(chipAll, chipDone, chipProgress, chipOverdue);
             applyFilterAndSearch();
         });
 
         chipDone.setOnClickListener(v -> {
             currentFilter = "DONE";
-            animateChip(v);
+            chipDone.setChecked(true);
+            animateChipPremium(v);
+            setActiveChip(chipDone, chipAll, chipProgress, chipOverdue);
             applyFilterAndSearch();
         });
 
         chipProgress.setOnClickListener(v -> {
-            currentFilter = "ON_PROGRESS";
-            animateChip(v);
+            currentFilter = "ON_PROGRESS"; // ✅ FIX BUG
+            chipProgress.setChecked(true);
+            animateChipPremium(v);
+            setActiveChip(chipProgress, chipAll, chipDone, chipOverdue);
             applyFilterAndSearch();
         });
 
         chipOverdue.setOnClickListener(v -> {
             currentFilter = "OVERDUE";
-            animateChip(v);
+            chipOverdue.setChecked(true);
+            animateChipPremium(v);
+            setActiveChip(chipOverdue, chipAll, chipDone, chipProgress);
             applyFilterAndSearch();
         });
 
@@ -115,7 +161,7 @@ public class TaskActivity extends AppCompatActivity {
             }
         });
 
-        // 🔍 SEARCH
+        // 🔍 SEARCH REALTIME
         etSearch.addTextChangedListener(new android.text.TextWatcher() {
             public void afterTextChanged(android.text.Editable s) {
                 applyFilterAndSearch();
@@ -132,7 +178,6 @@ public class TaskActivity extends AppCompatActivity {
 
         // 🔥 BOTTOM NAV
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
-
         bottomNav.setSelectedItemId(R.id.nav_task);
 
         bottomNav.setOnItemSelectedListener(item -> {
@@ -151,26 +196,61 @@ public class TaskActivity extends AppCompatActivity {
         });
     }
 
-    // 🔥 ANIMASI CHIP
-    private void animateChip(View chip) {
-        chip.animate().scaleX(1.1f).scaleY(1.1f).setDuration(120)
-                .withEndAction(() ->
-                        chip.animate().scaleX(1f).scaleY(1f).setDuration(120)
-                );
-    }
-
     // 🔥 NORMALIZE STATUS
     private String normalizeStatus(String status) {
         if (status == null) return "";
-        return status.replace(" ", "_").toUpperCase();
+
+        status = status.trim().toUpperCase();
+
+        if (status.contains("DONE")) return "DONE";
+        if (status.contains("PROGRESS")) return "ON_PROGRESS";
+        if (status.contains("OVERDUE")) return "OVERDUE";
+
+        return status;
     }
 
-    // 🔥 FILTER ENGINE
+    // 🔥 FILTER ENGINE FINAL (FIXED TOTAL)
     private void applyFilterAndSearch() {
 
         filteredList.clear();
 
         String keyword = etSearch.getText().toString().toLowerCase();
+
+        // 🔥 AUTO SWITCH FILTER BERDASARKAN KEYWORD
+        if (!keyword.isEmpty()) {
+
+            if (keyword.contains("done")) {
+                currentFilter = "DONE";
+                chipDone.setChecked(true);
+                setActiveChip(chipDone, chipAll, chipProgress, chipOverdue);
+            }
+            else if (keyword.contains("progres")) {
+                currentFilter = "ON_PROGRESS";
+                chipProgress.setChecked(true);
+                setActiveChip(chipProgress, chipAll, chipDone, chipOverdue);
+            }
+            else if (keyword.contains("overdue")) {
+                currentFilter = "OVERDUE";
+                chipOverdue.setChecked(true);
+                setActiveChip(chipOverdue, chipAll, chipDone, chipProgress);
+            }
+            else {
+                currentFilter = "ALL";
+                chipAll.setChecked(true);
+                setActiveChip(chipAll, chipDone, chipProgress, chipOverdue);
+            }
+        }
+
+        // 🔥 AUTO RESET FILTER SAAT SEARCH
+        if (!keyword.isEmpty()) {
+            if (keyword.contains("progres")) {
+                currentFilter = "ON_PROGRESS";
+            } else if (keyword.contains("overdue")) {
+                currentFilter = "OVERDUE";
+            } else if (keyword.contains("selesai")) {
+                currentFilter = "DONE";
+            }
+        }
 
         SimpleDateFormat sdf = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
         Date today = new Date();
@@ -181,29 +261,48 @@ public class TaskActivity extends AppCompatActivity {
 
             String project = t.getProject() == null ? "" : t.getProject().toLowerCase();
             String jenis = t.getJenis() == null ? "" : t.getJenis().toLowerCase();
+            String statusSearch = t.getStatus() == null ? "" : t.getStatus().toLowerCase();
+            String dueText = t.getDue() == null ? "" : t.getDue().toLowerCase();
 
-            if (!project.contains(keyword) && !jenis.contains(keyword)) continue;
+            // 🔍 SEARCH
+            if (!project.contains(keyword) &&
+                    !jenis.contains(keyword) &&
+                    !statusSearch.contains(keyword) &&
+                    !dueText.contains(keyword)) {
+                continue;
+            }
 
             String status = normalizeStatus(t.getStatus());
 
-            // DONE tidak masuk overdue
-            if (status.equals("DONE") && currentFilter.equals("OVERDUE")) continue;
-
+            // 🔥 CEK OVERDUE
             boolean isOverdue = false;
 
             try {
-                Date due = sdf.parse(t.getDue());
-                if (due != null && today.after(due)) {
+                Date dueDate = sdf.parse(t.getDue());
+                if (dueDate != null && today.after(dueDate)) {
                     isOverdue = true;
                 }
             } catch (Exception ignored) {}
 
-            if (currentFilter.equals("DONE") && !status.equals("DONE")) continue;
+            // 🔥 FILTER FINAL
 
-            if (currentFilter.equals("ON_PROGRESS")) {
-                if (!status.equals("ON_PROGRESS") || isOverdue) continue;
+            // DONE
+            if (currentFilter.equals("DONE")) {
+                if (!status.equals("DONE")) continue;
             }
 
+            // PROGRESS (HARUS BELUM OVERDUE)
+            if (currentFilter.equals("ON_PROGRESS")) {
+                if (!status.equals("ON_PROGRESS")) continue;
+
+                // 🔥 DOUBLE PROTECTION
+                if (isOverdue) continue;
+
+                // 🔥 TAMBAHAN: cegah status kacau
+                if (status.contains("OVERDUE")) continue;
+            }
+
+            // OVERDUE
             if (currentFilter.equals("OVERDUE")) {
                 if (!isOverdue || status.equals("DONE")) continue;
             }
