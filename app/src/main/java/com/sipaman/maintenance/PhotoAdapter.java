@@ -13,80 +13,54 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> {
 
     Context context;
-    List<Uri> list;
-    boolean isAddButton;
-    int type;
+    List<String> urlList;
 
-    public PhotoAdapter(Context context, List<Uri> list, boolean isAddButton, int type) {
+    public PhotoAdapter(Context context, List<String> urlList) {
         this.context = context;
-        this.list = list;
-        this.isAddButton = isAddButton;
-        this.type = type;
+        this.urlList = (urlList == null) ? new ArrayList<>() : urlList;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context)
-                .inflate(R.layout.item_photo, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_photo, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        if (position < list.size()) {
+        String url = urlList.get(position);
 
-            Uri uri = list.get(position);
+        Glide.with(context)
+                .load(url)
+                .into(holder.imgPhoto);
 
-            holder.btnDelete.setVisibility(View.VISIBLE);
-
-            Glide.with(context)
-                    .load(uri)
-                    .into(holder.imgPhoto);
-
-            // 🔥 PREVIEW
-            holder.imgPhoto.setOnClickListener(v -> {
-                Intent intent = new Intent(context, PreviewActivity.class);
-                intent.putExtra("image", uri.toString());
-                context.startActivity(intent);
-            });
-
-            // 🔥 DELETE
-            holder.btnDelete.setOnClickListener(v -> {
-                list.remove(position);
-                notifyDataSetChanged();
-            });
-
-        } else {
-
-            holder.btnDelete.setVisibility(View.GONE);
-            holder.imgPhoto.setImageResource(android.R.drawable.ic_input_add);
-
-            holder.imgPhoto.setOnClickListener(v -> {
-                ((AddTaskActivity) context).openGallery(type);
-            });
-        }
+        // 🔥 PREVIEW
+        holder.imgPhoto.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PreviewActivity.class);
+            intent.putExtra("image", url);
+            context.startActivity(intent);
+        });
     }
 
     @Override
     public int getItemCount() {
-        return list.size() + 1;
+        return urlList.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-
-        ImageView imgPhoto, btnDelete;
+        ImageView imgPhoto;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imgPhoto = itemView.findViewById(R.id.imgPhoto);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 }

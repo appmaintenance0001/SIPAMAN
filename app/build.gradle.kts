@@ -44,32 +44,32 @@ android {
 
 dependencies {
 
-    // 🔹 CORE UI
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    // 🔹 LIST & CARD
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.cardview:cardview:1.0.0")
 
-    // 🔹 FIREBASE
     implementation("com.google.firebase:firebase-database:20.3.0")
 
-    // 🔹 CLOUDINARY (UPLOAD FOTO)
     implementation("com.cloudinary:cloudinary-android:2.3.1")
 
-    // 🔹 WORK MANAGER (NOTIF BACKGROUND)
     implementation("androidx.work:work-runtime:2.9.0")
 
-    // 🔹 CHART
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
-    // 🔹 TEST
+    implementation("androidx.activity:activity:1.9.0") // 🔥 ganti libs.activity
+
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 }

@@ -37,6 +37,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private String highlightedTaskId = null;
 
+    private OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(Task task);
+    }
+
+
+    public TaskAdapter(List<Task> list, OnItemClickListener listener) {
+        this.taskList = list;
+        this.listener = listener;
+    }
+
     public void setHighlightedTask(String taskId) {
         this.highlightedTaskId = taskId;
         notifyDataSetChanged();
@@ -92,6 +104,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         // 🔥 RESET STATE (PENTING)
         holder.btnDone.setVisibility(View.VISIBLE);
         holder.txtStatus.setBackgroundResource(0);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(taskList.get(position));
+            }
+        });
 
         // =========================
         // 🔥 DELETE
@@ -154,7 +172,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         // =========================
         holder.itemView.setOnClickListener(v -> {
 
-            Intent intent = new Intent(v.getContext(), AddTaskActivity.class);
+            Intent intent = new Intent(v.getContext(), DetailTaskActivity.class);
 
             intent.putExtra("id", task.getId());
             intent.putExtra("project", task.getProject());
@@ -162,6 +180,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             intent.putExtra("mulai", task.getMulai());
             intent.putExtra("due", task.getDue());
             intent.putExtra("status", task.getStatus());
+            intent.putExtra("tanggalSelesai", task.getTanggalSelesai());
+
+            // 🔥 TAMBAHAN (PENTING)
+            intent.putExtra("pic", task.getPic());
+            intent.putExtra("priority", task.getPriority());
+            intent.putExtra("deskripsi", task.getDeskripsi());
 
             v.getContext().startActivity(intent);
         });

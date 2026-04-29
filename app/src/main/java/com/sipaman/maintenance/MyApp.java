@@ -18,6 +18,10 @@ public class MyApp extends Application {
         config.put("cloud_name", "sipaman"); // ⚠️ HARUS SESUAI CLOUDINARY
         config.put("secure", "true");
 
-        MediaManager.init(this, config);
+        try {
+            MediaManager.init(this, config);
+        } catch (Exception e) {
+            // sudah init → aman
+        }
     }
 }

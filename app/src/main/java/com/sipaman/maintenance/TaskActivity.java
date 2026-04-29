@@ -1,6 +1,7 @@
 package com.sipaman.maintenance;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.content.Intent;
@@ -82,9 +83,22 @@ public class TaskActivity extends AppCompatActivity {
         rvTask = findViewById(R.id.rvTask);
         rvTask.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new TaskAdapter(filteredList);
-        rvTask.setAdapter(adapter);
+        adapter = new TaskAdapter(filteredList, task -> {
 
+            Intent intent = new Intent(TaskActivity.this, DetailTaskActivity.class);
+
+            intent.putExtra("id", task.getId());
+            intent.putExtra("project", task.getProject());
+            intent.putExtra("jenis", task.getJenis());
+            intent.putExtra("mulai", task.getMulai());
+            intent.putExtra("due", task.getDue());
+            intent.putExtra("status", task.getStatus());
+            intent.putExtra("selesai", task.getTanggalSelesai());
+
+            startActivity(intent);
+        });
+
+        rvTask.setAdapter(adapter); // 🔥 WAJIB
         etSearch = findViewById(R.id.etSearch);
 
         // 🔥 DISABLE ENTER DI SEARCH
@@ -152,6 +166,7 @@ public class TaskActivity extends AppCompatActivity {
                     }
                 }
 
+                updateChipCounter();
                 applyFilterAndSearch();
             }
 
@@ -209,14 +224,66 @@ public class TaskActivity extends AppCompatActivity {
         return status;
     }
 
+    private void updateChipCounter() {
+
+        int countAll = 0;
+        int countDone = 0;
+        int countProgress = 0;
+        int countOverdue = 0;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
+        Date today = new Date();
+
+        for (Task t : taskList) {
+
+            if (t == null) continue;
+
+            countAll++;
+
+            String status = normalizeStatus(t.getStatus());
+
+            boolean isOverdue = false;
+
+            try {
+                Date dueDate = sdf.parse(t.getDue());
+                if (dueDate != null && today.after(dueDate)) {
+                    isOverdue = true;
+                }
+            } catch (Exception ignored) {}
+
+            if (status.equals("DONE")) {
+                countDone++;
+            }
+
+            if (status.equals("ON_PROGRESS") && !isOverdue) {
+                countProgress++;
+            }
+
+            if (isOverdue && !status.equals("DONE")) {
+                countOverdue++;
+            }
+        }
+
+        // 🔥 SET TEXT CHIP
+        chipAll.setText("Semua (" + countAll + ")");
+        chipDone.setText("Done (" + countDone + ")");
+        chipProgress.setText("Progress (" + countProgress + ")");
+        chipOverdue.setText("Overdue (" + countOverdue + ")");
+    }
+
     // 🔥 FILTER ENGINE FINAL (FIXED TOTAL)
     private void applyFilterAndSearch() {
+
+        Log.d("TASK_DEBUG", "Adapter size: " + filteredList.size());
+        Log.d("TASK_DEBUG", "Total task: " + taskList.size());
+        Log.d("TASK_DEBUG", "Filtered: " + filteredList.size());
+
 
         filteredList.clear();
 
         String keyword = etSearch.getText().toString().toLowerCase();
 
-        // 🔥 AUTO SWITCH FILTER BERDASARKAN KEYWORD
+
         if (!keyword.isEmpty()) {
 
             if (keyword.contains("done")) {
@@ -224,7 +291,7 @@ public class TaskActivity extends AppCompatActivity {
                 chipDone.setChecked(true);
                 setActiveChip(chipDone, chipAll, chipProgress, chipOverdue);
             }
-            else if (keyword.contains("progres")) {
+            else if (keyword.contains("progress")) {
                 currentFilter = "ON_PROGRESS";
                 chipProgress.setChecked(true);
                 setActiveChip(chipProgress, chipAll, chipDone, chipOverdue);
@@ -241,16 +308,6 @@ public class TaskActivity extends AppCompatActivity {
             }
         }
 
-        // 🔥 AUTO RESET FILTER SAAT SEARCH
-        if (!keyword.isEmpty()) {
-            if (keyword.contains("progres")) {
-                currentFilter = "ON_PROGRESS";
-            } else if (keyword.contains("overdue")) {
-                currentFilter = "OVERDUE";
-            } else if (keyword.contains("selesai")) {
-                currentFilter = "DONE";
-            }
-        }
 
         SimpleDateFormat sdf = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
         Date today = new Date();
@@ -264,17 +321,18 @@ public class TaskActivity extends AppCompatActivity {
             String statusSearch = t.getStatus() == null ? "" : t.getStatus().toLowerCase();
             String dueText = t.getDue() == null ? "" : t.getDue().toLowerCase();
 
-            // 🔍 SEARCH
-            if (!project.contains(keyword) &&
-                    !jenis.contains(keyword) &&
-                    !statusSearch.contains(keyword) &&
-                    !dueText.contains(keyword)) {
-                continue;
+            // 🔍 SEARCH (AMAN)
+            if (!keyword.isEmpty()) {
+                if (!project.contains(keyword) &&
+                        !jenis.contains(keyword) &&
+                        !statusSearch.contains(keyword) &&
+                        !dueText.contains(keyword)) {
+                    continue;
+                }
             }
 
             String status = normalizeStatus(t.getStatus());
 
-            // 🔥 CEK OVERDUE
             boolean isOverdue = false;
 
             try {
@@ -284,25 +342,13 @@ public class TaskActivity extends AppCompatActivity {
                 }
             } catch (Exception ignored) {}
 
-            // 🔥 FILTER FINAL
+            // 🔘 FILTER
+            if (currentFilter.equals("DONE") && !status.equals("DONE")) continue;
 
-            // DONE
-            if (currentFilter.equals("DONE")) {
-                if (!status.equals("DONE")) continue;
-            }
-
-            // PROGRESS (HARUS BELUM OVERDUE)
             if (currentFilter.equals("ON_PROGRESS")) {
-                if (!status.equals("ON_PROGRESS")) continue;
-
-                // 🔥 DOUBLE PROTECTION
-                if (isOverdue) continue;
-
-                // 🔥 TAMBAHAN: cegah status kacau
-                if (status.contains("OVERDUE")) continue;
+                if (!status.equals("ON_PROGRESS") || isOverdue) continue;
             }
 
-            // OVERDUE
             if (currentFilter.equals("OVERDUE")) {
                 if (!isOverdue || status.equals("DONE")) continue;
             }
@@ -312,4 +358,5 @@ public class TaskActivity extends AppCompatActivity {
 
         adapter.notifyDataSetChanged();
     }
+
 }

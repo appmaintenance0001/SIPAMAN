@@ -1,42 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/abu_muda">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#F5F7F6">
 
-
-    <!-- Judul -->
-    <TextView
-        android:id="@+id/tvJudul"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SI-PAMAN"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@color/primary"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true"/>
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="20dp">
 
-    <!-- Subtitle -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sistem Pantau Maintenance"
-        android:textSize="14sp"
-        android:textColor="@color/abu_teks"
-        android:layout_below="@id/tvJudul"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"/>
+        <!-- LOGO -->
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/logo_sipaman"
+            android:layout_marginTop="20dp"
+            android:contentDescription="logo" />
 
-    <!-- Tombol -->
-    <Button
-        android:id="@+id/btnMulai"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Masuk Aplikasi"
-        android:backgroundTint="@color/primary"
-        android:textColor="@color/putih"
-        android:layout_centerInParent="true"/>
+        <!-- TITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SI-PAMAN"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#1B5E20"
+            android:layout_marginTop="12dp" />
 
-</RelativeLayout>
+        <!-- SUBTITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sistem Pantau Maintenance"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="4dp" />
+
+        <!-- DIVIDER -->
+        <View
+            android:layout_width="40dp"
+            android:layout_height="4dp"
+            android:background="@drawable/shape_divider_green"
+            android:layout_marginTop="10dp" />
+
+        <!-- DESCRIPTION -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Solusi digital untuk memantau, mengelola, dan meningkatkan kinerja maintenance secara real-time dan terintegrasi."
+            android:textSize="13sp"
+            android:textColor="#777777"
+            android:gravity="center"
+            android:layout_marginTop="12dp" />
+
+        <!-- IMAGE ENGINEER + BG -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="20dp">
+
+            <!-- BACKGROUND FACTORY -->
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:alpha="0.25"
+                android:src="@drawable/bg_factory"
+                android:contentDescription="bg" />
+
+            <!-- ENGINEER -->
+            <ImageView
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/img_engineer"
+                android:contentDescription="engineer" />
+
+        </FrameLayout>
+
+        <!-- MENU ICON -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="20dp">
+
+            <!-- MONITORING -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_monitoring_chart"
+                    android:contentDescription="monitoring" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Monitoring"
+                    android:textSize="12sp"
+                    android:textColor="#777777"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+
+            <!-- MAINTENANCE -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_maintenance"
+                    android:contentDescription="maintenance" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Maintenance"
+                    android:textSize="12sp"
+                    android:textColor="#777777"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+
+            <!-- LAPORAN -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_laporan"
+                    android:contentDescription="laporan" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Laporan"
+                    android:textSize="12sp"
+                    android:textColor="#777777"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+
+            <!-- AMAN -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_secure"
+                    android:contentDescription="secure" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aman &amp; Terpercaya"
+                    android:textSize="12sp"
+                    android:textColor="#777777"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- BUTTON -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnMasuk"
+            android:layout_width="280dp"
+            android:layout_height="55dp"
+            android:text="MASUK APLIKASI"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="#2E7D32"
+            app:cornerRadius="30dp" />
+
+        <!-- INFO -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_secure"
+                android:contentDescription="secure" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="  Data aman, sistem terpercaya"
+                android:textSize="12sp"
+                android:textColor="#777777" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
