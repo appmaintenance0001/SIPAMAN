@@ -12,9 +12,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.*;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -56,8 +59,6 @@ public class DashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-
-
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
 
 // 🔥 PASANG LISTENER DULU
@@ -80,6 +81,7 @@ public class DashboardActivity extends AppCompatActivity {
                 return true;
             }
             else if (id == R.id.nav_setting) {
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             }
 
@@ -139,6 +141,7 @@ public class DashboardActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot snapshot) {
 
                 taskList.clear();
+                overdueList.clear(); // 🔥 WAJIB
 
                 int overdueCount = 0;
                 int todayCount = 0;
@@ -171,20 +174,19 @@ public class DashboardActivity extends AppCompatActivity {
                         continue;
                     }
 
-                    if ("ON_PROGRESS".equals(status)) {
+                    // ================= STATUS COUNT FIX =================
+                    if ("DONE".equals(status)) {
+
+                        doneCount++;
+
+                    } else if (task.getDue() != null && isOverdue(task.getDue())) {
+
+                        overdueCount++;
+                        overdueList.add(task);
+
+                    } else {
+
                         progressCount++;
-                    }
-
-                    try {
-                        Date dueDate = sdf.parse(task.getDue());
-
-                        if (dueDate != null && today.after(dueDate)) {
-                            overdueCount++;
-                            overdueList.add(task);
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
 
@@ -283,4 +285,16 @@ public class DashboardActivity extends AppCompatActivity {
         String today = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
         prefs.edit().putString("last_notif_date", today).apply();
     }
+
+    // ================= OVERDUE CHECK =================
+    private boolean isOverdue(String dueDate) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
+            Date due = sdf.parse(dueDate);
+            return due.before(new Date());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 }

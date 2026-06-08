@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#F4F6FA"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#F5F5F5">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <!-- CARD -->
-        <LinearLayout
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:elevation="6dp"
-            android:padding="16dp"
+        <!-- TOOLBAR -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="56dp"
+            android:background="#123D7A"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+        <!-- CONTENT -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <!-- JUDUL + STATUS -->
             <RelativeLayout
@@ -26,64 +32,72 @@
 
                 <TextView
                     android:id="@+id/txtProject"
-                    android:text="Judul Task"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_alignParentStart="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="Judul Task"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#222222"/>
 
                 <TextView
                     android:id="@+id/txtStatus"
-                    android:text="Overdue"
-                    android:textColor="@android:color/white"
-                    android:padding="6dp"
-                    android:layout_alignParentEnd="true"
-                    android:background="@drawable/bg_status_overdue"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="OVERDUE"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="8dp"
+                    android:background="@drawable/bg_status_overdue"/>
             </RelativeLayout>
 
             <!-- SPACING -->
-            <View android:layout_height="12dp" android:layout_width="match_parent"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="16dp"/>
 
             <!-- PROJECT -->
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="Project"
                 android:textStyle="bold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/txtProjectValue"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textSize="16sp"/>
 
             <!-- JENIS -->
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Jenis Maintenance"
                 android:textStyle="bold"
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/txtJenis"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:textSize="16sp"/>
 
-            <!-- TANGGAL -->
+            <!-- MULAI -->
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_marginTop="12dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:text="Mulai: "
-                    android:textStyle="bold"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="Mulai: "
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/txtMulai"
@@ -91,76 +105,82 @@
                     android:layout_height="wrap_content"/>
             </LinearLayout>
 
+            <!-- DUE -->
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:text="Due: "
-                    android:textStyle="bold"
-                    android:textColor="#E53935"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:text="Due: "
+                    android:textColor="#E53935"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/txtDue"
-                    android:textColor="#E53935"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:textColor="#E53935"/>
             </LinearLayout>
 
             <!-- STATUS -->
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
                 android:text="Status"
                 android:textStyle="bold"
-                android:layout_marginTop="12dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/txtStatusBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_status_default"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
                 android:text="Status"
                 android:textColor="@android:color/white"
-
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-
-                android:background="@drawable/bg_status_default"
-                android:textStyle="bold"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/txtStatusText"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"/>
 
             <!-- SELESAI -->
             <TextView
                 android:id="@+id/txtSelesai"
-                android:layout_marginTop="8dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"/>
 
+            <!-- PIC -->
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="PIC / Teknisi"
                 android:textStyle="bold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/txtPic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+            <!-- PRIORITY -->
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Priority"
                 android:textStyle="bold"
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/txtPriority"
@@ -169,51 +189,59 @@
 
             <!-- DESKRIPSI -->
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:text="Deskripsi"
                 android:textStyle="bold"
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/txtDeskripsi"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <!-- 🔥 FOTO BEFORE -->
+            <!-- FOTO BEFORE -->
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="Foto Before"
                 android:textStyle="bold"
-                android:layout_marginTop="12dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:textSize="15sp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvBefore"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <!-- 🔥 FOTO AFTER -->
+            <!-- FOTO AFTER -->
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="Foto After"
                 android:textStyle="bold"
-                android:layout_marginTop="12dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:textSize="15sp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvAfter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
+            <!-- BUTTON -->
             <Button
                 android:id="@+id/btnSelesai"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
                 android:text="Tandai Selesai"
-                android:backgroundTint="#1E4DB7"
+                android:textAllCaps="false"
                 android:textColor="@android:color/white"
-                android:layout_marginTop="16dp"/>
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:backgroundTint="#1E4DB7"/>
 
         </LinearLayout>
 

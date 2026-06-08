@@ -16,4 +16,6 @@
 
     <color name="chip_stroke">#D1D5DB</color>
     <color name="chip_ripple">#22000000</color>
+
+    <color name="splash_bg">#0F172A</color>
 </resources>

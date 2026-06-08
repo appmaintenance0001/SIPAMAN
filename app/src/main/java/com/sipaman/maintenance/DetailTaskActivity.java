@@ -1,15 +1,22 @@
 package com.sipaman.maintenance;
 
+
 import android.content.Intent;
+
 import android.os.Bundle;
+
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -17,10 +24,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Date;
+
 
 public class DetailTaskActivity extends AppCompatActivity {
 
@@ -33,10 +43,56 @@ public class DetailTaskActivity extends AppCompatActivity {
 
     private RecyclerView rvBefore, rvAfter;
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.menu_delete) {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Hapus Task")
+                    .setMessage("Yakin ingin menghapus?")
+                    .setPositiveButton("Hapus", (d, w) -> {
+
+                        String id = getIntent().getStringExtra("id");
+
+                        FirebaseDatabase.getInstance()
+                                .getReference("tasks")
+                                .child(id)
+                                .removeValue();
+
+                        Toast.makeText(this, "Task dihapus", Toast.LENGTH_SHORT).show();
+                        finish();
+                    })
+                    .setNegativeButton("Batal", null)
+                    .show();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_task);
+
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        toolbar.setTitle("DETAIL TASK");
+
+        setSupportActionBar(toolbar);
 
         // ================= INIT VIEW =================
         txtProject = findViewById(R.id.txtProject);
@@ -72,6 +128,7 @@ public class DetailTaskActivity extends AppCompatActivity {
         btnSelesai.setEnabled(false);
         btnSelesai.setAlpha(0.5f);
 
+
         // ================= AMBIL DATA INTENT =================
         String id = getIntent().getStringExtra("id");
         String project = getIntent().getStringExtra("project");
@@ -87,19 +144,36 @@ public class DetailTaskActivity extends AppCompatActivity {
 
         if (status == null) status = "ON_PROGRESS";
 
-        // ================= SET STATUS BADGE =================
+        // ================= STATUS FIX (KONSISTEN DENGAN LIST) =================
+        String finalStatus;
+
         if ("DONE".equals(status)) {
+
+            finalStatus = "DONE";
+
             txtStatusBadge.setText("Done");
             txtStatusBadge.setBackgroundResource(R.drawable.bg_status_done);
 
-        } else if ("OVERDUE".equals(status)) {
+            btnSelesai.setVisibility(View.GONE);
+
+        } else if (due != null && isOverdue(due)) {
+
+            finalStatus = "OVERDUE";
+
             txtStatusBadge.setText("Overdue");
             txtStatusBadge.setBackgroundResource(R.drawable.bg_status_overdue);
 
         } else {
+
+            finalStatus = "ON PROGRESS";
+
             txtStatusBadge.setText("On Progress");
             txtStatusBadge.setBackgroundResource(R.drawable.bg_status_progress);
         }
+
+// SET TEXT STATUS
+        txtStatus.setText(finalStatus);
+        txtStatusText.setText(finalStatus);
 
         // ================= SET DATA =================
         txtProjectValue.setText(project);
@@ -115,10 +189,6 @@ public class DetailTaskActivity extends AppCompatActivity {
         txtPriority.setText(priority);
         txtDeskripsi.setText(deskripsi);
 
-        // ================= STATUS TEXT =================
-        String statusFix = status.replace("_", " ");
-        txtStatus.setText(statusFix);
-        txtStatusText.setText(statusFix);
 
         // ================= HIDE BUTTON JIKA DONE =================
         if ("DONE".equals(status)) {
@@ -128,24 +198,19 @@ public class DetailTaskActivity extends AppCompatActivity {
         // ================= BUTTON SELESAI =================
         btnSelesai.setOnClickListener(v -> {
 
-            if (id == null) return;
+            Intent intent =
+                    new Intent(
+                            DetailTaskActivity.this,
+                            AddTaskActivity.class
+                    );
 
-            DatabaseReference db = FirebaseDatabase.getInstance()
-                    .getReference("tasks");
-
-            // 🔥 UPDATE STATUS
-            db.child(id).child("status").setValue("DONE");
-
-            // 🔥 TANGGAL SELESAI
-            String today = new java.text.SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                    .format(new Date());
-
-            db.child(id).child("tanggalSelesai").setValue(today);
-
-            // 🔥 PINDAH KE INPUT AFTER
-            Intent intent = new Intent(this, AddTaskActivity.class);
-            intent.putExtra("id", id);
             intent.putExtra("mode", "after");
+
+            intent.putExtra(
+                    "id",
+                    getIntent().getStringExtra("id")
+            );
+
             startActivity(intent);
         });
 
@@ -169,10 +234,8 @@ public class DetailTaskActivity extends AppCompatActivity {
                 if (afterList == null) afterList = new ArrayList<>();
 
                 // 🔥 ENABLE BUTTON JIKA ADA AFTER
-                boolean sudahAdaAfter = !afterList.isEmpty();
-
-                btnSelesai.setEnabled(sudahAdaAfter);
-                btnSelesai.setAlpha(sudahAdaAfter ? 1f : 0.5f);
+                btnSelesai.setEnabled(true);
+                btnSelesai.setAlpha(1f);
 
                 // SET ADAPTER
                 rvBefore.setAdapter(new PhotoAdapter(DetailTaskActivity.this, beforeList));
@@ -185,4 +248,101 @@ public class DetailTaskActivity extends AppCompatActivity {
             }
         });
     }
-}
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadTaskDetail();
+    }
+
+
+
+    private void loadTaskDetail() {
+
+        String id =
+                getIntent().getStringExtra("id");
+
+        DatabaseReference db =
+                FirebaseDatabase.getInstance()
+                        .getReference("tasks");
+
+        db.child(id)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+
+                    Task task =
+                            snapshot.getValue(Task.class);
+
+                    if (task == null) return;
+
+                    // STATUS
+                    String status = task.getStatus();
+
+                    if ("DONE".equals(status)) {
+
+                        txtStatusBadge.setText("DONE");
+
+                        txtStatusBadge.setBackgroundResource(
+                                R.drawable.bg_status_done
+                        );
+
+                        txtStatus.setText("DONE");
+
+                        txtStatusText.setText("DONE");
+
+                        btnSelesai.setVisibility(View.GONE);
+
+                    } else {
+
+                        txtStatusBadge.setText("ON PROGRESS");
+
+                        txtStatusBadge.setBackgroundResource(
+                                R.drawable.bg_status_progress
+                        );
+                    }
+
+                    txtSelesai.setText(
+                            "Selesai: "
+                                    + task.getTanggalSelesai()
+                    );
+
+                    rvBefore.setAdapter(
+                            new PhotoAdapter(
+                                    DetailTaskActivity.this,
+                                    task.getBeforeUrls()
+                            )
+                    );
+
+                    rvAfter.setAdapter(
+                            new PhotoAdapter(
+                                    DetailTaskActivity.this,
+                                    task.getAfterUrls()
+                            )
+                    );
+                });
+    }
+
+
+
+        // ================= OVERDUE CHECK =================
+        private boolean isOverdue(String dueDate) {
+
+            try {
+
+                SimpleDateFormat sdf =
+                        new SimpleDateFormat(
+                                "d/M/yyyy",
+                                Locale.getDefault()
+                        );
+
+                Date due = sdf.parse(dueDate);
+
+                return due.before(new Date());
+
+            } catch (Exception e) {
+
+                return false;
+            }
+        }
+    }

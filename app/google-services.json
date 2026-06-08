@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1084938068310",
+    "firebase_url": "https://si-paman-default-rtdb.firebaseio.com",
     "project_id": "si-paman",
     "storage_bucket": "si-paman.firebasestorage.app"
   },

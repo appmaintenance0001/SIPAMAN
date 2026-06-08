@@ -12,6 +12,7 @@ public class Task {
     private String due;
     private String status;
     private String tanggalSelesai;
+    private String assignedTo;
 
     private String pic;
     private String priority;
@@ -19,6 +20,7 @@ public class Task {
 
     private List<String> beforeUrls;
     private List<String> afterUrls;
+
 
     // 🔥 WAJIB Firebase
     public Task() {beforeUrls = new ArrayList<>();
@@ -28,7 +30,8 @@ public class Task {
     public Task(String id, String project, String jenis, String mulai,
                 String due, String status,
                 String pic, String priority, String deskripsi,
-                List<String> beforeUrls, List<String> afterUrls) {
+                List<String> beforeUrls, List<String> afterUrls,
+                String assignedTo) {   // 🔥 TAMBAHAN
 
         this.id = id;
         this.project = project;
@@ -41,6 +44,7 @@ public class Task {
         this.deskripsi = deskripsi;
         this.beforeUrls = beforeUrls;
         this.afterUrls = afterUrls;
+        this.assignedTo = assignedTo; // 🔥 FIX
     }
 
     // 🔥 GETTER
@@ -59,6 +63,10 @@ public class Task {
     public List<String> getBeforeUrls() { return beforeUrls; }
     public List<String> getAfterUrls() { return afterUrls; }
 
+    public String getAssignedTo() {
+        return assignedTo;
+    }
+
     // 🔥 SETTER (WAJIB BIAR FIREBASE BISA MAP)
     public void setId(String id) { this.id = id; }
     public void setProject(String project) { this.project = project; }
@@ -74,4 +82,7 @@ public class Task {
 
     public void setBeforeUrls(List<String> beforeUrls) { this.beforeUrls = beforeUrls; }
     public void setAfterUrls(List<String> afterUrls) { this.afterUrls = afterUrls; }
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
+    }
 }

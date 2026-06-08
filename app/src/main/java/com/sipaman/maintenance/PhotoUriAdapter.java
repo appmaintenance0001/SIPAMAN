@@ -2,6 +2,7 @@ package com.sipaman.maintenance;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,11 +36,25 @@ public class PhotoUriAdapter extends RecyclerView.Adapter<PhotoUriAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         Uri uri = uriList.get(position);
 
         Glide.with(context)
                 .load(uri)
                 .into(holder.imgPhoto);
+
+        holder.imgPhoto.setOnClickListener(v -> {
+
+            Intent intent =
+                    new Intent(context, PreviewActivity.class);
+
+            intent.putExtra(
+                    "image",
+                    uri.toString()
+            );
+
+            context.startActivity(intent);
+        });
     }
 
     @Override

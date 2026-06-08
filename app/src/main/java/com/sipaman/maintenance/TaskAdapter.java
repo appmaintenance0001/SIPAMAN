@@ -62,7 +62,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView txtId, txtProject, txtJenis, txtMulai, txtDue, txtStatus, txtSelesai;
-        Button btnDelete, btnDone;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -74,8 +73,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             txtDue = itemView.findViewById(R.id.txtDue);
             txtStatus = itemView.findViewById(R.id.txtStatus);
             txtSelesai = itemView.findViewById(R.id.txtSelesai);
-            btnDelete = itemView.findViewById(R.id.btnDelete);
-            btnDone = itemView.findViewById(R.id.btnDone);
+
         }
     }
 
@@ -102,7 +100,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         holder.txtDue.setTextColor(Color.RED);
 
         // 🔥 RESET STATE (PENTING)
-        holder.btnDone.setVisibility(View.VISIBLE);
+
         holder.txtStatus.setBackgroundResource(0);
 
         holder.itemView.setOnClickListener(v -> {
@@ -111,54 +109,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             }
         });
 
-        // =========================
-        // 🔥 DELETE
-        // =========================
-        holder.btnDelete.setOnClickListener(v -> {
-
-            new AlertDialog.Builder(v.getContext())
-                    .setTitle("Hapus Data")
-                    .setMessage("Yakin ingin menghapus task ini?")
-                    .setPositiveButton("Hapus", (dialog, which) -> {
-
-                        FirebaseDatabase.getInstance()
-                                .getReference("tasks")
-                                .child(task.getId())
-                                .removeValue();
-
-                        Toast.makeText(v.getContext(), "Data berhasil dihapus", Toast.LENGTH_SHORT).show();
-                    })
-                    .setNegativeButton("Batal", (dialog, which) -> dialog.dismiss())
-                    .show();
-        });
-
-        // =========================
-        // 🔥 DONE + DATE PICKER
-        // =========================
-        holder.btnDone.setOnClickListener(v -> {
-
-            Calendar calendar = Calendar.getInstance();
-
-            new DatePickerDialog(
-                    v.getContext(),
-                    (view, year, month, dayOfMonth) -> {
-
-                        String tanggalSelesai = dayOfMonth + "/" + (month + 1) + "/" + year;
-
-                        DatabaseReference db = FirebaseDatabase.getInstance().getReference("tasks");
-
-                        db.child(task.getId()).child("status").setValue("DONE");
-                        db.child(task.getId()).child("tanggalSelesai").setValue(tanggalSelesai);
-
-                        Toast.makeText(v.getContext(), "Task selesai ✔", Toast.LENGTH_SHORT).show();
-                    },
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)
-            ).show();
-        });
-
-        // =========================
         // 🔥 TANGGAL SELESAI
         // =========================
         if (task.getTanggalSelesai() != null) {
@@ -193,38 +143,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         // =========================
         // 🔥 STATUS LOGIC
         // =========================
-        String status = task.getStatus();
-
-        if (status != null) {
-            status = status.replace(" ", "_").toUpperCase();
-        }
-
-        if ("DONE".equals(status)) {
+        if ("DONE".equals(task.getStatus())) {
 
             holder.txtStatus.setText("DONE");
             holder.txtStatus.setBackgroundResource(R.drawable.bg_status_done);
-            holder.btnDone.setVisibility(View.GONE);
-            holder.btnDone.setEnabled(false);
+
+
+        } else if (task.getDue() != null && isOverdue(task.getDue())) {
+
+            holder.txtStatus.setText("OVERDUE");
+            holder.txtStatus.setBackgroundResource(R.drawable.bg_status_overdue);
 
         } else {
 
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
-                Date dueDate = sdf.parse(task.getDue());
-                Date today = new Date();
-
-                if (dueDate != null && today.after(dueDate)) {
-                    holder.txtStatus.setText("OVERDUE");
-                    holder.txtStatus.setBackgroundResource(R.drawable.bg_status_overdue);
-                } else {
-                    holder.txtStatus.setText("ON PROGRESS");
-                    status = "ON_PROGRESS";
-                    holder.txtStatus.setBackgroundResource(R.drawable.bg_status_progress);
-                }
-
-            } catch (Exception e) {
-                holder.txtStatus.setText("UNKNOWN");
-            }
+            holder.txtStatus.setText("ON PROGRESS");
+            holder.txtStatus.setBackgroundResource(R.drawable.bg_status_progress);
         }
 
         // =========================
@@ -251,6 +184,17 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
         } else {
             holder.itemView.setBackgroundResource(android.R.color.transparent);
+        }
+    }
+
+    // ================= OVERDUE CHECK =================
+    private boolean isOverdue(String dueDate) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
+            Date due = sdf.parse(dueDate);
+            return due.before(new Date());
+        } catch (Exception e) {
+            return false;
         }
     }
 

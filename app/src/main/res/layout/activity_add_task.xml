@@ -287,6 +287,27 @@
                         android:text="Tambah After"
                         android:visibility="gone"/>
 
+
+                    <Button
+                        android:id="@+id/btnTanggalSelesai"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Pilih Tanggal Selesai"
+                        android:layout_marginTop="12dp"
+                        android:visibility="gone"/>
+
+
+                    <TextView
+                        android:id="@+id/txtTanggalSelesai"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Tanggal selesai belum dipilih"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/holo_green_dark"
+                        android:padding="10dp"
+                        android:visibility="gone"/>
+
+
                     <!-- SIMPAN -->
                     <Button
                         android:id="@+id/btnSimpan"
