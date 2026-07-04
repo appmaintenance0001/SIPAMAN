@@ -11,7 +11,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.AuthResult;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -20,6 +19,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
+    private LoadingDialog loadingDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +28,9 @@ public class LoginActivity extends AppCompatActivity {
 
         // 🔥 WAJIB: INIT DULU
         mAuth = FirebaseAuth.getInstance();
+
+        loadingDialog = new LoadingDialog(this);
+
 
         // 🔥 BARU BOLEH DIPAKAI
         if (mAuth.getCurrentUser() != null) {
@@ -61,41 +65,39 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        loadingDialog.show();
+
         // 🔥 LOGIN FIREBASE
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
 
-                    if (task.isSuccessful()) { // ✅ WAJIB ADA
+                    if (task.isSuccessful()) {
 
-                        String uid = mAuth.getCurrentUser().getUid();
+                        loadingDialog.dismiss();
 
-                        FirebaseFirestore.getInstance()
-                                .collection("users")
-                                .document(uid)
-                                .get()
-                                .addOnSuccessListener(doc -> {
+                        startActivity(new Intent(
+                                LoginActivity.this,
+                                DashboardActivity.class));
 
-                                    String role = doc.getString("role");
-
-                                    if ("admin".equals(role)) {
-                                        startActivity(new Intent(this, DashboardActivity.class));
-                                    } else {
-                                        startActivity(new Intent(this, DashboardActivity.class));
-                                    }
-
-                                    finish();
-                                });
+                        finish();
 
                     } else {
+
+                        loadingDialog.dismiss();
 
                         String errorMessage = "Login gagal";
 
                         Exception e = task.getException();
+
                         if (e != null && e.getMessage() != null) {
                             errorMessage = e.getMessage();
                         }
 
-                        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+                        Toast.makeText(
+                                LoginActivity.this,
+                                errorMessage,
+                                Toast.LENGTH_LONG
+                        ).show();
                     }
                 });
     }

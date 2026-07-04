@@ -22,10 +22,25 @@ public class PhotoUriAdapter extends RecyclerView.Adapter<PhotoUriAdapter.ViewHo
     Context context;
     List<Uri> uriList;
 
-    public PhotoUriAdapter(Context context, List<Uri> uriList) {
+    public PhotoUriAdapter(
+            Context context,
+            List<Uri> uriList,
+            boolean showDelete,
+            OnDeleteClick deleteClick
+    ) {
         this.context = context;
         this.uriList = (uriList == null) ? new ArrayList<>() : uriList;
+        this.showDelete = showDelete;
+        this.deleteClick = deleteClick;
     }
+
+    private boolean showDelete = false;
+
+    public interface OnDeleteClick {
+        void onDelete(int position);
+    }
+
+    private OnDeleteClick deleteClick;
 
     @NonNull
     @Override
@@ -42,6 +57,18 @@ public class PhotoUriAdapter extends RecyclerView.Adapter<PhotoUriAdapter.ViewHo
         Glide.with(context)
                 .load(uri)
                 .into(holder.imgPhoto);
+
+        if (showDelete) {
+            holder.btnDelete.setVisibility(View.VISIBLE);
+        } else {
+            holder.btnDelete.setVisibility(View.GONE);
+        }
+
+        holder.btnDelete.setOnClickListener(v -> {
+            if (deleteClick != null) {
+                deleteClick.onDelete(holder.getAdapterPosition());
+            }
+        });
 
         holder.imgPhoto.setOnClickListener(v -> {
 
@@ -64,10 +91,12 @@ public class PhotoUriAdapter extends RecyclerView.Adapter<PhotoUriAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgPhoto;
+        ImageView btnDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             imgPhoto = itemView.findViewById(R.id.imgPhoto);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 }

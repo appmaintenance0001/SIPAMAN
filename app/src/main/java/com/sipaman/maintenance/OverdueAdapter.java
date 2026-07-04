@@ -1,5 +1,6 @@
 package com.sipaman.maintenance;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,11 +9,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class OverdueAdapter extends RecyclerView.Adapter<OverdueAdapter.ViewHolder> {
 
-    List<Task> list;
+    private final List<Task> list;
+    private final SimpleDateFormat sourceFormat = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
+    private final SimpleDateFormat displayFormat = new SimpleDateFormat("dd MMM yyyy", Locale.US);
 
     public OverdueAdapter(List<Task> list) {
         this.list = list;
@@ -39,16 +45,44 @@ public class OverdueAdapter extends RecyclerView.Adapter<OverdueAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Task task = list.get(position);
 
-        Task t = list.get(position);
+        holder.txtTitle.setText(isEmpty(task.getJudul()) ? "Task Maintenance" : task.getJudul());
+        holder.txtTanggal.setText(isEmpty(task.getProject()) ? "-" : task.getProject());
+        holder.txtDue.setText(formatDate(task.getDue()));
 
-        holder.txtTitle.setText(t.getProject());
-        holder.txtTanggal.setText(t.getMulai());
-        holder.txtDue.setText(t.getDue());
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), DetailTaskActivity.class);
+            intent.putExtra("id", task.getId());
+            intent.putExtra("judul", task.getJudul());
+            intent.putExtra("project", task.getProject());
+            intent.putExtra("jenis", task.getJenis());
+            intent.putExtra("mulai", task.getMulai());
+            intent.putExtra("due", task.getDue());
+            intent.putExtra("status", task.getStatus());
+            intent.putExtra("tanggalSelesai", task.getTanggalSelesai());
+            intent.putExtra("pic", task.getPic());
+            intent.putExtra("priority", task.getPriority());
+            intent.putExtra("deskripsi", task.getDeskripsi());
+            v.getContext().startActivity(intent);
+        });
+    }
+
+    private String formatDate(String value) {
+        try {
+            Date date = sourceFormat.parse(value);
+            return date == null ? "-" : displayFormat.format(date);
+        } catch (Exception e) {
+            return "-";
+        }
+    }
+
+    private boolean isEmpty(String value) {
+        return value == null || value.trim().isEmpty();
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return list == null ? 0 : list.size();
     }
 }

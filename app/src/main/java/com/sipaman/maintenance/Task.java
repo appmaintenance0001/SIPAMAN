@@ -6,6 +6,7 @@ import java.util.List;
 public class Task {
 
     private String id;
+    private String judul;
     private String project;
     private String jenis;
     private String mulai;
@@ -27,13 +28,24 @@ public class Task {
         afterUrls = new ArrayList<>();}
 
     // 🔥 Constructor lengkap
-    public Task(String id, String project, String jenis, String mulai,
-                String due, String status,
-                String pic, String priority, String deskripsi,
-                List<String> beforeUrls, List<String> afterUrls,
-                String assignedTo) {   // 🔥 TAMBAHAN
+    public Task(
+            String id,
+            String judul,
+            String project,
+            String jenis,
+            String mulai,
+            String due,
+            String status,
+            String pic,
+            String priority,
+            String deskripsi,
+            List<String> beforeUrls,
+            List<String> afterUrls,
+            String assignedTo
+    ) {   // 🔥 TAMBAHAN
 
         this.id = id;
+        this.judul = judul;
         this.project = project;
         this.jenis = jenis;
         this.mulai = mulai;
@@ -49,6 +61,7 @@ public class Task {
 
     // 🔥 GETTER
     public String getId() { return id; }
+    public String getJudul() {return judul; }
     public String getProject() { return project; }
     public String getJenis() { return jenis; }
     public String getMulai() { return mulai; }
@@ -69,6 +82,7 @@ public class Task {
 
     // 🔥 SETTER (WAJIB BIAR FIREBASE BISA MAP)
     public void setId(String id) { this.id = id; }
+    public void setJudul(String judul) {this.judul = judul; }
     public void setProject(String project) { this.project = project; }
     public void setJenis(String jenis) { this.jenis = jenis; }
     public void setMulai(String mulai) { this.mulai = mulai; }

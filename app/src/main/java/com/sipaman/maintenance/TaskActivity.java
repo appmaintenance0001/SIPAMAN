@@ -7,6 +7,8 @@ import android.widget.Toast;
 import android.content.Intent;
 import android.view.View;
 import android.view.KeyEvent;
+import android.view.inputmethod.InputMethodManager;
+import android.content.Context;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,6 +45,7 @@ public class TaskActivity extends AppCompatActivity {
     String currentFilter = "ALL";
 
     Chip chipAll, chipDone, chipProgress, chipOverdue;
+    View filterContainer;
 
     // 🔥 ANIMASI CHIP PREMIUM
     private void animateChipPremium(View chip) {
@@ -88,18 +91,36 @@ public class TaskActivity extends AppCompatActivity {
             Intent intent = new Intent(TaskActivity.this, DetailTaskActivity.class);
 
             intent.putExtra("id", task.getId());
+            intent.putExtra("judul", task.getJudul());
             intent.putExtra("project", task.getProject());
             intent.putExtra("jenis", task.getJenis());
             intent.putExtra("mulai", task.getMulai());
             intent.putExtra("due", task.getDue());
             intent.putExtra("status", task.getStatus());
-            intent.putExtra("selesai", task.getTanggalSelesai());
+            intent.putExtra("tanggalSelesai", task.getTanggalSelesai());
+            intent.putExtra("pic", task.getPic());
+            intent.putExtra("priority", task.getPriority());
+            intent.putExtra("deskripsi", task.getDeskripsi());
 
             startActivity(intent);
         });
 
         rvTask.setAdapter(adapter); // 🔥 WAJIB
         etSearch = findViewById(R.id.etSearch);
+        filterContainer = findViewById(R.id.filterContainer);
+
+        findViewById(R.id.btnTaskSearch).setOnClickListener(v -> {
+            etSearch.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
+
+        findViewById(R.id.btnTaskFilter).setOnClickListener(v -> {
+            int visibility = filterContainer.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+            filterContainer.setVisibility(visibility);
+        });
 
         // 🔥 DISABLE ENTER DI SEARCH
         etSearch.setOnKeyListener((v, keyCode, event) -> {
@@ -114,8 +135,9 @@ public class TaskActivity extends AppCompatActivity {
         chipOverdue = findViewById(R.id.chipOverdue);
 
         // DEFAULT
-        chipAll.setChecked(true);
-        setActiveChip(chipAll, chipDone, chipProgress, chipOverdue);
+        currentFilter = getIntent().getStringExtra("filter");
+        if (currentFilter == null) currentFilter = "ALL";
+        applyActiveFilterChip();
 
         // 🔥 CLICK FILTER
         chipAll.setOnClickListener(v -> {
@@ -162,6 +184,7 @@ public class TaskActivity extends AppCompatActivity {
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     Task task = ds.getValue(Task.class);
                     if (task != null) {
+                        task.setId(ds.getKey());
                         taskList.add(task);
                     }
                 }
@@ -204,6 +227,17 @@ public class TaskActivity extends AppCompatActivity {
                 finish();
                 return true;
             } else if (id == R.id.nav_task) {
+                return true;
+            } else if (id == R.id.nav_calendar) {
+                startActivity(new Intent(this, CalendarActivity.class));
+                finish();
+                return true;
+            } else if (id == R.id.nav_project) {
+                startActivity(new Intent(this, ProjectActivity.class));
+                finish();
+                return true;
+            } else if (id == R.id.nav_setting) {
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             }
 
@@ -269,6 +303,23 @@ public class TaskActivity extends AppCompatActivity {
         chipDone.setText("Done (" + countDone + ")");
         chipProgress.setText("Progress (" + countProgress + ")");
         chipOverdue.setText("Overdue (" + countOverdue + ")");
+    }
+
+    private void applyActiveFilterChip() {
+        if ("DONE".equals(currentFilter)) {
+            chipDone.setChecked(true);
+            setActiveChip(chipDone, chipAll, chipProgress, chipOverdue);
+        } else if ("ON_PROGRESS".equals(currentFilter)) {
+            chipProgress.setChecked(true);
+            setActiveChip(chipProgress, chipAll, chipDone, chipOverdue);
+        } else if ("OVERDUE".equals(currentFilter)) {
+            chipOverdue.setChecked(true);
+            setActiveChip(chipOverdue, chipAll, chipDone, chipProgress);
+        } else {
+            currentFilter = "ALL";
+            chipAll.setChecked(true);
+            setActiveChip(chipAll, chipDone, chipProgress, chipOverdue);
+        }
     }
 
     // 🔥 FILTER ENGINE FINAL (FIXED TOTAL)

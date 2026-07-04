@@ -50,7 +50,7 @@ public class AddTaskActivity extends AppCompatActivity {
     ShimmerFrameLayout shimmer;
 
     AutoCompleteTextView spProject, spJenis, spPriority, spPic;
-    EditText etDeskripsi, etMulai, etDue;
+    EditText etJudul, etDeskripsi, etMulai, etDue;
     Button btnSimpan,
             btnAddBefore,
             btnAddAfter,
@@ -105,6 +105,7 @@ public class AddTaskActivity extends AppCompatActivity {
         spJenis = findViewById(R.id.spJenis);
         spPriority = findViewById(R.id.spPriority);
         spPic = findViewById(R.id.spPic);
+        etJudul = findViewById(R.id.etJudul);
         etDeskripsi = findViewById(R.id.etDeskripsi);
         txtTanggalSelesai = findViewById(R.id.txtTanggalSelesai);
 
@@ -144,8 +145,37 @@ public class AddTaskActivity extends AppCompatActivity {
         rvBefore.setLayoutManager(new GridLayoutManager(this, 3));
         rvAfter.setLayoutManager(new GridLayoutManager(this, 3));
 
-        adapterBefore = new PhotoUriAdapter(this, listBefore);
-        adapterAfter = new PhotoUriAdapter(this, listAfter);
+        adapterBefore = new PhotoUriAdapter(
+                this,
+                listBefore,
+                true,
+                position -> {
+
+                    listBefore.remove(position);
+
+                    adapterBefore.notifyDataSetChanged();
+
+                    if (listBefore.size() < 2) {
+                        btnAddBefore.setVisibility(View.VISIBLE);
+                    }
+                }
+        );
+
+        adapterAfter = new PhotoUriAdapter(
+                this,
+                listAfter,
+                true,
+                position -> {
+
+                    listAfter.remove(position);
+
+                    adapterAfter.notifyDataSetChanged();
+
+                    if (listAfter.size() < 2) {
+                        btnAddAfter.setVisibility(View.VISIBLE);
+                    }
+                }
+        );
 
         rvBefore.setAdapter(adapterBefore);
         rvAfter.setAdapter(adapterAfter);
@@ -285,9 +315,16 @@ public class AddTaskActivity extends AppCompatActivity {
     private void saveTask() {
 
         String project = spProject.getText().toString();
+        String judul = etJudul.getText().toString().trim();
         String jenis = spJenis.getText().toString();
         String mulai = etMulai.getText().toString();
         String due = etDue.getText().toString();
+
+        if (judul.isEmpty()) {
+            etJudul.setError("Judul task wajib diisi");
+            return;
+        }
+
 
         FirebaseUser user =
                 FirebaseAuth.getInstance().getCurrentUser();
@@ -353,6 +390,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
         startUpload(
                 uid,
+                judul,
                 project,
                 jenis,
                 mulai,
@@ -361,6 +399,7 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     private void startUpload(String uid,
+                             String judul,
                              String project,
                              String jenis,
                              String mulai,
@@ -399,6 +438,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
         lanjutUpload(
                 uid,
+                judul,
                 project,
                 jenis,
                 mulai,
@@ -410,6 +450,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
     // ================= UPLOAD BERURUTAN =================
     private void lanjutUpload(String uid,
+                              String judul,
                               String project,
                               String jenis,
                               String mulai,
@@ -579,6 +620,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
                     Task task = new Task(
                             id,
+                            judul,
                             project,
                             jenis,
                             mulai,
@@ -1094,11 +1136,21 @@ public class AddTaskActivity extends AppCompatActivity {
                 getContentResolver().notifyChange(cameraUri, null);
                 listAfter.add(cameraUri);
 
-                adapterAfter =
-                        new PhotoUriAdapter(
-                                this,
-                                listAfter
-                        );
+                adapterAfter = new PhotoUriAdapter(
+                        this,
+                        listAfter,
+                        true,
+                        position -> {
+
+                            listAfter.remove(position);
+
+                            adapterAfter.notifyDataSetChanged();
+
+                            if (listAfter.size() < 2) {
+                                btnAddAfter.setVisibility(View.VISIBLE);
+                            }
+                        }
+                );
 
                 rvAfter.setAdapter(adapterAfter);
 
@@ -1191,11 +1243,21 @@ public class AddTaskActivity extends AppCompatActivity {
                     listAfter.add(uri);
                 }
 
-                adapterAfter =
-                        new PhotoUriAdapter(
-                                this,
-                                listAfter
-                        );
+                adapterAfter = new PhotoUriAdapter(
+                        this,
+                        listAfter,
+                        true,
+                        position -> {
+
+                            listAfter.remove(position);
+
+                            adapterAfter.notifyDataSetChanged();
+
+                            if (listAfter.size() < 2) {
+                                btnAddAfter.setVisibility(View.VISIBLE);
+                            }
+                        }
+                );
 
                 rvAfter.setAdapter(adapterAfter);
 

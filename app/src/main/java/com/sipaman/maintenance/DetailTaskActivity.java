@@ -131,6 +131,7 @@ public class DetailTaskActivity extends AppCompatActivity {
 
         // ================= AMBIL DATA INTENT =================
         String id = getIntent().getStringExtra("id");
+        String judul = getIntent().getStringExtra("judul");
         String project = getIntent().getStringExtra("project");
         String jenis = getIntent().getStringExtra("jenis");
         String mulai = getIntent().getStringExtra("mulai");
@@ -177,7 +178,7 @@ public class DetailTaskActivity extends AppCompatActivity {
 
         // ================= SET DATA =================
         txtProjectValue.setText(project);
-        txtProject.setText(project);
+        txtProject.setText(judul);
 
         txtJenis.setText(jenis);
         txtMulai.setText("Mulai: " + mulai);
@@ -260,6 +261,8 @@ public class DetailTaskActivity extends AppCompatActivity {
 
     private void loadTaskDetail() {
 
+
+
         String id =
                 getIntent().getStringExtra("id");
 
@@ -275,6 +278,8 @@ public class DetailTaskActivity extends AppCompatActivity {
                             snapshot.getValue(Task.class);
 
                     if (task == null) return;
+
+                    txtProject.setText(task.getJudul());
 
                     // STATUS
                     String status = task.getStatus();

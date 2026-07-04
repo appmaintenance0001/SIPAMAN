@@ -1,79 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="#F5F6FA"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F5F6FA"
+    android:orientation="vertical">
 
-    <!-- HEADER (TIDAK SCROLL) -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="#173A6A"
+        android:layout_height="96dp"
+        android:background="@drawable/bg_dashboard_header"
+        android:elevation="4dp"
         android:gravity="center_vertical"
-        android:padding="16dp"
-        android:elevation="4dp">
+        android:orientation="horizontal"
+        android:paddingStart="18dp"
+        android:paddingEnd="18dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SI-PAMAN"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvWelcomeName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Selamat datang"
+                android:textColor="#DCEBFF"
+                android:textSize="14sp" />
+        </LinearLayout>
 
         <TextView
-            android:text="SIPAMAN"
+            android:id="@+id/btnDashboardSearch"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_icon_button"
+            android:gravity="center"
+            android:text="⌕"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            android:textSize="23sp" />
 
-        <ImageView
-            android:src="@android:drawable/ic_dialog_info"
-            app:tint="#FFFFFF"
-            android:layout_width="24dp"
-            android:layout_height="24dp"/>
+        <TextView
+            android:id="@+id/btnNotification"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/bg_icon_button"
+            android:gravity="center"
+            android:text="!"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- CONTENT + FAB -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <!-- SCROLL AREA -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/bottomNav">
+            android:layout_above="@id/bottomNav"
+            android:clipToPadding="false"
+            android:padding="16dp">
 
             <LinearLayout
-                android:padding="16dp"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <!-- WELCOME -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Selamat datang,"
-                    android:textColor="#0B0202"
-                    android:textSize="14sp" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="18dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:text="Admin"
-                    android:textColor="#0B0202"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <!-- RINGKASAN -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
                     android:text="Ringkasan Task"
-                    android:textColor="#0B0202"
+                    android:textColor="#111827"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <include
+                        android:id="@+id/cardTotal"
+                        layout="@layout/item_summary_total" />
+
+                    <include
+                        android:id="@+id/cardDone"
+                        layout="@layout/item_summary_total" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -81,120 +110,118 @@
                     android:orientation="horizontal">
 
                     <include
-                        android:id="@+id/cardTotal"
-                        layout="@layout/item_summary_total"/>
-
-                    <include
-                        android:id="@+id/cardDone"
-                        layout="@layout/item_summary_total"/>
-
-                    <include
                         android:id="@+id/cardProgress"
-                        layout="@layout/item_summary_total"/>
+                        layout="@layout/item_summary_total" />
 
                     <include
                         android:id="@+id/cardOverdue"
-                        layout="@layout/item_summary_total"/>
-
+                        layout="@layout/item_summary_total" />
                 </LinearLayout>
 
-                <!-- CHART -->
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Task Berdasarkan Status"
-                    android:textColor="#0B0202"
+                    android:layout_marginTop="18dp"
+                    android:text="Grafik Status"
+                    android:textColor="#111827"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_card"
-                    android:orientation="horizontal"
-                    android:padding="12dp">
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_chart_card"
+                    android:elevation="2dp"
+                    android:orientation="vertical"
+                    android:padding="14dp">
 
-                    <!-- PIE -->
                     <com.github.mikephil.charting.charts.PieChart
                         android:id="@+id/pieChart"
-                        android:layout_width="0dp"
-                        android:layout_height="200dp"
-                        android:layout_weight="1" />
+                        android:layout_width="match_parent"
+                        android:layout_height="230dp" />
 
-                    <!-- LEGEND -->
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingStart="8dp">
+                        android:gravity="center"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/tvLegendDone"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingTop="40dp"
-                            android:paddingRight="20dp"
-                            android:paddingBottom="12dp"
-                            android:text="🟢 Selesai 0%"
-                            android:textColor="#0B0202" />
+                            android:padding="6dp"
+                            android:text="Done 0%"
+                            android:textColor="#16A34A"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvLegendProgress"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingBottom="12dp"
-                            android:text="🟡 Progress 0%"
-                            android:textColor="#0B0202" />
+                            android:padding="6dp"
+                            android:text="Progress 0%"
+                            android:textColor="#CA8A04"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvLegendPending"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingBottom="12dp"
-                            android:text="⚪ Planning 0%"
-                            android:textColor="#0B0202" />
+                            android:padding="6dp"
+                            android:text="Pending 0%"
+                            android:textColor="#64748B"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvLegendOverdue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="🔴 Overdue 0%"
-                            android:textColor="#0B0202" />
+                            android:padding="6dp"
+                            android:text="Overdue 0%"
+                            android:textColor="#E11D48"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
-
                 </LinearLayout>
 
-                <!-- OVERDUE HEADER -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="16dp">
+                    android:layout_marginTop="18dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Task Overdue"
-                        android:textColor="#0B0202"
+                        android:text="5 Overdue Terbaru"
+                        android:textColor="#111827"
+                        android:textSize="17sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/btnLihatSemua"
-                        android:text="Lihat Semua"
-                        android:textColor="#1976D2"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:padding="6dp"
+                        android:text="Lihat Semua"
+                        android:textColor="#173A6A"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
 
-                <!-- LIST OVERDUE -->
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvOverdue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"/>
-
-
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false" />
             </LinearLayout>
         </ScrollView>
 
@@ -204,9 +231,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@android:color/white"
-            app:menu="@menu/bottom_nav_menu"
-            app:labelVisibilityMode="labeled"/>
-
+            app:labelVisibilityMode="labeled"
+            app:menu="@menu/bottom_nav_menu" />
     </RelativeLayout>
-
 </LinearLayout>

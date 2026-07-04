@@ -1,93 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="6dp"
-    app:cardBackgroundColor="#FFFFFF">
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:background="@drawable/bg_task_list_card"
+    android:gravity="center_vertical"
+    android:minHeight="70dp"
+    android:orientation="horizontal"
+    android:paddingStart="12dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/txtStatusIcon"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:background="@drawable/bg_task_icon_pending"
+        android:gravity="center"
+        android:text="T"
+        android:textColor="#64748B"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <LinearLayout
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-        <!-- ID -->
         <TextView
-            android:id="@+id/txtId"
-            android:layout_width="wrap_content"
+            android:id="@+id/txtJudul"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ID"
-            android:textStyle="bold"
-            android:textColor="#222222"
-            android:textSize="14sp"/>
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Perbaikan AC Lantai 2"
+            android:textColor="#111827"
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
-        <!-- PROJECT -->
         <TextView
             android:id="@+id/txtProject"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Project"
-            android:textStyle="bold"
-            android:textColor="#222222"
-            android:textSize="14sp"/>
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Gedung Produksi"
+            android:textColor="#6B7280"
+            android:textSize="12sp" />
 
-        <!-- JENIS -->
-
-        <!-- MULAI -->
         <TextView
             android:id="@+id/txtJenis"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Jenis Maintenance"
-            android:textColor="#888888"
-            android:textSize="13sp" />
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Corrective Maintenance"
+            android:textColor="#94A3B8"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/txtMulai"
+            android:id="@+id/txtStatus"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mulai"
-            android:textColor="#666666"
-            android:layout_marginTop="8dp"/>
+            android:layout_height="24dp"
+            android:gravity="center"
+            android:minWidth="76dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="Pending"
+            android:textColor="#64748B"
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
-        <!-- DUE -->
         <TextView
             android:id="@+id/txtDue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Due"
-            android:textColor="#666666"/>
-
-        <!-- STATUS -->
-        <TextView
-            android:id="@+id/txtStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ON PROGRESS"
-            android:layout_marginTop="8dp"
-            android:textColor="#000000"
-            android:textStyle="bold"
-            android:padding="6dp"/>
-
-        <!-- TANGGAL SELESAI -->
-        <TextView
-            android:id="@+id/txtSelesai"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Selesai: -"
-            android:textSize="14sp"
-            android:textColor="#777777"
-            android:layout_marginTop="4dp"/>
-
-
+            android:layout_marginTop="5dp"
+            android:text="22 Apr 2024"
+            android:textColor="#6B7280"
+            android:textSize="11sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/txtId"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/txtMulai"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/txtSelesai"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+</LinearLayout>
