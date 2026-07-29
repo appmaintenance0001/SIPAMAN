@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="14dp"
+    android:layout_marginEnd="14dp"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_task_list_card"
+    android:elevation="1dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="14dp">
+
+    <TextView
+        android:id="@+id/tvNotifIcon"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:background="@drawable/bg_task_icon_pending"
+        android:gravity="center"
+        android:text="N"
+        android:textColor="#64748B"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvNotifTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Task Baru"
+            android:textColor="#111827"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvNotifMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text="Perbaikan AC Lantai 2"
+            android:textColor="#64748B"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tvNotifDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="22 Apr 2024"
+            android:textColor="#94A3B8"
+            android:textSize="12sp" />
+    </LinearLayout>
+</LinearLayout>

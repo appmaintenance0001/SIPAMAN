@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F6FA"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="#173A6A"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <TextView
+            android:id="@+id/btnCalendarMenu"
+            android:layout_width="42dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="☰"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Kalender"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnCalendarToday"
+            android:layout_width="42dp"
+            android:layout_height="match_parent"
+            android:padding="9dp"
+            android:src="@drawable/ic_calendar"
+            app:tint="#FFFFFF" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:padding="14dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/btnPrevMonth"
+                        android:layout_width="44dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="‹"
+                        android:textColor="#6B7280"
+                        android:textSize="28sp" />
+
+                    <TextView
+                        android:id="@+id/tvMonthTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Mei 2024"
+                        android:textColor="#111827"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/btnNextMonth"
+                        android:layout_width="44dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="›"
+                        android:textColor="#6B7280"
+                        android:textSize="28sp" />
+                </LinearLayout>
+
+                <GridLayout
+                    android:id="@+id/calendarGrid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:columnCount="7"
+                    android:useDefaultMargins="false" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvSelectedDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="22 Mei 2024"
+                android:textColor="#111827"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/taskContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_card"
+                android:elevation="2dp"
+                android:orientation="vertical"
+                android:padding="8dp" />
+
+            <TextView
+                android:id="@+id/tvEmptyTask"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_card"
+                android:gravity="center"
+                android:padding="18dp"
+                android:text="Tidak ada task pada tanggal ini"
+                android:textColor="#6B7280"
+                android:textSize="14sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav_menu" />
+</LinearLayout>
