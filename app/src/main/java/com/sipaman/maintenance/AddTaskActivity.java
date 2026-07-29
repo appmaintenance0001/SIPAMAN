@@ -27,6 +27,7 @@ import androidx.core.content.ContextCompat;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -61,6 +62,12 @@ public class AddTaskActivity extends AppCompatActivity {
     List<Uri> listBefore = new ArrayList<>();
     List<Uri> listAfter = new ArrayList<>();
 
+    private final List<Project> projectList = new ArrayList<>();
+    private final List<String> projectNames = new ArrayList<>();
+    private ArrayAdapter<String> projectAdapter;
+
+    private String selectedProjectId = "";
+
     PhotoUriAdapter adapterBefore, adapterAfter;
 
     DatabaseReference database;
@@ -84,7 +91,6 @@ public class AddTaskActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_task);
 
         // ================= DROPDOWN DATA =================
-        String[] projectList = {"Office", "Intake", "Dryer"};
         String[] jenisList = {"Preventive", "Corrective", "Emergency"};
         String[] priorityList = {"Low", "Medium", "High"};
         String[] picList = {"Mahmud", "Maulana", "Rahmat"};
@@ -109,8 +115,23 @@ public class AddTaskActivity extends AppCompatActivity {
         etDeskripsi = findViewById(R.id.etDeskripsi);
         txtTanggalSelesai = findViewById(R.id.txtTanggalSelesai);
 
-        ArrayAdapter<String> projectAdapter =
-                new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, projectList);
+        projectAdapter =
+                new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_dropdown_item_1line,
+                        projectNames
+                );
+
+        spProject.setAdapter(projectAdapter);
+        spProject.setOnItemClickListener((parent, view, position, id) -> {
+
+            Project project = projectList.get(position);
+
+            selectedProjectId = project.getId();
+
+        });
+
+        loadProjects();
 
         ArrayAdapter<String> jenisAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, jenisList);
@@ -248,6 +269,8 @@ public class AddTaskActivity extends AppCompatActivity {
 
                 spProject.setText(oldTask.getProject(), false);
 
+                selectedProjectId = oldTask.getProjectId();
+
                 spJenis.setText(oldTask.getJenis(), false);
 
                 spPriority.setText(oldTask.getPriority(), false);
@@ -283,6 +306,37 @@ public class AddTaskActivity extends AppCompatActivity {
 
     }
 
+    private void loadProjects() {
+
+        FirebaseDatabase.getInstance()
+                .getReference("projects")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+
+                    projectList.clear();
+                    projectNames.clear();
+
+                    for (DataSnapshot ds : snapshot.getChildren()) {
+
+                        Project project = ds.getValue(Project.class);
+
+                        if (project == null)
+                            continue;
+
+                        project.setId(ds.getKey());
+
+                        projectList.add(project);
+
+                        projectNames.add(project.getName());
+
+                    }
+
+                    projectAdapter.notifyDataSetChanged();
+
+                });
+
+    }
+
     String tanggalSelesaiManual = "";
 
     private void pickTanggalSelesai(Runnable onSelected) {
@@ -315,6 +369,21 @@ public class AddTaskActivity extends AppCompatActivity {
     private void saveTask() {
 
         String project = spProject.getText().toString();
+
+        if (selectedProjectId.isEmpty()) {
+
+            for (Project p : projectList) {
+
+                if (project.equals(p.getName())) {
+
+                    selectedProjectId = p.getId();
+                    break;
+
+                }
+
+            }
+
+        }
         String judul = etJudul.getText().toString().trim();
         String jenis = spJenis.getText().toString();
         String mulai = etMulai.getText().toString();
@@ -621,6 +690,7 @@ public class AddTaskActivity extends AppCompatActivity {
                     Task task = new Task(
                             id,
                             judul,
+                            selectedProjectId,
                             project,
                             jenis,
                             mulai,

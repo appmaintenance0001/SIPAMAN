@@ -7,6 +7,7 @@ public class Task {
 
     private String id;
     private String judul;
+    private String projectId;
     private String project;
     private String jenis;
     private String mulai;
@@ -31,6 +32,7 @@ public class Task {
     public Task(
             String id,
             String judul,
+            String projectId,
             String project,
             String jenis,
             String mulai,
@@ -46,6 +48,7 @@ public class Task {
 
         this.id = id;
         this.judul = judul;
+        this.projectId = projectId;
         this.project = project;
         this.jenis = jenis;
         this.mulai = mulai;
@@ -80,6 +83,14 @@ public class Task {
         return assignedTo;
     }
 
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
     // 🔥 SETTER (WAJIB BIAR FIREBASE BISA MAP)
     public void setId(String id) { this.id = id; }
     public void setJudul(String judul) {this.judul = judul; }
@@ -99,4 +110,5 @@ public class Task {
     public void setAssignedTo(String assignedTo) {
         this.assignedTo = assignedTo;
     }
+
 }
