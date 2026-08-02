@@ -3,65 +3,145 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F6FA"
+    android:background="#F4F7FC"
     android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="96dp"
-        android:background="@drawable/bg_dashboard_header"
-        android:elevation="4dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="18dp"
-        android:paddingEnd="18dp">
+        android:layout_height="250dp"
+        android:background="@drawable/bg_dashboard_header_v2">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="170dp"
+            android:layout_gravity="bottom"
+            android:alpha="0.20"
+            android:scaleType="centerCrop"
+            android:src="@drawable/factory_bg" />
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="26dp"
+            android:paddingEnd="24dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SI-PAMAN"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvWelcomeName"
-                android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Selamat Pagi,"
+                        android:textColor="#FFFFFF"
+                        android:textSize="19sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvWelcomeName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="User"
+                        android:textColor="#FFFFFF"
+                        android:textSize="34sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvRole"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:text="Maintenance"
+                        android:textColor="#E3F2FD"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/btnDashboardSearch"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/bg_icon_button"
+                    android:gravity="center"
+                    android:text="S"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <FrameLayout
+                    android:layout_width="56dp"
+                    android:layout_height="56dp">
+
+                    <TextView
+                        android:id="@+id/btnNotification"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_icon_button"
+                        android:gravity="center"
+                        android:text="N"
+                        android:textColor="#FFFFFF"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvNotificationBadge"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="top|end"
+                        android:background="@drawable/bg_circle_red"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Selamat datang"
-                android:textColor="#DCEBFF"
-                android:textSize="14sp" />
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/chipDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_icon_button"
+                    android:gravity="center"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:text="Tanggal"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/chipSite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/bg_icon_button"
+                    android:gravity="center"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:text="SI-PAMAN"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp" />
+            </LinearLayout>
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/btnDashboardSearch"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/bg_icon_button"
-            android:gravity="center"
-            android:text="⌕"
-            android:textColor="#FFFFFF"
-            android:textSize="23sp" />
-
-        <TextView
-            android:id="@+id/btnNotification"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:background="@drawable/bg_icon_button"
-            android:gravity="center"
-            android:text="!"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+    </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -73,7 +153,9 @@
             android:layout_height="match_parent"
             android:layout_above="@id/bottomNav"
             android:clipToPadding="false"
-            android:padding="16dp">
+            android:paddingStart="14dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="14dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -81,12 +163,47 @@
                 android:orientation="vertical"
                 android:paddingBottom="18dp">
 
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardQuickAction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="22dp"
+                    app:cardElevation="7dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="8dp">
+
+                        <include
+                            android:id="@+id/actionAddTask"
+                            layout="@layout/item_quick_action" />
+
+                        <include
+                            android:id="@+id/actionCalendar"
+                            layout="@layout/item_quick_action" />
+
+                        <include
+                            android:id="@+id/actionProject"
+                            layout="@layout/item_quick_action" />
+
+                        <include
+                            android:id="@+id/actionReport"
+                            layout="@layout/item_quick_action" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <include layout="@layout/item_progress_card" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ringkasan Task"
+                    android:layout_marginTop="18dp"
+                    android:text="Ringkasan"
                     android:textColor="#111827"
-                    android:textSize="17sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -118,13 +235,41 @@
                         layout="@layout/item_summary_total" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <include
+                        android:id="@+id/cardProject"
+                        layout="@layout/item_summary_total" />
+
+                    <include
+                        android:id="@+id/cardPic"
+                        layout="@layout/item_summary_total" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <include
+                        android:id="@+id/cardCompletion"
+                        layout="@layout/item_summary_total" />
+
+                    <include
+                        android:id="@+id/cardDueToday"
+                        layout="@layout/item_summary_total" />
+                </LinearLayout>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
                     android:text="Grafik Status"
                     android:textColor="#111827"
-                    android:textSize="17sp"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -200,9 +345,57 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="5 Overdue Terbaru"
+                        android:text="Task per Project"
                         android:textColor="#111827"
-                        android:textSize="17sp"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lihat Semua"
+                        android:textColor="#0B3BB7"
+                        android:textSize="13sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvProjectSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Task Jatuh Tempo 7 Hari"
+                    android:textColor="#111827"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvDueSoon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Overdue"
+                        android:textColor="#E11D48"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -211,13 +404,29 @@
                         android:layout_height="wrap_content"
                         android:padding="6dp"
                         android:text="Lihat Semua"
-                        android:textColor="#173A6A"
+                        android:textColor="#E11D48"
                         android:textSize="13sp"
                         android:textStyle="bold" />
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvOverdue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:text="Aktivitas Terbaru"
+                    android:textColor="#111827"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvRecentActivity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"

@@ -108,6 +108,10 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
             intent.putExtra("projectId", projectId);
 
+            if (currentProject != null) {
+                intent.putExtra("projectName", currentProject.getName());
+            }
+
             startActivity(intent);
 
         });

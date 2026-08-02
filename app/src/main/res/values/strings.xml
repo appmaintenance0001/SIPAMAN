@@ -16,5 +16,7 @@
     <string name="hint_judul">Masukkan judul task</string>
     <string name="hint_deskripsi">Masukkan deskripsi task</string>
     <string name="hapus">Hapus</string>
+    <string name="cd_search">Cari</string>
+    <string name="cd_notification">Notifikasi</string>
 
 </resources>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:id="@+id/cardProgressMaintenance"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+
+    app:cardCornerRadius="22dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Progress Maintenance"
+            android:textStyle="bold"
+            android:textColor="#173A6A"
+            android:textSize="18sp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <!-- Progress Circle -->
+            <FrameLayout
+                android:layout_width="110dp"
+                android:layout_height="110dp">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/progressCircle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:max="100"
+                    android:progress="82"
+                    app:indicatorSize="110dp"
+                    app:indicatorColor="#1DB954"
+                    app:trackColor="#E5E7EB"
+                    app:trackThickness="10dp"/>
+
+                <TextView
+                    android:id="@+id/tvProgressPercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="82%"
+                    android:textStyle="bold"
+                    android:textSize="24sp"
+                    android:textColor="#173A6A"/>
+
+            </FrameLayout>
+
+            <!-- Bagian kanan -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvProgressTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="98 dari 120 Task Selesai"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progressBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp"
+                    android:layout_marginTop="16dp"
+                    android:max="100"
+                    android:progress="82"
+                    app:indicatorColor="#1DB954"
+                    app:trackColor="#E5E7EB"
+                    app:trackCornerRadius="5dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

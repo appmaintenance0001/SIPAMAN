@@ -67,6 +67,8 @@ public class AddTaskActivity extends AppCompatActivity {
     private ArrayAdapter<String> projectAdapter;
 
     private String selectedProjectId = "";
+    private String incomingProjectId = "";
+    private String incomingProjectName = "";
 
     PhotoUriAdapter adapterBefore, adapterAfter;
 
@@ -106,6 +108,15 @@ public class AddTaskActivity extends AppCompatActivity {
         id = getIntent().getStringExtra("id");
         mode = getIntent().getStringExtra("mode");
         isEdit = id != null;
+
+        incomingProjectId = getIntent().getStringExtra("projectId");
+        incomingProjectName = getIntent().getStringExtra("projectName");
+
+        if (incomingProjectId == null)
+            incomingProjectId = "";
+
+        if (incomingProjectName == null)
+            incomingProjectName = "";
 
         spProject = findViewById(R.id.spProject);
         spJenis = findViewById(R.id.spJenis);
@@ -332,6 +343,16 @@ public class AddTaskActivity extends AppCompatActivity {
                     }
 
                     projectAdapter.notifyDataSetChanged();
+
+                    if (!incomingProjectId.isEmpty()) {
+
+                        selectedProjectId = incomingProjectId;
+
+                        spProject.setText(incomingProjectName, false);
+
+                        spProject.setEnabled(false);
+
+                    }
 
                 });
 
