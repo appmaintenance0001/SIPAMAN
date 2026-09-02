@@ -46,6 +46,12 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
         projectId = getIntent().getStringExtra("projectId");
 
+        if (projectId == null || projectId.trim().isEmpty()) {
+            // Audit: cegah Firebase child(null) dan layar kosong saat projectId tidak dikirim.
+            finish();
+            return;
+        }
+
         tvProjectName = findViewById(R.id.tvProjectName);
         tvLocation = findViewById(R.id.tvLocation);
         tvTotalTask = findViewById(R.id.tvTotalTask);
@@ -57,6 +63,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
         fabAddTask = findViewById(R.id.fabAddTask);
 
         rvTask.setLayoutManager(new LinearLayoutManager(this));
+        rvTask.setHasFixedSize(true);
 
         adapter = new TaskAdapter(taskList);
 
@@ -69,16 +76,6 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
         loadTasks();
 
-        fabAddTask.setOnClickListener(v -> {
-
-            Intent i = new Intent(this, AddTaskActivity.class);
-
-            i.putExtra("projectId", projectId);
-
-            startActivity(i);
-
-        });
-
     }
 
     private void loadProject() {
@@ -86,6 +83,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
         projectRef.child(projectId)
                 .get()
                 .addOnSuccessListener(snapshot -> {
+                    if (isFinishing() || isDestroyed()) return;
 
                     currentProject = snapshot.getValue(Project.class);
 
@@ -117,6 +115,7 @@ public class ProjectDetailActivity extends AppCompatActivity {
         });
 
         taskRef.get().addOnSuccessListener(snapshot -> {
+            if (isFinishing() || isDestroyed()) return;
 
             taskList.clear();
 
@@ -130,6 +129,8 @@ public class ProjectDetailActivity extends AppCompatActivity {
 
                 if (task == null)
                     continue;
+
+                task.setId(ds.getKey());
 
                 if (!projectId.equals(task.getProjectId()))
                     continue;

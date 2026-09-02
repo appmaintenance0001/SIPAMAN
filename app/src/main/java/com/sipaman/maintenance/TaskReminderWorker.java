@@ -6,10 +6,16 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.google.firebase.database.*;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class TaskReminderWorker extends Worker {
 
@@ -31,11 +37,9 @@ public class TaskReminderWorker extends Worker {
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference("tasks");
 
-        database.get().addOnCompleteListener(task -> {
-
-            if (!task.isSuccessful()) return;
-
-            DataSnapshot snapshot = task.getResult();
+        try {
+            // Audit: Worker harus menunggu Firebase selesai agar hasil reminder konsisten.
+            DataSnapshot snapshot = Tasks.await(database.get(), 20, TimeUnit.SECONDS);
 
             int overdueCount = 0;
             int todayCount = 0;
@@ -52,6 +56,7 @@ public class TaskReminderWorker extends Worker {
                 if ("DONE".equals(t.getStatus())) continue;
 
                 try {
+                    if (t.getDue() == null) continue;
                     Date dueDate = sdf.parse(t.getDue());
 
                     if (dueDate != null) {
@@ -91,9 +96,10 @@ public class TaskReminderWorker extends Worker {
                 );
             }
 
-        });
+        } catch (Exception e) {
+            return Result.retry();
+        }
 
-        // 🔥 WAJIB tetap return di sini
         return Result.success();
     }
 }

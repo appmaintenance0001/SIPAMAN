@@ -9,11 +9,15 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.os.Looper;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,8 +39,10 @@ import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.UploadCallback;
 import com.cloudinary.android.callback.ErrorInfo;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -244,6 +250,7 @@ public class AddTaskActivity extends AppCompatActivity {
         if ("after".equals(mode) && id != null) {
 
             database.child(id).get().addOnSuccessListener(snapshot -> {
+                if (isActivityUnavailable()) return;
 
                 Task oldTask = snapshot.getValue(Task.class);
 
@@ -323,6 +330,7 @@ public class AddTaskActivity extends AppCompatActivity {
                 .getReference("projects")
                 .get()
                 .addOnSuccessListener(snapshot -> {
+                    if (isActivityUnavailable()) return;
 
                     projectList.clear();
                     projectNames.clear();
@@ -499,6 +507,12 @@ public class AddTaskActivity extends AppCompatActivity {
             id = database.push().getKey();
         }
 
+        if (id == null) {
+            // Audit: Firebase push key bisa null pada kondisi error lokal, jangan lanjut ke child(null).
+            Toast.makeText(this, "Gagal membuat ID task", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         if (shimmer != null) {
 
             shimmer.setVisibility(View.VISIBLE);
@@ -564,7 +578,7 @@ public class AddTaskActivity extends AppCompatActivity {
                 // ================= VALIDASI AFTER =================
                 if ("after".equals(mode) && finalAfterUrls.isEmpty()) {
 
-                    runOnUiThread(() -> {
+                    runOnUiThreadIfActive(() -> {
 
                         Toast.makeText(
                                 AddTaskActivity.this,
@@ -598,6 +612,7 @@ public class AddTaskActivity extends AppCompatActivity {
                     database.child(id)
                             .get()
                             .addOnSuccessListener(snapshot -> {
+                                if (isActivityUnavailable()) return;
 
                                 Task oldTask = snapshot.getValue(Task.class);
 
@@ -660,6 +675,7 @@ public class AddTaskActivity extends AppCompatActivity {
                                         database.child(id)
                                                 .setValue(oldTask)
                                                 .addOnSuccessListener(aVoid -> {
+                                                    if (isActivityUnavailable()) return;
 
                                                     dialog.dismiss();
 
@@ -687,6 +703,7 @@ public class AddTaskActivity extends AppCompatActivity {
                                                     finish();
                                                 })
                                                 .addOnFailureListener(e -> {
+                                                    if (isActivityUnavailable()) return;
 
                                                     dialog.dismiss();
 
@@ -728,6 +745,7 @@ public class AddTaskActivity extends AppCompatActivity {
                     database.child(id)
                             .setValue(task)
                             .addOnSuccessListener(aVoid -> {
+                                if (isActivityUnavailable()) return;
 
                                 dialog.dismiss();
                                 btnSimpan.setEnabled(true);
@@ -760,6 +778,7 @@ public class AddTaskActivity extends AppCompatActivity {
                                 finish();
                             })
                             .addOnFailureListener(e -> {
+                                if (isActivityUnavailable()) return;
 
                                 dialog.dismiss();
                                 btnSimpan.setEnabled(true);
@@ -822,7 +841,7 @@ public class AddTaskActivity extends AppCompatActivity {
                         @Override
                         public void onStart(String requestId) {
 
-                            runOnUiThread(() -> {
+                            runOnUiThreadIfActive(() -> {
 
                                 if (progressBar != null) {
 
@@ -871,9 +890,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
                             if (count[0] == total) {
 
-                                new Handler(Looper.getMainLooper()).post(() -> {
-                                    callback.onComplete(urls);
-                                });
+                                runOnUiThreadIfActive(() -> callback.onComplete(urls));
                             }
                         }
 
@@ -892,7 +909,7 @@ public class AddTaskActivity extends AppCompatActivity {
                                                     / totalBytes
                                     );
 
-                            runOnUiThread(() -> {
+                            runOnUiThreadIfActive(() -> {
 
                                 if (progressBar != null) {
 
@@ -929,7 +946,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
                             if (count[0] == total) {
 
-                                callback.onComplete(urls);
+                                runOnUiThreadIfActive(() -> callback.onComplete(urls));
                             }
                         }
 
@@ -947,7 +964,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
     private void updateProgress(int current, int total) {
 
-        runOnUiThread(() -> {
+        runOnUiThreadIfActive(() -> {
 
             if (progressBar != null) {
 
@@ -975,15 +992,23 @@ public class AddTaskActivity extends AppCompatActivity {
         });
     }
 
-    private void finishUpload(OnUploadComplete callback,
-                              List<String> urls) {
-
-        callback.onComplete(urls);
-    }
-
     interface OnUploadComplete {
 
         void onComplete(List<String> urls);
+    }
+
+    private void runOnUiThreadIfActive(Runnable action) {
+        // Audit: callback upload asynchronous tidak boleh menyentuh view setelah Activity selesai.
+        if (action == null || isActivityUnavailable()) return;
+        runOnUiThread(() -> {
+            if (!isActivityUnavailable()) {
+                action.run();
+            }
+        });
+    }
+
+    private boolean isActivityUnavailable() {
+        return isFinishing() || isDestroyed();
     }
 
 
@@ -994,6 +1019,8 @@ public class AddTaskActivity extends AppCompatActivity {
 
             InputStream input =
                     getContentResolver().openInputStream(uri);
+
+            if (input == null) return uri;
 
             BitmapFactory.Options options =
                     new BitmapFactory.Options();
@@ -1019,6 +1046,8 @@ public class AddTaskActivity extends AppCompatActivity {
 
             InputStream input2 =
                     getContentResolver().openInputStream(uri);
+
+            if (input2 == null) return uri;
 
             Bitmap bitmap =
                     BitmapFactory.decodeStream(
@@ -1154,7 +1183,14 @@ public class AddTaskActivity extends AppCompatActivity {
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        File file = new File(getExternalCacheDir(),
+        File cacheDir = getExternalCacheDir();
+
+        if (cacheDir == null) {
+            // Audit: beberapa device bisa mengembalikan external cache null.
+            cacheDir = getCacheDir();
+        }
+
+        File file = new File(cacheDir,
                 "IMG_" + System.currentTimeMillis() + ".jpg");
 
         cameraUri = FileProvider.getUriForFile(

@@ -1,7 +1,6 @@
 package com.sipaman.maintenance;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.content.Intent;
@@ -39,6 +38,7 @@ public class TaskActivity extends AppCompatActivity {
     List<Task> filteredList = new ArrayList<>();
 
     DatabaseReference database;
+    ValueEventListener taskListener;
 
     EditText etSearch;
 
@@ -85,6 +85,7 @@ public class TaskActivity extends AppCompatActivity {
 
         rvTask = findViewById(R.id.rvTask);
         rvTask.setLayoutManager(new LinearLayoutManager(this));
+        rvTask.setHasFixedSize(true);
 
         adapter = new TaskAdapter(filteredList, task -> {
 
@@ -175,9 +176,10 @@ public class TaskActivity extends AppCompatActivity {
         // 🔥 FIREBASE
         database = FirebaseDatabase.getInstance().getReference("tasks");
 
-        database.addValueEventListener(new ValueEventListener() {
+        taskListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                if (isFinishing() || isDestroyed()) return;
 
                 taskList.clear();
 
@@ -195,9 +197,12 @@ public class TaskActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
+                if (isFinishing() || isDestroyed()) return;
                 Toast.makeText(TaskActivity.this, "Gagal load data", Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+
+        database.addValueEventListener(taskListener);
 
         // 🔍 SEARCH REALTIME
         etSearch.addTextChangedListener(new android.text.TextWatcher() {
@@ -219,30 +224,54 @@ public class TaskActivity extends AppCompatActivity {
         bottomNav.setSelectedItemId(R.id.nav_task);
 
         bottomNav.setOnItemSelectedListener(item -> {
-
             int id = item.getItemId();
 
-            if (id == R.id.nav_dashboard) {
-                startActivity(new Intent(this, DashboardActivity.class));
-                finish();
-                return true;
-            } else if (id == R.id.nav_task) {
-                return true;
-            } else if (id == R.id.nav_calendar) {
-                startActivity(new Intent(this, CalendarActivity.class));
-                finish();
-                return true;
-            } else if (id == R.id.nav_project) {
-                startActivity(new Intent(this, ProjectActivity.class));
-                finish();
-                return true;
-            } else if (id == R.id.nav_setting) {
-                startActivity(new Intent(this, SettingsActivity.class));
+            if (id == R.id.nav_task) {
                 return true;
             }
 
+            Intent intent = null;
+
+            if (id == R.id.nav_dashboard) {
+                intent = new Intent(this, DashboardActivity.class);
+
+            } else if (id == R.id.nav_calendar) {
+                intent = new Intent(this, CalendarActivity.class);
+
+            } else if (id == R.id.nav_project) {
+                intent = new Intent(this, ProjectActivity.class);
+
+            } else if (id == R.id.nav_setting) {
+                intent = new Intent(this, SettingsActivity.class);
+            }
+
+            if (intent != null) {
+                startActivity(intent);
+
+                // Animasi perpindahan lebih halus
+                overridePendingTransition(
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out
+                );
+
+                finish();
+                return true;
+            }
+
+            Toast.makeText(this, "Menu belum tersedia", Toast.LENGTH_SHORT).show();
             return false;
         });
+
+        bottomNav.setSelectedItemId(R.id.nav_task);
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Audit: listener Firebase realtime dilepas untuk mencegah leak Activity.
+        if (database != null && taskListener != null) {
+            database.removeEventListener(taskListener);
+        }
+        super.onDestroy();
     }
 
     // 🔥 NORMALIZE STATUS
@@ -279,9 +308,12 @@ public class TaskActivity extends AppCompatActivity {
             boolean isOverdue = false;
 
             try {
-                Date dueDate = sdf.parse(t.getDue());
-                if (dueDate != null && today.after(dueDate)) {
-                    isOverdue = true;
+                // Audit: due date bisa kosong dari Firebase, jadi parsing dibuat null-safe.
+                if (t.getDue() != null) {
+                    Date dueDate = sdf.parse(t.getDue());
+                    if (dueDate != null && today.after(dueDate)) {
+                        isOverdue = true;
+                    }
                 }
             } catch (Exception ignored) {}
 
@@ -324,11 +356,6 @@ public class TaskActivity extends AppCompatActivity {
 
     // 🔥 FILTER ENGINE FINAL (FIXED TOTAL)
     private void applyFilterAndSearch() {
-
-        Log.d("TASK_DEBUG", "Adapter size: " + filteredList.size());
-        Log.d("TASK_DEBUG", "Total task: " + taskList.size());
-        Log.d("TASK_DEBUG", "Filtered: " + filteredList.size());
-
 
         filteredList.clear();
 
@@ -387,9 +414,12 @@ public class TaskActivity extends AppCompatActivity {
             boolean isOverdue = false;
 
             try {
-                Date dueDate = sdf.parse(t.getDue());
-                if (dueDate != null && today.after(dueDate)) {
-                    isOverdue = true;
+                // Audit: hindari NPE saat field due belum ada/masih kosong.
+                if (t.getDue() != null) {
+                    Date dueDate = sdf.parse(t.getDue());
+                    if (dueDate != null && today.after(dueDate)) {
+                        isOverdue = true;
+                    }
                 }
             } catch (Exception ignored) {}
 

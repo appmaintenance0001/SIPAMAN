@@ -15,14 +15,20 @@ public class NotificationHelper {
     private static final String CHANNEL_ID = "TASK_CHANNEL";
 
     public static void showNotification(Context context, String title, String message, String taskId) {
+        // Audit: hindari crash hashCode/null context saat notifikasi dipanggil dari Worker.
+        if (context == null) return;
+
+        String safeTaskId = taskId == null || taskId.trim().isEmpty()
+                ? "notification"
+                : taskId;
 
         Intent intent = new Intent(context, DashboardActivity.class);
-        intent.putExtra("taskId", taskId);
+        intent.putExtra("taskId", safeTaskId);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
-                taskId.hashCode(), // biar unik per task
+                safeTaskId.hashCode(), // biar unik per task
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
@@ -35,10 +41,12 @@ public class NotificationHelper {
             );
 
             NotificationManager manager = context.getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
         }
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "TASK_CHANNEL")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle(title)
                 .setContentText(message)
@@ -55,6 +63,6 @@ public class NotificationHelper {
         }
 
         NotificationManagerCompat.from(context)
-                .notify(taskId.hashCode(), builder.build());
+                .notify(safeTaskId.hashCode(), builder.build());
     }
 }

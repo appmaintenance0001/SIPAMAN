@@ -60,7 +60,7 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
         holder.tvProjectLocation.setText(project.getLocation() == null ? "-" : project.getLocation());
         holder.tvTaskCount.setText(count + " Task");
         holder.tvProjectIcon.setText(project.getIcon() == null || project.getIcon().trim().isEmpty()
-                ? name.substring(0, 1).toUpperCase()
+                ? getProjectInitial(name)
                 : project.getIcon());
 
         try {
@@ -92,5 +92,13 @@ public class ProjectAdapter extends RecyclerView.Adapter<ProjectAdapter.ViewHold
     @Override
     public int getItemCount() {
         return list == null ? 0 : list.size();
+    }
+
+    private String getProjectInitial(String name) {
+        // Audit: nama project kosong tidak boleh membuat substring crash.
+        if (name == null || name.trim().isEmpty()) {
+            return "P";
+        }
+        return name.trim().substring(0, 1).toUpperCase();
     }
 }

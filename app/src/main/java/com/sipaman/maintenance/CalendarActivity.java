@@ -43,6 +43,7 @@ public class CalendarActivity extends AppCompatActivity {
     private LinearLayout taskContainer;
     private TextView tvMonthTitle, tvSelectedDate, tvEmptyTask;
     private DatabaseReference database;
+    private ValueEventListener taskListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,33 +118,51 @@ public class CalendarActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
-            if (id == R.id.nav_dashboard) {
-                startActivity(new Intent(this, DashboardActivity.class));
-                finish();
-                return true;
-            } else if (id == R.id.nav_task) {
-                startActivity(new Intent(this, TaskActivity.class));
-                finish();
-                return true;
-            } else if (id == R.id.nav_calendar) {
-                return true;
-            } else if (id == R.id.nav_project) {
-                startActivity(new Intent(this, ProjectActivity.class));
-                finish();
-                return true;
-            } else if (id == R.id.nav_setting) {
-                startActivity(new Intent(this, SettingsActivity.class));
+            if (id == R.id.nav_calendar) {
                 return true;
             }
 
-            return true;
+            Intent intent = null;
+
+            if (id == R.id.nav_dashboard) {
+                intent = new Intent(this, DashboardActivity.class);
+
+            } else if (id == R.id.nav_task) {
+                intent = new Intent(this, TaskActivity.class);
+
+            } else if (id == R.id.nav_project) {
+                intent = new Intent(this, ProjectActivity.class);
+
+            } else if (id == R.id.nav_setting) {
+                intent = new Intent(this, SettingsActivity.class);
+            }
+
+            if (intent != null) {
+                startActivity(intent);
+
+                // Animasi perpindahan lebih halus
+                overridePendingTransition(
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out
+                );
+
+                finish();
+                return true;
+            }
+
+            Toast.makeText(this, "Menu belum tersedia", Toast.LENGTH_SHORT).show();
+            return false;
         });
+
+        bottomNav.setSelectedItemId(R.id.nav_calendar);
     }
 
     private void loadTasks() {
-        database.addValueEventListener(new ValueEventListener() {
+        taskListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                if (isFinishing() || isDestroyed()) return;
+
                 tasksByDate.clear();
 
                 for (DataSnapshot data : snapshot.getChildren()) {
@@ -171,9 +190,21 @@ public class CalendarActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError error) {
+                if (isFinishing() || isDestroyed()) return;
                 Toast.makeText(CalendarActivity.this, "Gagal load kalender", Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+
+        database.addValueEventListener(taskListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Audit: lepaskan listener realtime agar Activity tidak tertahan setelah ditutup.
+        if (database != null && taskListener != null) {
+            database.removeEventListener(taskListener);
+        }
+        super.onDestroy();
     }
 
     private void renderCalendar() {

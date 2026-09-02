@@ -2,6 +2,8 @@ package com.sipaman.maintenance;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +20,14 @@ import java.util.Locale;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     private final List<Task> taskList;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private String highlightedTaskId = null;
     private OnItemClickListener listener;
+    private final Runnable clearHighlightRunnable = () -> {
+        String previousId = highlightedTaskId;
+        highlightedTaskId = null;
+        notifyTaskChanged(previousId);
+    };
 
     public interface OnItemClickListener {
         void onItemClick(Task task);
@@ -35,13 +43,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     }
 
     public void setHighlightedTask(String taskId) {
+        String previousId = highlightedTaskId;
         this.highlightedTaskId = taskId;
-        notifyDataSetChanged();
+        mainHandler.removeCallbacks(clearHighlightRunnable);
+        notifyTaskChanged(previousId);
+        notifyTaskChanged(taskId);
 
-        new android.os.Handler().postDelayed(() -> {
-            highlightedTaskId = null;
-            notifyDataSetChanged();
-        }, 3000);
+        // Audit: delayed callback disimpan agar bisa dibatalkan saat RecyclerView detach.
+        mainHandler.postDelayed(clearHighlightRunnable, 3000);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -189,5 +198,30 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return taskList == null ? 0 : taskList.size();
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+        // Audit: cegah Handler menahan adapter setelah list tidak dipakai.
+        mainHandler.removeCallbacks(clearHighlightRunnable);
+        super.onDetachedFromRecyclerView(recyclerView);
+    }
+
+    private void notifyTaskChanged(String taskId) {
+        int position = findTaskPosition(taskId);
+        if (position >= 0) {
+            notifyItemChanged(position);
+        }
+    }
+
+    private int findTaskPosition(String taskId) {
+        if (taskId == null || taskList == null) return -1;
+        for (int i = 0; i < taskList.size(); i++) {
+            Task task = taskList.get(i);
+            if (task != null && taskId.equals(task.getId())) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

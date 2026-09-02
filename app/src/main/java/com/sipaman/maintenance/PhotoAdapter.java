@@ -18,8 +18,8 @@ import java.util.List;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> {
 
-    Context context;
-    List<String> urlList;
+    private final Context context;
+    private final List<String> urlList;
 
     public PhotoAdapter(Context context, List<String> urlList) {
         this.context = context;
@@ -29,7 +29,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_photo, parent, false);
+        // Audit: inflate memakai parent context agar tidak menahan Activity context lebih lama dari RecyclerView.
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo, parent, false);
         return new ViewHolder(view);
     }
 
@@ -38,15 +39,15 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.ViewHolder> 
 
         String url = urlList.get(position);
 
-        Glide.with(context)
+        Glide.with(holder.itemView)
                 .load(url)
                 .into(holder.imgPhoto);
 
         // 🔥 PREVIEW
         holder.imgPhoto.setOnClickListener(v -> {
-            Intent intent = new Intent(context, PreviewActivity.class);
+            Intent intent = new Intent(v.getContext(), PreviewActivity.class);
             intent.putExtra("image", url);
-            context.startActivity(intent);
+            v.getContext().startActivity(intent);
         });
     }
 

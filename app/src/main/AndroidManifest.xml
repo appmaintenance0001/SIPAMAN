@@ -24,12 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SIPAMAN">
         <activity
-            android:name=".ProjectSummaryAdapter"
-            android:exported="false" />
-        <activity
-            android:name=".ProjectSummary"
-            android:exported="false" />
-        <activity
             android:name=".ProjectDetailActivity"
             android:exported="false" />
         <activity

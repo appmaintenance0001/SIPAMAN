@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/nav_dashboard"
-        android:icon="@android:drawable/ic_menu_view"
-        android:title="Dashboard" />
+        android:icon="@drawable/ic_dashboard"
+        android:title="Dashboard"/>
 
     <item
         android:id="@+id/nav_task"
-        android:icon="@android:drawable/ic_menu_view"
-        android:title="Tasks" />
+        android:icon="@drawable/ic_task"
+        android:title="Task"/>
 
     <item
         android:id="@+id/nav_calendar"
         android:icon="@drawable/ic_calendar"
-        android:title="Calendar" />
+        android:title="Calendar"/>
 
     <item
         android:id="@+id/nav_project"
-        android:icon="@android:drawable/ic_menu_view"
-        android:title="Project" />
+        android:icon="@drawable/ic_project"
+        android:title="Project"/>
 
     <item
         android:id="@+id/nav_setting"
-        android:icon="@android:drawable/ic_menu_view"
-        android:title="Settings" />
+        android:icon="@drawable/ic_setting"
+        android:title="Setting"/>
 
 </menu>

@@ -26,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
@@ -56,6 +57,12 @@ public class DashboardActivity extends AppCompatActivity {
     private RecentActivityDashboardAdapter recentActivityAdapter;
 
     private DatabaseReference taskRef;
+    private DatabaseReference projectRef;
+    private DatabaseReference activityLogRef;
+    private Query activityLogQuery;
+    private ValueEventListener taskListener;
+    private ValueEventListener projectListener;
+    private ValueEventListener activityLogListener;
     private PieChart pieChart;
     private TextView tvWelcomeName;
     private TextView tvRole;
@@ -71,6 +78,14 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView tvCompletion;
     private TextView tvDueToday;
     private TextView tvLegendDone, tvLegendProgress, tvLegendPending, tvLegendOverdue;
+    private TextView tvEmptyProjectSummary;
+    private TextView tvEmptyDueSoon;
+    private TextView tvEmptyOverdue;
+    private TextView tvEmptyRecentActivity;
+    private RecyclerView rvProjectSummary;
+    private RecyclerView rvDueSoon;
+    private RecyclerView rvOverdue;
+    private RecyclerView rvRecentActivity;
     private CircularProgressIndicator progressCircle;
 
     private LinearProgressIndicator progressBar;
@@ -90,10 +105,23 @@ public class DashboardActivity extends AppCompatActivity {
         setupQuickAction();
 
         loadUserName();
+        loadCurrentDate();
 
         loadDashboardData();
         loadProjectCount();
         loadRecentActivities();
+    }
+
+    private void loadCurrentDate() {
+
+        TextView chipDate = findViewById(R.id.chipDate);
+
+        SimpleDateFormat sdf =
+                new SimpleDateFormat("dd MMM yyyy", new Locale("id", "ID"));
+
+        String tanggal = sdf.format(new Date());
+
+        chipDate.setText("📅 " + tanggal);
     }
 
     private void bindViews() {
@@ -143,12 +171,12 @@ public class DashboardActivity extends AppCompatActivity {
         labelProject.setText("Project");
         labelPic.setText("PIC");
 
-        RecyclerView rvOverdue = findViewById(R.id.rvOverdue);
+        rvOverdue = findViewById(R.id.rvOverdue);
         rvOverdue.setLayoutManager(new LinearLayoutManager(this));
         overdueDashboardAdapter = new DashboardTaskAdapter(overdueList, true);
         rvOverdue.setAdapter(overdueDashboardAdapter);
 
-        RecyclerView rvDueSoon = findViewById(R.id.rvDueSoon);
+        rvDueSoon = findViewById(R.id.rvDueSoon);
 
         rvDueSoon.setLayoutManager(new LinearLayoutManager(this));
 
@@ -156,12 +184,12 @@ public class DashboardActivity extends AppCompatActivity {
 
         rvDueSoon.setAdapter(dueSoonDashboardAdapter);
 
-        RecyclerView rvRecentActivity = findViewById(R.id.rvRecentActivity);
+        rvRecentActivity = findViewById(R.id.rvRecentActivity);
         rvRecentActivity.setLayoutManager(new LinearLayoutManager(this));
         recentActivityAdapter = new RecentActivityDashboardAdapter(recentActivityList);
         rvRecentActivity.setAdapter(recentActivityAdapter);
 
-        RecyclerView rvProjectSummary =
+        rvProjectSummary =
                 findViewById(R.id.rvProjectSummary);
 
         rvProjectSummary.setLayoutManager(
@@ -182,6 +210,10 @@ public class DashboardActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         tvProgressPercent = findViewById(R.id.tvProgressPercent);
         tvProgressTitle = findViewById(R.id.tvProgressTitle);
+        tvEmptyProjectSummary = findViewById(R.id.tvEmptyProjectSummary);
+        tvEmptyDueSoon = findViewById(R.id.tvEmptyDueSoon);
+        tvEmptyOverdue = findViewById(R.id.tvEmptyOverdue);
+        tvEmptyRecentActivity = findViewById(R.id.tvEmptyRecentActivity);
 
         chipDate.setText(new SimpleDateFormat("dd MMM yyyy", Locale.US).format(new Date()));
         chipSite.setText("SI-PAMAN");
@@ -272,49 +304,70 @@ public class DashboardActivity extends AppCompatActivity {
         findViewById(R.id.btnLihatSemua).setOnClickListener(v ->
                 startActivity(new Intent(this, TaskActivity.class).putExtra("filter", "OVERDUE"))
         );
+
+        findViewById(R.id.btnProjectLihatSemua).setOnClickListener(v ->
+                startActivity(new Intent(this, ProjectActivity.class))
+        );
+
+        findViewById(R.id.btnRecentActivityAll).setOnClickListener(v ->
+                startActivity(new Intent(this, HistoryActivity.class))
+        );
     }
 
     private void setupBottomNav() {
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
 
             if (id == R.id.nav_dashboard) {
                 return true;
-            } else if (id == R.id.nav_task) {
-                startActivity(new Intent(this, TaskActivity.class));
-                finish();
-                return true;
+            }
+
+            Intent intent = null;
+
+            if (id == R.id.nav_task) {
+                intent = new Intent(this, TaskActivity.class);
+
             } else if (id == R.id.nav_calendar) {
-                startActivity(new Intent(this, CalendarActivity.class));
-                finish();
-                return true;
+                intent = new Intent(this, CalendarActivity.class);
+
+            } else if (id == R.id.nav_project) {
+                intent = new Intent(this, ProjectActivity.class);
+
+            } else if (id == R.id.nav_setting) {
+                intent = new Intent(this, SettingsActivity.class);
             }
-            else if (id == R.id.nav_project) {
-                startActivity(new Intent(this, ProjectActivity.class));
+
+            if (intent != null) {
+                startActivity(intent);
+
+                // Animasi perpindahan lebih halus
+                overridePendingTransition(
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out
+                );
+
                 finish();
-                return true;
-            }
-            else if (id == R.id.nav_setting) {
-                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             }
 
             Toast.makeText(this, "Menu belum tersedia", Toast.LENGTH_SHORT).show();
-            return true;
+            return false;
         });
+
         bottomNav.setSelectedItemId(R.id.nav_dashboard);
     }
 
     private void setupSummaryCards() {
-        findViewById(R.id.cardTotal).setBackgroundResource(R.drawable.bg_chart_card);
-        findViewById(R.id.cardDone).setBackgroundResource(R.drawable.bg_chart_card);
-        findViewById(R.id.cardProgress).setBackgroundResource(R.drawable.bg_chart_card);
-        findViewById(R.id.cardOverdue).setBackgroundResource(R.drawable.bg_chart_card);
-        findViewById(R.id.cardProject).setBackgroundResource(R.drawable.bg_chart_card);
-        findViewById(R.id.cardPic).setBackgroundResource(R.drawable.bg_chart_card);
-        findViewById(R.id.cardCompletion).setBackgroundResource(R.drawable.bg_chart_card);
-        findViewById(R.id.cardDueToday).setBackgroundResource(R.drawable.bg_chart_card);
+        findViewById(R.id.cardTotal).setBackgroundResource(R.drawable.bg_summary_blue);
+        findViewById(R.id.cardDone).setBackgroundResource(R.drawable.bg_summary_green);
+        findViewById(R.id.cardProgress).setBackgroundResource(R.drawable.bg_summary_orange);
+        findViewById(R.id.cardOverdue).setBackgroundResource(R.drawable.bg_summary_red);
+        findViewById(R.id.cardProject).setBackgroundResource(R.drawable.bg_summary_purple);
+        findViewById(R.id.cardPic).setBackgroundResource(R.drawable.bg_summary_cyan);
+        findViewById(R.id.cardCompletion).setBackgroundResource(R.drawable.bg_summary_blue);
+        findViewById(R.id.cardDueToday).setBackgroundResource(R.drawable.bg_summary_orange);
     }
 
     private void loadUserName() {
@@ -336,22 +389,33 @@ public class DashboardActivity extends AppCompatActivity {
                 .child(user.getUid())
                 .get()
                 .addOnSuccessListener(snapshot -> {
+
                     String name = snapshot.child("name").getValue(String.class);
                     String role = snapshot.child("role").getValue(String.class);
-                    if (!isEmpty(name)) {
+                    String site = snapshot.child("site").getValue(String.class);
+
+                    if (name != null)
                         tvWelcomeName.setText(name);
-                    }
-                    if (!isEmpty(role)) {
+
+                    if (role != null)
                         tvRole.setText(role);
+
+                    if (site != null && !site.isEmpty()) {
+                        chipSite.setText("📍 " + site);
+                    } else {
+                        chipSite.setText("📍 Pulubala");
                     }
+
                 });
     }
 
     private void loadDashboardData() {
         taskRef = FirebaseDatabase.getInstance().getReference("tasks");
-        taskRef.addValueEventListener(new ValueEventListener() {
+        taskListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                if (isFinishing() || isDestroyed()) return;
+
                 int totalCount = 0;
                 int doneCount = 0;
                 int progressCount = 0;
@@ -466,13 +530,17 @@ public class DashboardActivity extends AppCompatActivity {
 
                 overdueDashboardAdapter.notifyDataSetChanged();
                 dueSoonDashboardAdapter.notifyDataSetChanged();
+                updateTaskEmptyStates();
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
+                if (isFinishing() || isDestroyed()) return;
                 Toast.makeText(DashboardActivity.this, "Gagal ambil data dashboard", Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+
+        taskRef.addValueEventListener(taskListener);
     }
 
     private void sortAndLimitOverdue() {
@@ -599,6 +667,8 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private boolean isOverdue(String dueDate) {
+        if (isEmpty(dueDate)) return false;
+
         try {
             Date due = dateFormat.parse(dueDate);
             return due != null && due.before(new Date());
@@ -608,6 +678,7 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private boolean isDueSoon(String dueDate) {
+        if (isEmpty(dueDate)) return false;
 
         try {
 
@@ -631,6 +702,8 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private boolean isDueToday(String dueDate) {
+        if (isEmpty(dueDate)) return false;
+
         try {
             Date due = dateFormat.parse(dueDate);
             if (due == null) return false;
@@ -648,6 +721,8 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private Date parseDate(String value) {
+        if (isEmpty(value)) return new Date(0);
+
         try {
             Date date = dateFormat.parse(value);
             return date == null ? new Date(0) : date;
@@ -658,12 +733,12 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void loadProjectCount() {
 
-        DatabaseReference projectRef =
-                FirebaseDatabase.getInstance().getReference("projects");
+        projectRef = FirebaseDatabase.getInstance().getReference("projects");
 
-        projectRef.addValueEventListener(new ValueEventListener() {
+        projectListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                if (isFinishing() || isDestroyed()) return;
 
                 int totalProject = (int) snapshot.getChildrenCount();
 
@@ -675,16 +750,19 @@ public class DashboardActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError error) {
 
             }
-        });
+        };
+
+        projectRef.addValueEventListener(projectListener);
 
     }
 
     private void loadRecentActivities() {
-        FirebaseDatabase.getInstance()
-                .getReference("activity_logs")
-                .addValueEventListener(new ValueEventListener() {
+        activityLogRef = FirebaseDatabase.getInstance().getReference("activity_logs");
+        activityLogListener = new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
+                        if (isFinishing() || isDestroyed()) return;
+
                         recentActivityList.clear();
 
                         for (DataSnapshot data : snapshot.getChildren()) {
@@ -707,13 +785,50 @@ public class DashboardActivity extends AppCompatActivity {
                         }
 
                         recentActivityAdapter.notifyDataSetChanged();
+                        updateRecentActivityEmptyState();
                     }
 
                     @Override
                     public void onCancelled(DatabaseError error) {
+                        if (isFinishing() || isDestroyed()) return;
                         Toast.makeText(DashboardActivity.this, "Gagal load aktivitas terbaru", Toast.LENGTH_SHORT).show();
                     }
-                });
+                };
+
+        // Audit: Dashboard hanya membutuhkan 5 aktivitas terbaru, query dibatasi untuk mengurangi data transfer.
+        activityLogQuery = activityLogRef.orderByChild("timestamp")
+                .limitToLast(5);
+        activityLogQuery.addValueEventListener(activityLogListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Audit: semua listener realtime Dashboard dilepas untuk mencegah memory leak.
+        if (taskRef != null && taskListener != null) {
+            taskRef.removeEventListener(taskListener);
+        }
+        if (projectRef != null && projectListener != null) {
+            projectRef.removeEventListener(projectListener);
+        }
+        if (activityLogQuery != null && activityLogListener != null) {
+            activityLogQuery.removeEventListener(activityLogListener);
+        }
+        super.onDestroy();
+    }
+
+    private void updateTaskEmptyStates() {
+        setEmptyState(rvProjectSummary, tvEmptyProjectSummary, projectSummaryList.isEmpty());
+        setEmptyState(rvDueSoon, tvEmptyDueSoon, dueSoonList.isEmpty());
+        setEmptyState(rvOverdue, tvEmptyOverdue, overdueList.isEmpty());
+    }
+
+    private void updateRecentActivityEmptyState() {
+        setEmptyState(rvRecentActivity, tvEmptyRecentActivity, recentActivityList.isEmpty());
+    }
+
+    private void setEmptyState(RecyclerView recyclerView, TextView emptyView, boolean empty) {
+        recyclerView.setVisibility(empty ? View.GONE : View.VISIBLE);
+        emptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
     }
 
     private boolean isEmpty(String value) {

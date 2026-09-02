@@ -4,6 +4,7 @@ package com.sipaman.maintenance;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
+
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,7 +28,6 @@ import com.google.firebase.database.DatabaseError;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Date;
@@ -61,6 +62,11 @@ public class DetailTaskActivity extends AppCompatActivity {
                     .setPositiveButton("Hapus", (d, w) -> {
 
                         String id = getIntent().getStringExtra("id");
+
+                        if (TextUtils.isEmpty(id)) {
+                            Toast.makeText(this, "ID Task tidak valid", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         FirebaseDatabase.getInstance()
                                 .getReference("tasks")
@@ -143,6 +149,12 @@ public class DetailTaskActivity extends AppCompatActivity {
         String priority = getIntent().getStringExtra("priority");
         String deskripsi = getIntent().getStringExtra("deskripsi");
 
+        if (TextUtils.isEmpty(id)) {
+            Toast.makeText(this, "ID Task tidak valid", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         if (status == null) status = "ON_PROGRESS";
 
         // ================= STATUS FIX (KONSISTEN DENGAN LIST) =================
@@ -221,6 +233,7 @@ public class DetailTaskActivity extends AppCompatActivity {
         db.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                if (isFinishing() || isDestroyed()) return;
 
                 Task task = snapshot.getValue(Task.class);
 
@@ -266,6 +279,10 @@ public class DetailTaskActivity extends AppCompatActivity {
         String id =
                 getIntent().getStringExtra("id");
 
+        if (TextUtils.isEmpty(id) || isFinishing() || isDestroyed()) {
+            return;
+        }
+
         DatabaseReference db =
                 FirebaseDatabase.getInstance()
                         .getReference("tasks");
@@ -273,6 +290,7 @@ public class DetailTaskActivity extends AppCompatActivity {
         db.child(id)
                 .get()
                 .addOnSuccessListener(snapshot -> {
+                    if (isFinishing() || isDestroyed()) return;
 
                     Task task =
                             snapshot.getValue(Task.class);
@@ -341,9 +359,11 @@ public class DetailTaskActivity extends AppCompatActivity {
                                 Locale.getDefault()
                         );
 
+                if (TextUtils.isEmpty   (dueDate)) return false;
+
                 Date due = sdf.parse(dueDate);
 
-                return due.before(new Date());
+                return due != null && due.before(new Date());
 
             } catch (Exception e) {
 

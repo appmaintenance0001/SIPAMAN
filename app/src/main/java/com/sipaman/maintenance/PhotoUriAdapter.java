@@ -19,8 +19,8 @@ import java.util.List;
 
 public class PhotoUriAdapter extends RecyclerView.Adapter<PhotoUriAdapter.ViewHolder> {
 
-    Context context;
-    List<Uri> uriList;
+    private final Context context;
+    private final List<Uri> uriList;
 
     public PhotoUriAdapter(
             Context context,
@@ -34,18 +34,19 @@ public class PhotoUriAdapter extends RecyclerView.Adapter<PhotoUriAdapter.ViewHo
         this.deleteClick = deleteClick;
     }
 
-    private boolean showDelete = false;
+    private final boolean showDelete;
 
     public interface OnDeleteClick {
         void onDelete(int position);
     }
 
-    private OnDeleteClick deleteClick;
+    private final OnDeleteClick deleteClick;
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_photo, parent, false);
+        // Audit: gunakan parent context agar lifecycle Glide mengikuti item view.
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_photo, parent, false);
         return new ViewHolder(view);
     }
 
@@ -54,7 +55,7 @@ public class PhotoUriAdapter extends RecyclerView.Adapter<PhotoUriAdapter.ViewHo
 
         Uri uri = uriList.get(position);
 
-        Glide.with(context)
+        Glide.with(holder.itemView)
                 .load(uri)
                 .into(holder.imgPhoto);
 
@@ -65,22 +66,24 @@ public class PhotoUriAdapter extends RecyclerView.Adapter<PhotoUriAdapter.ViewHo
         }
 
         holder.btnDelete.setOnClickListener(v -> {
-            if (deleteClick != null) {
-                deleteClick.onDelete(holder.getAdapterPosition());
+            int adapterPosition = holder.getBindingAdapterPosition();
+            // Audit: posisi RecyclerView bisa invalid saat item sedang dianimasikan/dihapus.
+            if (deleteClick != null && adapterPosition != RecyclerView.NO_POSITION) {
+                deleteClick.onDelete(adapterPosition);
             }
         });
 
         holder.imgPhoto.setOnClickListener(v -> {
 
             Intent intent =
-                    new Intent(context, PreviewActivity.class);
+                    new Intent(v.getContext(), PreviewActivity.class);
 
             intent.putExtra(
                     "image",
                     uri.toString()
             );
 
-            context.startActivity(intent);
+            v.getContext().startActivity(intent);
         });
     }
 

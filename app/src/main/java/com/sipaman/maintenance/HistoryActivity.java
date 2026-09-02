@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -21,6 +22,8 @@ public class HistoryActivity extends AppCompatActivity {
 
     private final List<ActivityLog> logList = new ArrayList<>();
     private HistoryAdapter adapter;
+    private DatabaseReference historyRef;
+    private ValueEventListener historyListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +34,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         RecyclerView rvHistory = findViewById(R.id.rvHistory);
         rvHistory.setLayoutManager(new LinearLayoutManager(this));
+        rvHistory.setHasFixedSize(true);
         adapter = new HistoryAdapter(logList);
         rvHistory.setAdapter(adapter);
 
@@ -38,11 +42,12 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void loadHistory() {
-        FirebaseDatabase.getInstance()
-                .getReference("activity_logs")
-                .addValueEventListener(new ValueEventListener() {
+        historyRef = FirebaseDatabase.getInstance().getReference("activity_logs");
+        historyListener = new ValueEventListener() {
                     @Override
                     public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
+                        if (isFinishing() || isDestroyed()) return;
+
                         logList.clear();
                         for (DataSnapshot data : snapshot.getChildren()) {
                             ActivityLog log = data.getValue(ActivityLog.class);
@@ -61,8 +66,20 @@ public class HistoryActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+                        if (isFinishing() || isDestroyed()) return;
                         Toast.makeText(HistoryActivity.this, "Gagal load riwayat", Toast.LENGTH_SHORT).show();
                     }
-                });
+                };
+
+        historyRef.addValueEventListener(historyListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Audit: listener riwayat dilepas saat Activity tidak lagi aktif.
+        if (historyRef != null && historyListener != null) {
+            historyRef.removeEventListener(historyListener);
+        }
+        super.onDestroy();
     }
 }

@@ -1,7 +1,6 @@
 package com.sipaman.maintenance;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -36,6 +35,8 @@ public class ProjectActivity extends AppCompatActivity {
 
     private DatabaseReference projectRef;
     private DatabaseReference taskRef;
+    private ValueEventListener projectListener;
+    private ValueEventListener taskListener;
 
     private ProjectAdapter adapter;
 
@@ -53,6 +54,7 @@ public class ProjectActivity extends AppCompatActivity {
 
         RecyclerView rvProject = findViewById(R.id.rvProject);
         rvProject.setLayoutManager(new LinearLayoutManager(this));
+        rvProject.setHasFixedSize(true);
 
         adapter = new ProjectAdapter(
                 filteredProjects,
@@ -134,50 +136,45 @@ public class ProjectActivity extends AppCompatActivity {
         bottomNav.setSelectedItemId(R.id.nav_project);
 
         bottomNav.setOnItemSelectedListener(item -> {
-
             int id = item.getItemId();
 
-            if (id == R.id.nav_dashboard) {
-
-                startActivity(new Intent(ProjectActivity.this, DashboardActivity.class));
-                finish();
-                return true;
-
-            }
-
-            if (id == R.id.nav_task) {
-
-                startActivity(new Intent(ProjectActivity.this, TaskActivity.class));
-                finish();
-                return true;
-
-            }
-
-            if (id == R.id.nav_calendar) {
-
-                startActivity(new Intent(ProjectActivity.this, CalendarActivity.class));
-                finish();
-                return true;
-
-            }
-
             if (id == R.id.nav_project) {
-
                 return true;
-
             }
 
-            if (id == R.id.nav_setting) {
+            Intent intent = null;
 
-                startActivity(new Intent(ProjectActivity.this, SettingsActivity.class));
-                return true;
+            if (id == R.id.nav_dashboard) {
+                intent = new Intent(this, DashboardActivity.class);
 
+            } else if (id == R.id.nav_task) {
+                intent = new Intent(this, TaskActivity.class);
+
+            } else if (id == R.id.nav_calendar) {
+                intent = new Intent(this, CalendarActivity.class);
+
+            } else if (id == R.id.nav_setting) {
+                intent = new Intent(this, SettingsActivity.class);
             }
 
+            if (intent != null) {
+                startActivity(intent);
+
+                // Animasi perpindahan lebih halus
+                overridePendingTransition(
+                        android.R.anim.fade_in,
+                        android.R.anim.fade_out
+                );
+
+                finish();
+                return true;
+            }
+
+            Toast.makeText(this, "Menu belum tersedia", Toast.LENGTH_SHORT).show();
             return false;
-
         });
 
+        bottomNav.setSelectedItemId(R.id.nav_project);
     }
 
     private void loadData() {
@@ -186,10 +183,11 @@ public class ProjectActivity extends AppCompatActivity {
         // HITUNG JUMLAH TASK
         // =======================
 
-        taskRef.addValueEventListener(new ValueEventListener() {
+        taskListener = new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (isFinishing() || isDestroyed()) return;
 
                 taskCountMap.clear();
 
@@ -222,16 +220,19 @@ public class ProjectActivity extends AppCompatActivity {
 
             }
 
-        });
+        };
+
+        taskRef.addValueEventListener(taskListener);
 
         // =======================
         // LOAD PROJECT
         // =======================
 
-        projectRef.addValueEventListener(new ValueEventListener() {
+        projectListener = new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (isFinishing() || isDestroyed()) return;
 
                 allProjects.clear();
 
@@ -254,6 +255,7 @@ public class ProjectActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                if (isFinishing() || isDestroyed()) return;
 
                 Toast.makeText(
                         ProjectActivity.this,
@@ -263,8 +265,22 @@ public class ProjectActivity extends AppCompatActivity {
 
             }
 
-        });
+        };
 
+        projectRef.addValueEventListener(projectListener);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Audit: kedua listener realtime dilepas saat Activity selesai.
+        if (taskRef != null && taskListener != null) {
+            taskRef.removeEventListener(taskListener);
+        }
+        if (projectRef != null && projectListener != null) {
+            projectRef.removeEventListener(projectListener);
+        }
+        super.onDestroy();
     }
 
     private void applySearch() {
@@ -528,4 +544,3 @@ public class ProjectActivity extends AppCompatActivity {
 
     }
 }
-

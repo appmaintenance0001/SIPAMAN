@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -30,6 +31,8 @@ public class NotificationActivity extends AppCompatActivity {
     private NotificationAdapter adapter;
     private RecyclerView rvNotification;
     private TextView tvEmptyNotification;
+    private DatabaseReference notificationRef;
+    private ValueEventListener notificationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,7 @@ public class NotificationActivity extends AppCompatActivity {
         tvEmptyNotification = findViewById(R.id.tvEmptyNotification);
         rvNotification = findViewById(R.id.rvNotification);
         rvNotification.setLayoutManager(new LinearLayoutManager(this));
+        rvNotification.setHasFixedSize(true);
         adapter = new NotificationAdapter(notificationList);
         rvNotification.setAdapter(adapter);
 
@@ -48,11 +52,12 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void loadNotifications() {
-        FirebaseDatabase.getInstance()
-                .getReference("tasks")
-                .addValueEventListener(new ValueEventListener() {
+        notificationRef = FirebaseDatabase.getInstance().getReference("tasks");
+        notificationListener = new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
+                        if (isFinishing() || isDestroyed()) return;
+
                         notificationList.clear();
 
                         for (DataSnapshot data : snapshot.getChildren()) {
@@ -70,9 +75,21 @@ public class NotificationActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError error) {
+                        if (isFinishing() || isDestroyed()) return;
                         Toast.makeText(NotificationActivity.this, "Gagal load notifikasi", Toast.LENGTH_SHORT).show();
                     }
-                });
+                };
+
+        notificationRef.addValueEventListener(notificationListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Audit: listener notifikasi dilepas untuk menghindari callback ke Activity lama.
+        if (notificationRef != null && notificationListener != null) {
+            notificationRef.removeEventListener(notificationListener);
+        }
+        super.onDestroy();
     }
 
     private void addNotificationForTask(Task task) {
@@ -123,6 +140,8 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private boolean isTomorrow(String dateText) {
+        if (isEmpty(dateText)) return false;
+
         try {
             Date due = dateFormat.parse(dateText);
             if (due == null) return false;
@@ -141,6 +160,8 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private boolean isOverdue(String dateText) {
+        if (isEmpty(dateText)) return false;
+
         try {
             Date due = dateFormat.parse(dateText);
             return due != null && due.before(new Date());
@@ -158,6 +179,8 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private String formatDate(String dateText) {
+        if (isEmpty(dateText)) return "-";
+
         try {
             Date date = dateFormat.parse(dateText);
             return date == null ? "-" : displayFormat.format(date);
