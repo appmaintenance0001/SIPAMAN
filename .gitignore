@@ -13,3 +13,6 @@
 .externalNativeBuild
 .cxx
 local.properties
+# Cache Gradle khusus Codex
+/.codex-gradle-project/
+/.codex-gradle-user/
