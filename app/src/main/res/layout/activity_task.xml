@@ -59,7 +59,7 @@
             android:layout_marginTop="14dp"
             android:layout_marginEnd="14dp"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/bg_search_field"
+            android:background="@drawable/bg_card"
             android:padding="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -154,7 +154,15 @@
             android:id="@+id/bottomNav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
+            android:background="@android:color/white"
+            android:elevation="12dp"
+
+            app:itemIconTint="@color/bottom_nav_color"
+            app:itemTextColor="@color/bottom_nav_color"
+            app:itemIconSize="26dp"
+            app:itemRippleColor="@color/bottom_nav_color"
+
+            app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav_menu"/>
 
     </LinearLayout>

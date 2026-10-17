@@ -15,7 +15,8 @@ public class LoadingDialog {
 
         dialog.setContentView(R.layout.dialog_loading);
 
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(false);
 
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(

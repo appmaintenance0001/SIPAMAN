@@ -4,9 +4,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7F6"
+    android:background="@drawable/bg_welcome"
     android:paddingStart="16dp"
     android:paddingEnd="16dp">
+
+    <ImageView
+        android:id="@+id/bgLeft"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:alpha="0.6"
+        android:src="@drawable/bg_leaf_left"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageView
+        android:id="@+id/bgRight"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:alpha="0.5"
+        android:rotation="180"
+        android:src="@drawable/bg_leaf_right"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- LOGO -->
     <ImageView
@@ -62,7 +83,7 @@
         android:id="@+id/desc"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Solusi digital untuk memantau, mengelola, dan meningkatkan kinerja maintenance secara real-time dan terintegrasi."
+        android:text="Monitoring, pencatatan maintenance, pelaporan, dan pengelolaan aset dalam satu aplikasi."
         android:textSize="12sp"
         android:textColor="#777777"
         android:gravity="center"
@@ -72,33 +93,44 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- IMAGE AREA -->
-    <FrameLayout
-        android:id="@+id/imageContainer"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardIllustration"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="18dp"
-        app:layout_constraintTop_toBottomOf="@id/desc"
-        app:layout_constraintBottom_toTopOf="@id/menu"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_height="250dp"
+        android:layout_marginTop="4dp"
 
-        <!-- BG -->
+        app:cardCornerRadius="30dp"
+        app:strokeWidth="0dp"
+        app:cardElevation="14dp"
+        app:cardBackgroundColor="#FFFFFF"
+
+        app:layout_constraintTop_toBottomOf="@id/desc"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/menu">
+
         <ImageView
+            android:id="@+id/imgIllustration"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/bg_factory" />
+            android:src="@drawable/img_sipaman_welcome"/>
 
-        <!-- ENGINEER -->
-        <ImageView
-            android:layout_width="220dp"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:layout_marginBottom="1dp"
-            android:adjustViewBounds="true"
-            android:src="@drawable/img_engineer" />
-    </FrameLayout>
+            android:text="● REALTIME"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="10sp"
+            android:background="@drawable/bg_badge_green"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_margin="16dp"/>
+
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- MENU -->
     <LinearLayout
@@ -111,7 +143,7 @@
         app:layout_constraintBottom_toTopOf="@id/btnMasuk"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageContainer">
+        app:layout_constraintTop_toBottomOf="@id/cardIllustration">
 
         <!-- ITEM 1 -->
         <LinearLayout
@@ -122,8 +154,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_monitoring_chart" />
 
             <TextView
@@ -131,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:text="Monitoring"
                 android:textColor="#777777"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <!-- ITEM 2 -->
@@ -143,8 +175,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_maintenance" />
 
             <TextView
@@ -152,7 +184,7 @@
                 android:layout_height="wrap_content"
                 android:text="Maintenance"
                 android:textColor="#777777"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <!-- ITEM 3 -->
@@ -164,8 +196,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_laporan" />
 
             <TextView
@@ -173,7 +205,7 @@
                 android:layout_height="wrap_content"
                 android:text="Laporan"
                 android:textColor="#777777"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <!-- ITEM 4 -->
@@ -185,8 +217,8 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="26dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:src="@drawable/ic_secure" />
 
             <TextView
@@ -194,8 +226,47 @@
                 android:layout_height="wrap_content"
                 android:text="Aman"
                 android:textColor="#777777"
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/layoutFeature"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+
+        app:layout_constraintTop_toBottomOf="@id/menu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✓ Realtime"
+            android:textSize="11sp"
+            android:textColor="#2E7D32"
+            android:padding="6dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✓ Cloud"
+            android:textSize="11sp"
+            android:textColor="#2E7D32"
+            android:padding="6dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="✓ Multi Site"
+            android:textSize="11sp"
+            android:textColor="#2E7D32"
+            android:padding="6dp"/>
 
     </LinearLayout>
 
@@ -203,7 +274,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnMasuk"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="56dp"
         android:layout_marginTop="1dp"
         android:layout_marginBottom="10dp"
         android:backgroundTint="#2E7D32"
@@ -215,7 +286,24 @@
         app:layout_constraintBottom_toTopOf="@id/info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/menu" />
+        app:layout_constraintTop_toBottomOf="@+id/layoutFeature"
+        app:icon="@drawable/ic_login"
+        app:iconGravity="textStart"
+        app:iconPadding="12dp"/>
+
+    <TextView
+        android:id="@+id/txtVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Versi 1.0.0"
+        android:textStyle="bold"
+        android:textColor="#2E7D32"
+        android:textSize="11sp"
+
+        app:layout_constraintTop_toBottomOf="@id/btnMasuk"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"/>
 
     <!-- INFO -->
     <LinearLayout
@@ -228,12 +316,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnMasuk">
+        app:layout_constraintTop_toBottomOf="@+id/txtVersion">
 
         <ImageView
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:src="@drawable/ic_secure" />
+
 
         <TextView
             android:layout_width="wrap_content"
@@ -241,6 +330,7 @@
             android:text=" Data aman, sistem terpercaya"
             android:textColor="#777777"
             android:textSize="10sp" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

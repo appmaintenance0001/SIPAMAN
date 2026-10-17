@@ -1,34 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="180dp"
+    android:layout_height="220dp"
     android:background="@drawable/bg_dashboard_header_v2"
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="20dp">
 
+    <!-- FOTO -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imgProfile"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:src="@drawable/ic_person"
+        app:civ_border_width="2dp"
+        app:civ_border_color="#FFFFFF" />
+
+    <!-- NAMA -->
     <TextView
         android:id="@+id/tvDrawerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:text="Nama User"
         android:textColor="#FFFFFF"
         android:textSize="22sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
+    <!-- EMAIL -->
     <TextView
         android:id="@+id/tvDrawerEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="email@gmail.com"
-        android:textColor="#DCEBFF"/>
+        android:textColor="#E8F5E9"
+        android:textSize="14sp" />
 
+    <!-- ROLE -->
     <TextView
         android:id="@+id/tvDrawerRole"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Supervisor"
-        android:textColor="#FFFFFF"/>
+        android:layout_marginTop="2dp"
+        android:text="Supervisor • Paguat"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <!-- STATUS -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_status_active"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp">
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/bg_green_dot" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="Aktif"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -11,6 +11,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.AuthResult;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -33,9 +34,28 @@ public class LoginActivity extends AppCompatActivity {
 
 
         // 🔥 BARU BOLEH DIPAKAI
-        if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(this, DashboardActivity.class));
-            finish();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+
+            currentUser.reload().addOnCompleteListener(task -> {
+
+                if (currentUser.isEmailVerified()) {
+
+                    startActivity(new Intent(
+                            LoginActivity.this,
+                            DashboardActivity.class));
+
+                    finish();
+
+                } else {
+
+                    FirebaseAuth.getInstance().signOut();
+
+                }
+
+            });
+
         }
 
         etEmail = findViewById(R.id.etEmail);
@@ -73,31 +93,75 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (task.isSuccessful()) {
 
-                        loadingDialog.dismiss();
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                        startActivity(new Intent(
-                                LoginActivity.this,
-                                DashboardActivity.class));
+                        if (user != null) {
 
-                        finish();
+                            user.reload().addOnCompleteListener(reloadTask -> {
+
+                                if (!reloadTask.isSuccessful()) {
+
+                                    loadingDialog.dismiss();
+
+                                    Toast.makeText(
+                                            LoginActivity.this,
+                                            "Gagal memeriksa status verifikasi.",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+
+                                    return;
+                                }
+
+                                if (user.isEmailVerified()) {
+
+                                    loadingDialog.dismiss();
+
+                                    Toast.makeText(
+                                            LoginActivity.this,
+                                            "Login berhasil",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+
+                                    startActivity(new Intent(
+                                            LoginActivity.this,
+                                            DashboardActivity.class));
+
+                                    finish();
+
+                                } else {
+
+                                    loadingDialog.dismiss();
+
+                                    FirebaseAuth.getInstance().signOut();
+
+                                    Toast.makeText(
+                                            LoginActivity.this,
+                                            "Email belum diverifikasi.\nSilakan cek email Anda.",
+                                            Toast.LENGTH_LONG
+                                    ).show();
+
+                                }
+
+                            });
+
+                        }
 
                     } else {
 
                         loadingDialog.dismiss();
 
-                        String errorMessage = "Login gagal";
+                        String message = "Login gagal";
 
-                        Exception e = task.getException();
-
-                        if (e != null && e.getMessage() != null) {
-                            errorMessage = e.getMessage();
+                        if (task.getException() != null) {
+                            message = task.getException().getMessage();
                         }
 
                         Toast.makeText(
                                 LoginActivity.this,
-                                errorMessage,
+                                message,
                                 Toast.LENGTH_LONG
                         ).show();
+
                     }
                 });
     }

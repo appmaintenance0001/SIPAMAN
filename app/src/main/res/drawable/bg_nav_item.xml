@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Menu sedang dipilih -->
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#193D2D" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+    <!-- Menu normal -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+</selector>

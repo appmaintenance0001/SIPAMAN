@@ -153,8 +153,6 @@ public class ProjectActivity extends AppCompatActivity {
             } else if (id == R.id.nav_calendar) {
                 intent = new Intent(this, CalendarActivity.class);
 
-            } else if (id == R.id.nav_setting) {
-                intent = new Intent(this, SettingsActivity.class);
             }
 
             if (intent != null) {

@@ -3,248 +3,369 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#F5F5F5">
+    android:background="#F2F6FF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="20dp">
 
-        <!-- TOOLBAR -->
+        <!-- HEADER -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="#123D7A"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+            android:layout_height="64dp"
+            android:background="#0755B8"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-        <!-- CONTENT -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="14dp">
 
-            <!-- JUDUL + STATUS -->
-            <RelativeLayout
+            <!-- KARTU UTAMA -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:elevation="3dp"
+                android:padding="18dp">
 
-                <TextView
-                    android:id="@+id/txtProject"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Judul Task"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:textColor="#222222"/>
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/txtStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="OVERDUE"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold"
-                    android:paddingHorizontal="14dp"
-                    android:paddingVertical="8dp"
-                    android:background="@drawable/bg_status_overdue"/>
-            </RelativeLayout>
+                    <TextView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:gravity="center"
+                        android:text="▤"
+                        android:textSize="28sp"
+                        android:textColor="#0755B8"
+                        android:background="#E2ECFF" />
 
-            <!-- SPACING -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="16dp"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="14dp"
+                        android:orientation="vertical">
 
-            <!-- PROJECT -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Project"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
+                        <TextView
+                            android:id="@+id/txtProject"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Judul Task"
+                            android:textColor="#17233D"
+                            android:textSize="21sp"
+                            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/txtProjectValue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"/>
+                        <TextView
+                            android:id="@+id/txtProjectValue"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Nama Project"
+                            android:textColor="#0755B8"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
 
-            <!-- JENIS -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Jenis Maintenance"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
+                        <TextView
+                            android:id="@+id/txtDeskripsi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:text="Deskripsi task"
+                            android:textColor="#64748B"
+                            android:textSize="13sp" />
+                    </LinearLayout>
 
-            <TextView
-                android:id="@+id/txtJenis"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"/>
+                    <TextView
+                        android:id="@+id/txtStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="8dp"
+                        android:gravity="center"
+                        android:text="ON PROGRESS"
+                        android:textColor="#FFFFFF"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_status_progress" />
+                </LinearLayout>
+            </LinearLayout>
 
-            <!-- MULAI -->
+            <!-- JENIS DAN PRIORITY -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Mulai: "
-                    android:textStyle="bold"/>
+                    android:layout_weight="1"
+                    android:layout_marginEnd="5dp"
+                    android:orientation="vertical"
+                    android:background="#E8F8F4"
+                    android:padding="15dp">
 
-                <TextView
-                    android:id="@+id/txtMulai"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jenis Maintenance"
+                        android:textColor="#64748B"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/txtJenis"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Emergency"
+                        android:textColor="#17233D"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:orientation="vertical"
+                    android:background="#FFF5DF"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Priority"
+                        android:textColor="#64748B"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/txtPriority"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="High"
+                        android:textColor="#17233D"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- DUE -->
+            <!-- TANGGAL -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Due: "
-                    android:textColor="#E53935"
-                    android:textStyle="bold"/>
+                    android:layout_weight="1"
+                    android:layout_marginEnd="5dp"
+                    android:orientation="vertical"
+                    android:background="#FFFFFF"
+                    android:elevation="2dp"
+                    android:padding="15dp">
 
-                <TextView
-                    android:id="@+id/txtDue"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tanggal Mulai"
+                        android:textColor="#64748B"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/txtMulai"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:text="12/10/2026"
+                        android:textColor="#17233D"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textColor="#E53935"/>
+                    android:layout_weight="1"
+                    android:layout_marginStart="5dp"
+                    android:orientation="vertical"
+                    android:background="#FFFFFF"
+                    android:elevation="2dp"
+                    android:padding="15dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Due Date"
+                        android:textColor="#64748B"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/txtDue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:text="18/10/2026"
+                        android:textColor="#D93645"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- STATUS -->
-            <TextView
+            <!-- STATUS PEKERJAAN -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
-                android:text="Status"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:background="#E2EDFF"
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/txtStatusBadge"
-                android:layout_width="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status Pekerjaan"
+                    android:textColor="#526581"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/txtStatusBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="9dp"
+                    android:text="ON PROGRESS"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_status_progress" />
+
+                <TextView
+                    android:id="@+id/txtStatusText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <!-- PIC -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/bg_status_default"
-                android:paddingHorizontal="14dp"
-                android:paddingVertical="6dp"
-                android:text="Status"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:textStyle="bold"/>
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:background="#F0ECFF"
+                android:padding="16dp">
 
-            <TextView
-                android:id="@+id/txtStatusText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PIC / Teknisi"
+                    android:textColor="#64748B"
+                    android:textSize="14sp" />
 
-            <!-- SELESAI -->
+                <TextView
+                    android:id="@+id/txtPic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Nama Teknisi"
+                    android:textColor="#17233D"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <!-- TANGGAL SELESAI -->
             <TextView
                 android:id="@+id/txtSelesai"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"/>
-
-            <!-- PIC -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="PIC / Teknisi"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
-
-            <TextView
-                android:id="@+id/txtPic"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <!-- PRIORITY -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="Priority"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
-
-            <TextView
-                android:id="@+id/txtPriority"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <!-- DESKRIPSI -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="Deskripsi"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
-
-            <TextView
-                android:id="@+id/txtDeskripsi"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:background="#FFFFFF"
+                android:padding="14dp"
+                android:text="Selesai: -"
+                android:textColor="#64748B"
+                android:textSize="14sp" />
 
             <!-- FOTO BEFORE -->
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Foto Before"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
+                android:layout_marginTop="14dp"
+                android:orientation="vertical"
+                android:background="#FFFFFF"
+                android:elevation="2dp"
+                android:padding="14dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvBefore"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="▧  Foto Before"
+                    android:textColor="#4939B8"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBefore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:nestedScrollingEnabled="false" />
+            </LinearLayout>
 
             <!-- FOTO AFTER -->
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Foto After"
-                android:textStyle="bold"
-                android:textSize="15sp"/>
+                android:layout_marginTop="12dp"
+                android:orientation="vertical"
+                android:background="#E8F8F2"
+                android:padding="14dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAfter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="▧  Foto After"
+                    android:textColor="#087E63"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
 
-            <!-- BUTTON -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAfter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:nestedScrollingEnabled="false" />
+            </LinearLayout>
+
+            <!-- TOMBOL SELESAI -->
             <Button
                 android:id="@+id/btnSelesai"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-                android:text="Tandai Selesai"
+                android:layout_height="58dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="12dp"
+                android:text="✓  Tandai Selesai"
                 android:textAllCaps="false"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
                 android:textStyle="bold"
-                android:backgroundTint="#1E4DB7"/>
+                android:backgroundTint="#075BE0" />
 
         </LinearLayout>
-
     </LinearLayout>
-
 </ScrollView>

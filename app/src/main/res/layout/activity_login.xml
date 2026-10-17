@@ -36,7 +36,9 @@
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"/>
+            android:inputType="textEmailAddress"
+            android:textColor="#000000"
+            android:textColorHint="#000000"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Password -->
@@ -57,7 +59,9 @@
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            android:textColor="#000000"
+            android:textColorHint="#000000"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Button Login -->

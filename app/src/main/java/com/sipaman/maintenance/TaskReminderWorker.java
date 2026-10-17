@@ -1,6 +1,7 @@
 package com.sipaman.maintenance;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
@@ -12,14 +13,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class TaskReminderWorker extends Worker {
 
-    public TaskReminderWorker(@NonNull Context context, @NonNull WorkerParameters params) {
+    private static final String TAG = "SIPAMAN_REMINDER";
+
+    public TaskReminderWorker(
+            @NonNull Context context,
+            @NonNull WorkerParameters params
+    ) {
         super(context, params);
     }
 
@@ -27,79 +32,98 @@ public class TaskReminderWorker extends Worker {
     @Override
     public Result doWork() {
 
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-
-        // 🔥 hanya jalan jam 08:00 - 09:00
-        if (hour < 8 || hour >= 9) {
-            return Result.success();
-        }
-
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference("tasks");
-
         try {
-            // Audit: Worker harus menunggu Firebase selesai agar hasil reminder konsisten.
-            DataSnapshot snapshot = Tasks.await(database.get(), 20, TimeUnit.SECONDS);
+            DatabaseReference database =
+                    FirebaseDatabase.getInstance()
+                            .getReference("tasks");
+
+            DataSnapshot snapshot =
+                    Tasks.await(database.get(), 20, TimeUnit.SECONDS);
 
             int overdueCount = 0;
             int todayCount = 0;
 
-            SimpleDateFormat sdf = new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
+            SimpleDateFormat sdf =
+                    new SimpleDateFormat("d/M/yyyy", Locale.getDefault());
+
+            sdf.setLenient(false);
+
             Date today = new Date();
+            String todayString = sdf.format(today);
 
             for (DataSnapshot data : snapshot.getChildren()) {
 
-                Task t = data.getValue(Task.class);
+                Task task = data.getValue(Task.class);
 
-                if (t == null) continue;
+                if (task == null) continue;
 
-                if ("DONE".equals(t.getStatus())) continue;
+                if ("DONE".equalsIgnoreCase(task.getStatus())) {
+                    continue;
+                }
+
+                String due = task.getDue();
+
+                if (due == null || due.trim().isEmpty()) {
+                    continue;
+                }
 
                 try {
-                    if (t.getDue() == null) continue;
-                    Date dueDate = sdf.parse(t.getDue());
+                    Date dueDate = sdf.parse(due.trim());
 
-                    if (dueDate != null) {
+                    if (dueDate == null) continue;
 
-                        if (sdf.format(today).equals(sdf.format(dueDate))) {
-                            todayCount++;
-                        }
-
-                        if (today.after(dueDate)) {
-                            overdueCount++;
-                        }
+                    if (todayString.equals(sdf.format(dueDate))) {
+                        todayCount++;
                     }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    if (dueDate.before(sdf.parse(todayString))) {
+                        overdueCount++;
+                    }
+
+                } catch (Exception dateError) {
+                    Log.w(TAG, "Format due date tidak valid: " + due,
+                            dateError);
                 }
             }
 
-            // 🔔 kirim notif summary
-            if (overdueCount > 0 || todayCount > 0) {
+            Log.d(TAG, "Tanggal hari ini: " + todayString);
+            Log.d(TAG, "Jumlah task overdue: " + overdueCount);
+            Log.d(TAG, "Jumlah task jatuh tempo hari ini: " + todayCount);
 
-                StringBuilder msg = new StringBuilder();
+            StringBuilder message = new StringBuilder();
 
-                if (overdueCount > 0) {
-                    msg.append("🚨 ").append(overdueCount).append(" overdue\n");
+            if (overdueCount > 0) {
+                message.append("🚨 ")
+                        .append(overdueCount)
+                        .append(" task overdue");
+            }
+
+            if (todayCount > 0) {
+                if (message.length() > 0) {
+                    message.append("\n");
                 }
 
-                if (todayCount > 0) {
-                    msg.append("⚠️ ").append(todayCount).append(" hari ini");
-                }
+                message.append("⚠️ ")
+                        .append(todayCount)
+                        .append(" task jatuh tempo hari ini");
+            }
 
+            if (message.length() > 0) {
                 NotificationHelper.showNotification(
                         getApplicationContext(),
-                        "Reminder Task 📊",
-                        msg.toString(),
-                        "worker"
+                        "Reminder Task SI-PAMAN",
+                        message.toString(),
+                        "worker_daily"
                 );
             }
 
+            Log.d(TAG, "Pemeriksaan task selesai.");
+
+            return Result.success();
+
         } catch (Exception e) {
+            Log.e(TAG, "Gagal memeriksa task Firebase.", e);
             return Result.retry();
         }
-
-        return Result.success();
     }
 }

@@ -54,27 +54,54 @@ public class DetailTaskActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId() == R.id.menu_delete) {
+        if (item.getItemId() == R.id.menu_edit) {
+            String id = getIntent().getStringExtra("id");
 
+            if (TextUtils.isEmpty(id)) {
+                Toast.makeText(this, "ID Task tidak valid",
+                        Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
+            Intent intent = new Intent(
+                    DetailTaskActivity.this,
+                    AddTaskActivity.class
+            );
+
+            intent.putExtra("mode", "edit");
+            intent.putExtra("id", id);
+
+            startActivity(intent);
+            return true;
+        }
+
+        if (item.getItemId() == R.id.menu_delete) {
             new AlertDialog.Builder(this)
                     .setTitle("Hapus Task")
-                    .setMessage("Yakin ingin menghapus?")
-                    .setPositiveButton("Hapus", (d, w) -> {
-
+                    .setMessage("Yakin ingin menghapus task ini?")
+                    .setPositiveButton("Hapus", (dialog, which) -> {
                         String id = getIntent().getStringExtra("id");
 
                         if (TextUtils.isEmpty(id)) {
-                            Toast.makeText(this, "ID Task tidak valid", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "ID Task tidak valid",
+                                    Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         FirebaseDatabase.getInstance()
                                 .getReference("tasks")
                                 .child(id)
-                                .removeValue();
-
-                        Toast.makeText(this, "Task dihapus", Toast.LENGTH_SHORT).show();
-                        finish();
+                                .removeValue()
+                                .addOnSuccessListener(unused -> {
+                                    Toast.makeText(this, "Task dihapus",
+                                            Toast.LENGTH_SHORT).show();
+                                    finish();
+                                })
+                                .addOnFailureListener(e ->
+                                        Toast.makeText(this,
+                                                "Gagal menghapus task",
+                                                Toast.LENGTH_SHORT).show()
+                                );
                     })
                     .setNegativeButton("Batal", null)
                     .show();

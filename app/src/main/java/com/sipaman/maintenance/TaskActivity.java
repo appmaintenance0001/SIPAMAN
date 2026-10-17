@@ -241,8 +241,6 @@ public class TaskActivity extends AppCompatActivity {
             } else if (id == R.id.nav_project) {
                 intent = new Intent(this, ProjectActivity.class);
 
-            } else if (id == R.id.nav_setting) {
-                intent = new Intent(this, SettingsActivity.class);
             }
 
             if (intent != null) {
@@ -398,15 +396,30 @@ public class TaskActivity extends AppCompatActivity {
             String jenis = t.getJenis() == null ? "" : t.getJenis().toLowerCase();
             String statusSearch = t.getStatus() == null ? "" : t.getStatus().toLowerCase();
             String dueText = t.getDue() == null ? "" : t.getDue().toLowerCase();
+            String judul =
+                    t.getJudul() == null
+                            ? ""
+                            : t.getJudul().toLowerCase();
+
+            String pic =
+                    t.getPic() == null
+                            ? ""
+                            : t.getPic().toLowerCase();
+
+            String priority =
+                    t.getPriority() == null
+                            ? ""
+                            : t.getPriority().toLowerCase();
 
             // 🔍 SEARCH (AMAN)
-            if (!keyword.isEmpty()) {
-                if (!project.contains(keyword) &&
-                        !jenis.contains(keyword) &&
-                        !statusSearch.contains(keyword) &&
-                        !dueText.contains(keyword)) {
-                    continue;
-                }
+            if (!judul.contains(keyword)
+                    && !project.contains(keyword)
+                    && !jenis.contains(keyword)
+                    && !pic.contains(keyword)
+                    && !priority.contains(keyword)
+                    && !statusSearch.contains(keyword)
+                    && !dueText.contains(keyword)) {
+                continue;
             }
 
             String status = normalizeStatus(t.getStatus());

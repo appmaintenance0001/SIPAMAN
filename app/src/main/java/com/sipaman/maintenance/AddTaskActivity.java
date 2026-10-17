@@ -113,7 +113,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
         id = getIntent().getStringExtra("id");
         mode = getIntent().getStringExtra("mode");
-        isEdit = id != null;
+        isEdit = "edit".equals(mode);
 
         incomingProjectId = getIntent().getStringExtra("projectId");
         incomingProjectName = getIntent().getStringExtra("projectName");
@@ -285,6 +285,8 @@ public class AddTaskActivity extends AppCompatActivity {
                     );
                 }
 
+                etJudul.setText(oldTask.getJudul());
+
                 spProject.setText(oldTask.getProject(), false);
 
                 selectedProjectId = oldTask.getProjectId();
@@ -301,6 +303,66 @@ public class AddTaskActivity extends AppCompatActivity {
 
                 etDeskripsi.setText(oldTask.getDeskripsi());
             });
+        }
+        if ("edit".equals(mode) && id != null) {
+
+            btnSimpan.setText("Update Task");
+
+            database.child(id).get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (isActivityUnavailable()) return;
+
+                        Task oldTask = snapshot.getValue(Task.class);
+
+                        if (oldTask == null) {
+                            Toast.makeText(this,
+                                    "Task tidak ditemukan",
+                                    Toast.LENGTH_SHORT).show();
+                            finish();
+                            return;
+                        }
+
+                        etJudul.setText(oldTask.getJudul());
+
+                        spProject.setText(oldTask.getProject(), false);
+                        selectedProjectId = oldTask.getProjectId();
+
+                        spJenis.setText(oldTask.getJenis(), false);
+                        spPriority.setText(oldTask.getPriority(), false);
+                        spPic.setText(oldTask.getPic(), false);
+
+                        etMulai.setText(oldTask.getMulai());
+                        etDue.setText(oldTask.getDue());
+                        etDeskripsi.setText(oldTask.getDeskripsi());
+
+                        List<String> beforeUrls = oldTask.getBeforeUrls();
+                        List<String> afterUrls = oldTask.getAfterUrls();
+
+                        if (beforeUrls != null && !beforeUrls.isEmpty()) {
+                            rvBefore.setVisibility(View.VISIBLE);
+                            rvBefore.setAdapter(
+                                    new PhotoAdapter(
+                                            AddTaskActivity.this,
+                                            new ArrayList<>(beforeUrls)
+                                    )
+                            );
+                        }
+
+                        if (afterUrls != null && !afterUrls.isEmpty()) {
+                            rvAfter.setVisibility(View.VISIBLE);
+                            rvAfter.setAdapter(
+                                    new PhotoAdapter(
+                                            AddTaskActivity.this,
+                                            new ArrayList<>(afterUrls)
+                                    )
+                            );
+                        }
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this,
+                                    "Gagal memuat task: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show()
+                    );
         }
 
 
@@ -668,59 +730,245 @@ public class AddTaskActivity extends AppCompatActivity {
                                 oldTask.setStatus("DONE");
 
                                 // pilih tanggal selesai
-                                        oldTask.setTanggalSelesai(
-                                                tanggalSelesaiManual
-                                        );
+                                oldTask.setTanggalSelesai(
+                                        tanggalSelesaiManual
+                                );
 
-                                        database.child(id)
-                                                .setValue(oldTask)
-                                                .addOnSuccessListener(aVoid -> {
-                                                    if (isActivityUnavailable()) return;
+                                database.child(id)
+                                        .setValue(oldTask)
+                                        .addOnSuccessListener(aVoid -> {
+                                            if (isActivityUnavailable()) return;
 
-                                                    dialog.dismiss();
+                                            FirebaseUser currentUser =
+                                                    FirebaseAuth.getInstance().getCurrentUser();
 
-                                                    btnSimpan.setEnabled(true);
+                                            String uidLog = currentUser != null
+                                                    ? currentUser.getUid() : "";
 
-                                                    if (progressBar != null)
-                                                        progressBar.setVisibility(View.GONE);
+                                            String namaUser = "Pengguna";
 
-                                                    if (txtProgress != null)
-                                                        txtProgress.setVisibility(View.GONE);
+                                            if (currentUser != null) {
+                                                if (currentUser.getDisplayName() != null
+                                                        && !currentUser.getDisplayName().trim().isEmpty()) {
+                                                    namaUser = currentUser.getDisplayName();
+                                                } else if (currentUser.getEmail() != null) {
+                                                    namaUser = currentUser.getEmail();
+                                                }
+                                            }
 
-                                                    if (shimmer != null) {
+                                            String judulTask = oldTask.getJudul() != null
+                                                    ? oldTask.getJudul() : "Task tanpa judul";
 
-                                                        shimmer.stopShimmer();
+                                            String namaProject = oldTask.getProject() != null
+                                                    ? oldTask.getProject() : "-";
 
-                                                        shimmer.setVisibility(View.GONE);
-                                                    }
+                                            String namaPic = oldTask.getPic() != null
+                                                    ? oldTask.getPic() : "-";
 
-                                                    Toast.makeText(
-                                                            AddTaskActivity.this,
-                                                            "Task selesai",
-                                                            Toast.LENGTH_SHORT
-                                                    ).show();
+                                            String tanggalSelesai = oldTask.getTanggalSelesai() != null
+                                                    ? oldTask.getTanggalSelesai() : "-";
 
-                                                    finish();
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    if (isActivityUnavailable()) return;
+                                            String pesan =
+                                                    "Task \"" + judulTask + "\" telah diselesaikan."
+                                                            + "\nProject: " + namaProject
+                                                            + "\nPIC / Teknisi: " + namaPic
+                                                            + "\nTanggal selesai: " + tanggalSelesai;
 
-                                                    dialog.dismiss();
+                                            DatabaseReference logRef =
+                                                    FirebaseDatabase.getInstance()
+                                                            .getReference("activity_logs");
 
-                                                    btnSimpan.setEnabled(true);
+                                            String logId = logRef.push().getKey();
 
-                                                    Toast.makeText(
-                                                            AddTaskActivity.this,
-                                                            "Gagal update",
-                                                            Toast.LENGTH_SHORT
-                                                    ).show();
-                                                });
+                                            if (logId == null) {
+                                                dialog.dismiss();
+                                                btnSimpan.setEnabled(true);
+
+                                                Toast.makeText(
+                                                        AddTaskActivity.this,
+                                                        "Task selesai, tetapi ID riwayat gagal dibuat",
+                                                        Toast.LENGTH_LONG
+                                                ).show();
+
+                                                finish();
+                                                return;
+                                            }
+
+                                            ActivityLog activityLog = new ActivityLog(
+                                                    logId,
+                                                    uidLog,
+                                                    namaUser,
+                                                    "Task Selesai",
+                                                    System.currentTimeMillis(),
+                                                    id,
+                                                    judulTask,
+                                                    pesan
+                                            );
+
+                                            logRef.child(logId)
+                                                    .setValue(activityLog)
+                                                    .addOnCompleteListener(logResult -> {
+                                                        if (isActivityUnavailable()) return;
+
+                                                        dialog.dismiss();
+                                                        btnSimpan.setEnabled(true);
+
+                                                        if (progressBar != null) {
+                                                            progressBar.setVisibility(View.GONE);
+                                                        }
+
+                                                        if (txtProgress != null) {
+                                                            txtProgress.setVisibility(View.GONE);
+                                                        }
+
+                                                        if (shimmer != null) {
+                                                            shimmer.stopShimmer();
+                                                            shimmer.setVisibility(View.GONE);
+                                                        }
+
+                                                        if (logResult.isSuccessful()) {
+                                                            Toast.makeText(
+                                                                    AddTaskActivity.this,
+                                                                    "Task selesai dan riwayat berhasil disimpan",
+                                                                    Toast.LENGTH_LONG
+                                                            ).show();
+                                                        } else {
+                                                            Log.e(
+                                                                    "SIPAMAN_HISTORY",
+                                                                    "Gagal menyimpan activity_logs",
+                                                                    logResult.getException()
+                                                            );
+
+                                                            Toast.makeText(
+                                                                    AddTaskActivity.this,
+                                                                    "Task selesai, tetapi riwayat gagal disimpan. Periksa Logcat.",
+                                                                    Toast.LENGTH_LONG
+                                                            ).show();
+                                                        }
+
+                                                        finish();
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        Log.e(
+                                                                "SIPAMAN_HISTORY",
+                                                                "Gagal menulis activity_logs",
+                                                                e
+                                                        );
+
+                                                        if (isActivityUnavailable()) return;
+
+                                                        dialog.dismiss();
+                                                        btnSimpan.setEnabled(true);
+
+                                                        Toast.makeText(
+                                                                AddTaskActivity.this,
+                                                                "Gagal menyimpan riwayat: " + e.getMessage(),
+                                                                Toast.LENGTH_LONG
+                                                        ).show();
+
+                                                        finish();
+                                                    });
                                         });
+                            });
+                }
 
 
-                            }
 
+                // ================= MODE EDIT =================
+                else if ("edit".equals(mode)) {
 
+                    database.child(id).get()
+                            .addOnSuccessListener(snapshot -> {
+                                if (isActivityUnavailable()) return;
+
+                                Task oldTask = snapshot.getValue(Task.class);
+
+                                if (oldTask == null) {
+                                    dialog.dismiss();
+                                    btnSimpan.setEnabled(true);
+
+                                    Toast.makeText(
+                                            AddTaskActivity.this,
+                                            "Task tidak ditemukan",
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                    return;
+                                }
+
+                                // Pertahankan foto lama dan tambahkan foto baru
+                                ArrayList<String> beforeLama =
+                                        oldTask.getBeforeUrls() != null
+                                                ? new ArrayList<>(oldTask.getBeforeUrls())
+                                                : new ArrayList<>();
+
+                                ArrayList<String> afterLama =
+                                        oldTask.getAfterUrls() != null
+                                                ? new ArrayList<>(oldTask.getAfterUrls())
+                                                : new ArrayList<>();
+
+                                beforeLama.addAll(finalBeforeUrls);
+                                afterLama.addAll(finalAfterUrls);
+
+                                Map<String, Object> updates =
+                                        new java.util.HashMap<>();
+
+                                updates.put("judul", judul);
+                                updates.put("projectId", selectedProjectId);
+                                updates.put("project", project);
+                                updates.put("jenis", jenis);
+                                updates.put("mulai", mulai);
+                                updates.put("due", due);
+                                updates.put("pic", spPic.getText().toString());
+                                updates.put("priority", spPriority.getText().toString());
+                                updates.put("deskripsi",
+                                        etDeskripsi.getText().toString());
+                                updates.put("beforeUrls", beforeLama);
+                                updates.put("afterUrls", afterLama);
+
+                                // ID dan status task lama tidak diganti
+                                database.child(id)
+                                        .updateChildren(updates)
+                                        .addOnSuccessListener(unused -> {
+                                            if (isActivityUnavailable()) return;
+
+                                            dialog.dismiss();
+                                            btnSimpan.setEnabled(true);
+
+                                            Toast.makeText(
+                                                    AddTaskActivity.this,
+                                                    "Task berhasil diperbarui",
+                                                    Toast.LENGTH_SHORT
+                                            ).show();
+
+                                            finish();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            if (isActivityUnavailable()) return;
+
+                                            dialog.dismiss();
+                                            btnSimpan.setEnabled(true);
+
+                                            Toast.makeText(
+                                                    AddTaskActivity.this,
+                                                    "Gagal memperbarui task: "
+                                                            + e.getMessage(),
+                                                    Toast.LENGTH_LONG
+                                            ).show();
+                                        });
+                            })
+                            .addOnFailureListener(e -> {
+                                if (isActivityUnavailable()) return;
+
+                                dialog.dismiss();
+                                btnSimpan.setEnabled(true);
+
+                                Toast.makeText(
+                                        AddTaskActivity.this,
+                                        "Gagal membaca task lama",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            });
+                }
 
                 // ================= MODE CREATE =================
                 else {
@@ -756,7 +1004,6 @@ public class AddTaskActivity extends AppCompatActivity {
                                 adapterBefore.notifyDataSetChanged();
                                 adapterAfter.notifyDataSetChanged();
 
-
                                 if (progressBar != null)
                                     progressBar.setVisibility(View.GONE);
 
@@ -767,7 +1014,6 @@ public class AddTaskActivity extends AppCompatActivity {
                                     shimmer.stopShimmer();
                                     shimmer.setVisibility(View.GONE);
                                 }
-
 
                                 Toast.makeText(
                                         AddTaskActivity.this,

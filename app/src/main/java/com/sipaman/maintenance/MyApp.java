@@ -13,15 +13,18 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // 🔥 CONFIG CLOUDINARY (UNSIGNED MODE)
+        // Konfigurasi Cloudinary tetap dipertahankan.
         Map<String, String> config = new HashMap<>();
-        config.put("cloud_name", "sipaman"); // ⚠️ HARUS SESUAI CLOUDINARY
+        config.put("cloud_name", "sipaman");
         config.put("secure", "true");
 
         try {
             MediaManager.init(this, config);
         } catch (Exception e) {
-            // sudah init → aman
+            // Aman jika Cloudinary sudah diinisialisasi.
         }
+
+        // Jadwalkan reminder otomatis SI-PAMAN.
+        TaskReminderScheduler.scheduleDaily(this);
     }
 }

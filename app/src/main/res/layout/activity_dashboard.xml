@@ -1,109 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F6F8FC"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#F6F8FC"
+        android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="272dp"
+        android:layout_height="200dp"
         android:background="@drawable/bg_dashboard_header_v2">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="190dp"
             android:layout_gravity="bottom"
-            android:alpha="0.12"
+            android:alpha="0.20"
             android:scaleType="centerCrop"
-            android:src="@drawable/factory_bg" />
+            android:src="@drawable/factory_bg"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="239dp"
+            android:layout_height="254dp"
+            android:gravity="top"
             android:orientation="vertical"
-            android:paddingStart="26dp"
-            android:paddingTop="30dp"
-            android:paddingEnd="26dp">
+            android:paddingStart="16dp"
+            android:paddingTop="20dp"
+            android:paddingEnd="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:orientation="horizontal">
+
+                <!-- MENU -->
+
+                <ImageView
+                    android:id="@+id/btnMenu"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_icon_button"
+                    android:padding="3dp"
+                    android:src="@drawable/ic_menu"
+                    app:tint="@android:color/white" />
+
+                <!-- USER -->
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Selamat Datang,"
                         android:textColor="#FFFFFF"
-                        android:textSize="21sp"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvWelcomeName"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
                         android:text="User"
                         android:textColor="#FFFFFF"
-                        android:textSize="38sp"
+                        android:textSize="28sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tvRole"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
-                        android:text="Maintenance"
-                        android:textColor="#DCEBFF"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:text="Supervisor Maintenance"
+                        android:textColor="#E3F2FD"
+                        android:textSize="14sp" />
+
                 </LinearLayout>
+
+                <!-- SEARCH -->
 
                 <ImageView
                     android:id="@+id/btnDashboardSearch"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:layout_marginEnd="12dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@drawable/bg_icon_button"
-                    android:padding="16dp"
+                    android:padding="12dp"
                     android:src="@drawable/ic_search"
-                    app:tint="#FFFFFF" />
+                    app:tint="@android:color/white" />
+
+                <!-- NOTIFICATION -->
 
                 <FrameLayout
-                    android:layout_width="56dp"
-                    android:layout_height="56dp">
+                    android:layout_width="40dp"
+                    android:layout_height="40dp">
 
                     <ImageView
                         android:id="@+id/btnNotification"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:background="@drawable/bg_icon_button"
-                        android:padding="16dp"
+                        android:padding="12dp"
                         android:src="@drawable/ic_notifications"
-                        app:tint="#FFFFFF" />
+                        app:tint="@android:color/white" />
 
                     <TextView
                         android:id="@+id/tvNotificationBadge"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="top|end"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
+                        android:layout_gravity="end|top"
                         android:background="@drawable/bg_circle_red"
                         android:gravity="center"
                         android:text="0"
                         android:textColor="#FFFFFF"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textSize="9sp" />
                 </FrameLayout>
+
             </LinearLayout>
+
+            <!-- CHIP -->
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -117,25 +141,27 @@
                     android:layout_height="36dp"
                     android:background="@drawable/bg_icon_button"
                     android:gravity="center"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
-                    android:text="Tanggal"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="📅 Tanggal"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
 
                 <TextView
                     android:id="@+id/chipSite"
                     android:layout_width="wrap_content"
                     android:layout_height="36dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="10dp"
                     android:background="@drawable/bg_icon_button"
                     android:gravity="center"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
-                    android:text="SI-PAMAN"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="📍 Site"
                     android:textColor="#FFFFFF"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
+
             </LinearLayout>
+
         </LinearLayout>
     </FrameLayout>
 
@@ -174,7 +200,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="10dp">
+                        android:paddingHorizontal="14dp"
+                        android:paddingVertical="14dp">
 
                         <include
                             android:id="@+id/actionAddTask"
@@ -500,9 +527,10 @@
                     android:padding="18dp"
                     android:text="Belum ada aktivitas terbaru"
                     android:textColor="#64748B"
-                    android:textSize="13sp"
-                    android:visibility="gone" />
+                    android:textSize="13sp" />
+
             </LinearLayout>
+
         </ScrollView>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -511,11 +539,48 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@android:color/white"
+            android:elevation="12dp"
             app:itemIconTint="@color/bottom_nav_color"
             app:itemTextColor="@color/bottom_nav_color"
-            app:itemIconSize="24dp"
+            app:itemIconSize="26dp"
+            app:itemRippleColor="@color/bottom_nav_color"
             app:labelVisibilityMode="labeled"
-            app:elevation="8dp"
             app:menu="@menu/bottom_nav_menu"/>
+
     </RelativeLayout>
-</LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        android:background="#19191F"
+
+
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu"
+
+        app:itemIconTint="@color/drawer_item_icon"
+        app:itemTextColor="@color/drawer_item_text"
+        app:itemIconPadding="18dp"
+        app:itemIconSize="24dp"
+        app:itemBackground="@drawable/bg_nav_item"
+        app:itemRippleColor="#A5D6A7"
+        app:itemHorizontalPadding="16dp"
+        app:itemVerticalPadding="12dp"
+        app:itemMaxLines="1"
+
+        app:divider="@drawable/nav_separator"
+        app:dividerInsetStart="24dp"
+        app:dividerInsetEnd="24dp"
+
+        app:itemShapeFillColor="#193D2D"
+        app:itemShapeInsetStart="12dp"
+        app:itemShapeInsetEnd="12dp" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
+
+ 

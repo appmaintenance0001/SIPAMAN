@@ -5,38 +5,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F6FA">
+    android:background="#F2F6FC">
 
     <!-- HEADER -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="#173A6A"
+        android:layout_height="64dp"
+        android:background="#194477"
         android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Tambah Task"
             android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- CONTENT -->
+    <!-- SCROLL CONTENT -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:clipToPadding="false">
 
-        <!-- 🔥 WAJIB: SATU CHILD -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <!-- 🔥 SHIMMER -->
+            <!-- SHIMMER -->
             <com.facebook.shimmer.ShimmerFrameLayout
                 android:id="@+id/shimmerLayout"
                 android:layout_width="match_parent"
@@ -52,292 +55,414 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:background="#DDDDDD"
-                        android:layout_marginBottom="10dp"/>
+                        android:layout_marginBottom="10dp"
+                        android:background="#DDDDDD" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
-                        android:background="#DDDDDD"
-                        android:layout_marginBottom="10dp"/>
+                        android:layout_marginBottom="10dp"
+                        android:background="#DDDDDD" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
-                        android:background="#DDDDDD"
-                        android:layout_marginBottom="10dp"/>
-
+                        android:background="#DDDDDD" />
                 </LinearLayout>
             </com.facebook.shimmer.ShimmerFrameLayout>
 
-            <!-- 🔥 FORM -->
+            <!-- FORM CARD -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:background="@drawable/bg_card"
+                android:elevation="3dp"
+                android:padding="18dp">
 
-                <!-- CARD -->
+                <!-- HEADER INFORMASI -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_card"
-                    android:padding="16dp">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="22dp">
 
-                    <!-- JUDUL -->
                     <TextView
-                        style="@style/label"
-                        android:layout_width="wrap_content"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:gravity="center"
+                        android:text="▤"
+                        android:textSize="28sp"
+                        android:textColor="#2459B2"
+                        android:background="#E4EDFF" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="1. Judul Task *"/>
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="12dp">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/inputBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etJudul"
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_judul"/>
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:text="Informasi Task"
+                            android:textColor="#17233D"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
-                    <!-- PROJECT -->
-                    <TextView
-                        style="@style/label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2. Project *"/>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/inputBoxDropdown"
-                        app:startIconDrawable="@drawable/ic_building"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spProject"
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/hint_project"
-                            android:focusable="false"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- JENIS -->
-                    <TextView
-                        style="@style/label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="3. Jenis Maintenance *"/>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/inputBoxDropdown"
-                        app:startIconDrawable="@drawable/ic_tools"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spJenis"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_jenis"
-                            android:focusable="false"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- PIC -->
-                    <TextView
-                        style="@style/label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="4. PIC / Teknisi *"/>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/inputBox"
-                        app:startIconDrawable="@drawable/ic_user"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spPic"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_pic"
-                            android:inputType="text"
-                            android:completionThreshold="1"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- PRIORITY -->
-                    <TextView
-                        style="@style/label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="5. Priority *"/>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/inputBoxDropdown"
-                        app:startIconDrawable="@drawable/ic_flag"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <AutoCompleteTextView
-                            android:id="@+id/spPriority"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_priority"
-                            android:focusable="false"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- MULAI -->
-                    <TextView
-                        style="@style/label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="6. Tanggal Mulai *"/>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/inputBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <EditText
-                            android:id="@+id/etMulai"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_mulai"
-                            android:focusable="false"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- DUE -->
-                    <TextView
-                        style="@style/label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="7. Due Date *"/>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/inputBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <EditText
-                            android:id="@+id/etDue"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/hint_due"
-                            android:focusable="false"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- DESKRIPSI -->
-                    <TextView
-                        style="@style/label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="8. Deskripsi *"/>
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/inputBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etDeskripsi"
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:hint="@string/hint_deskripsi"
-                            android:gravity="top"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- BEFORE -->
-                    <TextView
-                        style="@style/label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="9. Foto Before *"/>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvBefore"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
-
-                    <Button
-                        android:id="@+id/btnAddBefore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tambah Before"/>
-
-                    <!-- AFTER -->
-                    <TextView
-                        style="@style/label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="10. Foto After *"/>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvAfter"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:alpha="0.5"/>
-
-                    <Button
-                        android:id="@+id/btnAddAfter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tambah After"
-                        android:visibility="gone"/>
-
-
-                    <Button
-                        android:id="@+id/btnTanggalSelesai"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Pilih Tanggal Selesai"
-                        android:layout_marginTop="12dp"
-                        android:visibility="gone"/>
-
-
-                    <TextView
-                        android:id="@+id/txtTanggalSelesai"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Tanggal selesai belum dipilih"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/holo_green_dark"
-                        android:padding="10dp"
-                        android:visibility="gone"/>
-
-
-                    <!-- SIMPAN -->
-                    <Button
-                        android:id="@+id/btnSimpan"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:text="Simpan Task"
-                        android:backgroundTint="#173A6A"
-                        android:textColor="#FFFFFF"
-                        android:layout_marginTop="16dp"/>
-
-                    <ProgressBar
-                        android:id="@+id/progressBar"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"/>
-
-                    <TextView
-                        android:id="@+id/txtProgress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Uploading..."
-                        android:visibility="gone"
-                        android:layout_marginTop="4dp"/>
-
+                            android:layout_marginTop="4dp"
+                            android:text="Lengkapi informasi pekerjaan"
+                            android:textColor="#64748B"
+                            android:textSize="13sp" />
+                    </LinearLayout>
                 </LinearLayout>
 
-            </LinearLayout>
+                <!-- 1. JUDUL -->
+                <TextView
+                    style="@style/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1. Judul Task *"
+                    android:textColor="#26364B" />
 
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etJudul"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_judul"
+                        android:textColor="#17233D"
+                        android:textColorHint="#8B96A8" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 2. PROJECT -->
+                <TextView
+                    style="@style/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2. Project *"
+                    android:textColor="#26364B" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    app:startIconDrawable="@drawable/ic_building">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spProject"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_project"
+                        android:focusable="false"
+                        android:textColor="#17233D"
+                        android:textColorHint="#8B96A8" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 3. JENIS MAINTENANCE -->
+                <TextView
+                    style="@style/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3. Jenis Maintenance *"
+                    android:textColor="#26364B" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    app:startIconDrawable="@drawable/ic_tools">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spJenis"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_jenis"
+                        android:focusable="false"
+                        android:textColor="#17233D"
+                        android:textColorHint="#8B96A8" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 4. PIC -->
+                <TextView
+                    style="@style/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4. PIC / Teknisi *"
+                    android:textColor="#26364B" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    app:startIconDrawable="@drawable/ic_user">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spPic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_pic"
+                        android:inputType="text"
+                        android:completionThreshold="1"
+                        android:textColor="#17233D"
+                        android:textColorHint="#8B96A8" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 5. PRIORITY -->
+                <TextView
+                    style="@style/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5. Priority *"
+                    android:textColor="#26364B" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBoxDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    app:startIconDrawable="@drawable/ic_flag">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spPriority"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_priority"
+                        android:focusable="false"
+                        android:textColor="#17233D"
+                        android:textColorHint="#8B96A8" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 6. TANGGAL MULAI -->
+                <TextView
+                    style="@style/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6. Tanggal Mulai *"
+                    android:textColor="#26364B" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp">
+
+                    <EditText
+                        android:id="@+id/etMulai"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_mulai"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:textColor="#17233D"
+                        android:textColorHint="#8B96A8" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 7. DUE DATE -->
+                <TextView
+                    style="@style/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="7. Due Date *"
+                    android:textColor="#26364B" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp">
+
+                    <EditText
+                        android:id="@+id/etDue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_due"
+                        android:focusable="false"
+                        android:clickable="true"
+                        android:textColor="#17233D"
+                        android:textColorHint="#8B96A8" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- 8. DESKRIPSI -->
+                <TextView
+                    style="@style/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="8. Deskripsi *"
+                    android:textColor="#26364B" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/inputBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDeskripsi"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:gravity="top"
+                        android:hint="@string/hint_deskripsi"
+                        android:inputType="textMultiLine"
+                        android:textColor="#17233D"
+                        android:textColorHint="#8B96A8" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- PEMISAH -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="18dp"
+                    android:background="#E5EAF2" />
+
+                <!-- HEADER DOKUMENTASI -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Dokumentasi Pekerjaan"
+                    android:textColor="#194477"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="14dp"
+                    android:text="Tambahkan foto kondisi pekerjaan"
+                    android:textColor="#64748B"
+                    android:textSize="13sp" />
+
+                <!-- 9. FOTO BEFORE -->
+                <TextView
+                    style="@style/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="9. Foto Before *"
+                    android:textColor="#26364B" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBefore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:nestedScrollingEnabled="false" />
+
+                <Button
+                    android:id="@+id/btnAddBefore"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:backgroundTint="#E5D8FF"
+                    android:text="+  Tambah Foto Before"
+                    android:textAllCaps="false"
+                    android:textColor="#34245C" />
+
+                <!-- 10. FOTO AFTER -->
+                <TextView
+                    style="@style/label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10. Foto After *"
+                    android:textColor="#26364B" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAfter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:alpha="0.7"
+                    android:nestedScrollingEnabled="false" />
+
+                <Button
+                    android:id="@+id/btnAddAfter"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:backgroundTint="#DDF6EC"
+                    android:text="+  Tambah Foto After"
+                    android:textAllCaps="false"
+                    android:textColor="#087E63"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="Dokumentasi kondisi setelah perbaikan"
+                    android:textColor="#64748B"
+                    android:textSize="12sp" />
+
+                <!-- TANGGAL SELESAI -->
+                <Button
+                    android:id="@+id/btnTanggalSelesai"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="12dp"
+                    android:backgroundTint="#E5D8FF"
+                    android:text="Pilih Tanggal Selesai"
+                    android:textAllCaps="false"
+                    android:textColor="#34245C"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtTanggalSelesai"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="Tanggal selesai belum dipilih"
+                    android:textColor="#16845B"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <!-- SIMPAN TASK -->
+                <Button
+                    android:id="@+id/btnSimpan"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="22dp"
+                    android:backgroundTint="#194477"
+                    android:text="Simpan Task"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <!-- PROGRESS -->
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtProgress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Uploading..."
+                    android:textColor="#64748B"
+                    android:visibility="gone" />
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
 </LinearLayout>

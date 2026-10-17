@@ -7,6 +7,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.PopupMenu;
+
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.core.view.GravityCompat;
+import com.google.android.material.navigation.NavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -43,6 +48,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class DashboardActivity extends AppCompatActivity {
+
 
     private final List<Task> overdueList = new ArrayList<>();
     private final List<Task> dueSoonList = new ArrayList<>();
@@ -93,6 +99,15 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView tvProgressPercent;
     private TextView tvProgressTitle;
 
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+
+    // Header Navigation Drawer
+    private ImageView imgProfile;
+    private TextView tvDrawerName;
+    private TextView tvDrawerEmail;
+    private TextView tvDrawerRole;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +125,8 @@ public class DashboardActivity extends AppCompatActivity {
         loadDashboardData();
         loadProjectCount();
         loadRecentActivities();
+
+
     }
 
     private void loadCurrentDate() {
@@ -215,6 +232,65 @@ public class DashboardActivity extends AppCompatActivity {
         tvEmptyOverdue = findViewById(R.id.tvEmptyOverdue);
         tvEmptyRecentActivity = findViewById(R.id.tvEmptyRecentActivity);
 
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.navigationView);
+        // Hubungkan komponen header Navigation Drawer
+        View headerView = navigationView.getHeaderView(0);
+
+        imgProfile = headerView.findViewById(R.id.imgProfile);
+        tvDrawerName = headerView.findViewById(R.id.tvDrawerName);
+        tvDrawerEmail = headerView.findViewById(R.id.tvDrawerEmail);
+        tvDrawerRole = headerView.findViewById(R.id.tvDrawerRole);
+        ImageView btnMenu;
+
+        btnMenu = findViewById(R.id.btnMenu);
+
+        btnMenu.setOnClickListener(v -> {
+            drawerLayout.openDrawer(GravityCompat.START);
+        });
+
+        navigationView.setNavigationItemSelectedListener(item -> {
+
+            int id = item.getItemId();
+
+            if (id == R.id.menu_profile) {
+
+                startActivity(new Intent(
+                        DashboardActivity.this,
+                        ProfileActivity.class));
+
+            } else if (id == R.id.menu_project) {
+
+                startActivity(new Intent(this, ProjectActivity.class));
+
+            } else if (id == R.id.menu_calendar) {
+
+                startActivity(new Intent(this, CalendarActivity.class));
+
+            } else if (id == R.id.menu_report) {
+
+                startActivity(new Intent(this, ReportSummaryActivity.class));
+
+            } else if (id == R.id.menu_settings) {
+
+                startActivity(new Intent(this, SettingsActivity.class));
+
+            } else if (id == R.id.menu_logout) {
+
+                FirebaseAuth.getInstance().signOut();
+
+                Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+
+                finish();
+            }
+
+            drawerLayout.closeDrawer(GravityCompat.START);
+
+            return true;
+        });
+
         chipDate.setText(new SimpleDateFormat("dd MMM yyyy", Locale.US).format(new Date()));
         chipSite.setText("SI-PAMAN");
     }
@@ -262,7 +338,7 @@ public class DashboardActivity extends AppCompatActivity {
         );
 
         findViewById(R.id.actionReport).setOnClickListener(v ->
-                startActivity(new Intent(this, HistoryActivity.class))
+                startActivity(new Intent(this, ReportSummaryActivity.class))
         );
 
     }
@@ -335,8 +411,6 @@ public class DashboardActivity extends AppCompatActivity {
             } else if (id == R.id.nav_project) {
                 intent = new Intent(this, ProjectActivity.class);
 
-            } else if (id == R.id.nav_setting) {
-                intent = new Intent(this, SettingsActivity.class);
             }
 
             if (intent != null) {
@@ -372,41 +446,103 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void loadUserName() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
         if (user == null) {
             tvWelcomeName.setText("Selamat datang");
+            tvRole.setText("Maintenance");
+
+            tvDrawerName.setText("Pengguna");
+            tvDrawerEmail.setText("Tidak ada email");
+            tvDrawerRole.setText("Maintenance");
+
             return;
         }
 
+        // Email diambil langsung dari akun Firebase Authentication
+        String email = user.getEmail();
+
+        tvDrawerEmail.setText(
+                email != null && !email.trim().isEmpty()
+                        ? email
+                        : "Email tidak tersedia"
+        );
+
+        // Nama sementara dari akun, sebelum data Realtime Database dimuat
         String fallbackName = user.getDisplayName();
-        if (isEmpty(fallbackName) && user.getEmail() != null) {
-            fallbackName = user.getEmail().split("@")[0];
+
+        if (isEmpty(fallbackName) && email != null) {
+            fallbackName = email.split("@")[0];
         }
-        tvWelcomeName.setText(isEmpty(fallbackName) ? "User" : fallbackName);
+
+        if (isEmpty(fallbackName)) {
+            fallbackName = "Pengguna";
+        }
+
+        tvWelcomeName.setText(fallbackName);
+        tvDrawerName.setText(fallbackName);
         tvRole.setText("Maintenance");
+        tvDrawerRole.setText("Maintenance");
 
-        FirebaseDatabase.getInstance()
+        // Ambil profil asli dari Firebase Realtime Database
+        DatabaseReference userRef = FirebaseDatabase.getInstance()
                 .getReference("users")
-                .child(user.getUid())
-                .get()
-                .addOnSuccessListener(snapshot -> {
+                .child(user.getUid());
 
-                    String name = snapshot.child("name").getValue(String.class);
-                    String role = snapshot.child("role").getValue(String.class);
-                    String site = snapshot.child("site").getValue(String.class);
+        userRef.addListenerForSingleValueEvent(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (isFinishing() || isDestroyed()) return;
 
-                    if (name != null)
-                        tvWelcomeName.setText(name);
+                        String name = snapshot.child("name")
+                                .getValue(String.class);
 
-                    if (role != null)
-                        tvRole.setText(role);
+                        String role = snapshot.child("role")
+                                .getValue(String.class);
 
-                    if (site != null && !site.isEmpty()) {
-                        chipSite.setText("📍 " + site);
-                    } else {
-                        chipSite.setText("📍 Pulubala");
+                        String site = snapshot.child("site")
+                                .getValue(String.class);
+
+                        // Nama pengguna
+                        if (!isEmpty(name)) {
+                            tvWelcomeName.setText(name);
+                            tvDrawerName.setText(name);
+                        }
+
+                        // Jabatan/role
+                        if (!isEmpty(role)) {
+                            tvRole.setText(role);
+                        }
+
+                        // Jabatan dan lokasi pada drawer
+                        String roleText = !isEmpty(role)
+                                ? role
+                                : "Maintenance";
+
+                        String drawerInfo = roleText;
+
+                        if (!isEmpty(site)) {
+                            drawerInfo += " • " + site;
+                            chipSite.setText("📍 " + site);
+                        } else {
+                            chipSite.setText("📍 Site belum diatur");
+                        }
+
+                        tvDrawerRole.setText(drawerInfo);
                     }
 
-                });
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        if (isFinishing() || isDestroyed()) return;
+
+                        Toast.makeText(
+                                DashboardActivity.this,
+                                "Gagal memuat profil pengguna",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+                }
+        );
     }
 
     private void loadDashboardData() {
