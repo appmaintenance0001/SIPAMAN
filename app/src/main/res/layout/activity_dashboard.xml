@@ -9,545 +9,600 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F6F8FC"
+        android:background="#F4F7FB"
         android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@drawable/bg_dashboard_header_v2">
-
-        <ImageView
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="190dp"
-            android:layout_gravity="bottom"
-            android:alpha="0.20"
-            android:scaleType="centerCrop"
-            android:src="@drawable/factory_bg"/>
+            android:layout_height="170dp"
+            android:background="@drawable/bg_dashboard_industrial_header">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="254dp"
-            android:gravity="top"
-            android:orientation="vertical"
-            android:paddingStart="16dp"
-            android:paddingTop="20dp"
-            android:paddingEnd="16dp">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="226dp"
+                android:layout_gravity="bottom"
+                android:alpha="0.13"
+                android:scaleType="centerCrop"
+                android:src="@drawable/factory_bg"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <!-- MENU -->
-
-                <ImageView
-                    android:id="@+id/btnMenu"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="@drawable/bg_icon_button"
-                    android:padding="3dp"
-                    android:src="@drawable/ic_menu"
-                    app:tint="@android:color/white" />
-
-                <!-- USER -->
+                android:layout_height="match_parent"
+                android:gravity="top"
+                android:orientation="vertical"
+                android:paddingStart="16dp"
+                android:paddingTop="22dp"
+                android:paddingEnd="16dp">
 
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Selamat Datang,"
-                        android:textColor="#FFFFFF"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvWelcomeName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="User"
-                        android:textColor="#FFFFFF"
-                        android:textSize="28sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvRole"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Supervisor Maintenance"
-                        android:textColor="#E3F2FD"
-                        android:textSize="14sp" />
-
-                </LinearLayout>
-
-                <!-- SEARCH -->
-
-                <ImageView
-                    android:id="@+id/btnDashboardSearch"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="10dp"
-                    android:background="@drawable/bg_icon_button"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_search"
-                    app:tint="@android:color/white" />
-
-                <!-- NOTIFICATION -->
-
-                <FrameLayout
-                    android:layout_width="40dp"
-                    android:layout_height="40dp">
+                    <!-- MENU -->
 
                     <ImageView
-                        android:id="@+id/btnNotification"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:id="@+id/btnMenu"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
                         android:background="@drawable/bg_icon_button"
-                        android:padding="12dp"
-                        android:src="@drawable/ic_notifications"
+                        android:padding="3dp"
+                        android:src="@drawable/ic_menu"
                         app:tint="@android:color/white" />
 
-                    <TextView
-                        android:id="@+id/tvNotificationBadge"
-                        android:layout_width="17dp"
-                        android:layout_height="17dp"
-                        android:layout_gravity="end|top"
-                        android:background="@drawable/bg_circle_red"
-                        android:gravity="center"
-                        android:text="0"
-                        android:textColor="#FFFFFF"
-                        android:textSize="9sp" />
-                </FrameLayout>
-
-            </LinearLayout>
-
-            <!-- CHIP -->
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/chipDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:background="@drawable/bg_icon_button"
-                    android:gravity="center"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:text="📅 Tanggal"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/chipSite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:layout_marginStart="10dp"
-                    android:background="@drawable/bg_icon_button"
-                    android:gravity="center"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:text="📍 Site"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-    </FrameLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@id/bottomNav"
-            android:clipToPadding="false"
-            android:paddingStart="18dp"
-            android:paddingTop="18dp"
-            android:paddingEnd="18dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="24dp">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardQuickAction"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="22dp"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="24dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#E6EAF2"
-                    app:strokeWidth="1dp">
+                    <!-- USER -->
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="14dp"
-                        android:paddingVertical="14dp">
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                        <include
-                            android:id="@+id/actionAddTask"
-                            layout="@layout/item_quick_action" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Selamat Datang,"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
-                        <include
-                            android:id="@+id/actionCalendar"
-                            layout="@layout/item_quick_action" />
+                        <TextView
+                            android:id="@+id/tvWelcomeName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="User"
+                            android:textColor="#FFFFFF"
+                            android:textSize="30sp"
+                            android:textStyle="bold" />
 
-                        <include
-                            android:id="@+id/actionProject"
-                            layout="@layout/item_quick_action" />
+                        <TextView
+                            android:id="@+id/tvRole"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Supervisor Maintenance"
+                            android:textColor="#DCFCE7"
+                            android:textSize="15sp" />
 
-                        <include
-                            android:id="@+id/actionReport"
-                            layout="@layout/item_quick_action" />
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
 
-                <include layout="@layout/item_progress_card" />
+                    <!-- SEARCH -->
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="Ringkasan"
-                    android:textColor="#111827"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    <ImageView
+                        android:id="@+id/btnDashboardSearch"
+                        android:layout_width="42dp"
+                        android:layout_height="42dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/bg_icon_button"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_search"
+                        app:tint="@android:color/white" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
+                    <!-- NOTIFICATION -->
 
-                    <include
-                        android:id="@+id/cardTotal"
-                        layout="@layout/item_summary_total" />
+                    <FrameLayout
+                        android:layout_width="42dp"
+                        android:layout_height="42dp">
 
-                    <include
-                        android:id="@+id/cardDone"
-                        layout="@layout/item_summary_total" />
+                        <ImageView
+                            android:id="@+id/btnNotification"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
+                            android:background="@drawable/bg_icon_button"
+                            android:padding="12dp"
+                            android:src="@drawable/ic_notifications"
+                            app:tint="@android:color/white" />
+
+                        <TextView
+                            android:id="@+id/tvNotificationBadge"
+                            android:layout_width="17dp"
+                            android:layout_height="17dp"
+                            android:layout_gravity="end|top"
+                            android:background="@drawable/bg_circle_red"
+                            android:gravity="center"
+                            android:text="0"
+                            android:textColor="#FFFFFF"
+                            android:textSize="9sp" />
+                    </FrameLayout>
+
                 </LinearLayout>
 
+                <!-- CHIP -->
+
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
                     android:orientation="horizontal">
 
-                    <include
-                        android:id="@+id/cardProgress"
-                        layout="@layout/item_summary_total" />
+                    <TextView
+                        android:id="@+id/chipDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:background="@drawable/bg_icon_button"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="📅 Tanggal"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp" />
 
-                    <include
-                        android:id="@+id/cardOverdue"
-                        layout="@layout/item_summary_total" />
+                    <TextView
+                        android:id="@+id/chipSite"
+                        android:layout_width="wrap_content"
+                        android:layout_height="38dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/bg_icon_button"
+                        android:gravity="center"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:text="📍 Site"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp" />
+
                 </LinearLayout>
+
+            </LinearLayout>
+        </FrameLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/bottomNav"
+                android:clipToPadding="false"
+                android:paddingStart="18dp"
+                android:paddingTop="18dp"
+                android:paddingEnd="18dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <include
-                        android:id="@+id/cardProject"
-                        layout="@layout/item_summary_total" />
-
-                    <include
-                        android:id="@+id/cardPic"
-                        layout="@layout/item_summary_total" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <include
-                        android:id="@+id/cardCompletion"
-                        layout="@layout/item_summary_total" />
-
-                    <include
-                        android:id="@+id/cardDueToday"
-                        layout="@layout/item_summary_total" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="Grafik Status"
-                    android:textColor="#111827"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_chart_card"
-                    android:elevation="1dp"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:paddingBottom="24dp">
 
-                    <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/pieChart"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardQuickAction"
                         android:layout_width="match_parent"
-                        android:layout_height="246dp" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="22dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="2dp"
+                        app:strokeColor="#E6EAF2"
+                        app:strokeWidth="1dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:paddingHorizontal="8dp"
+                            android:paddingVertical="8dp">
+
+                            <include
+                                android:id="@+id/actionAddTask"
+                                layout="@layout/item_quick_action" />
+
+                            <include
+                                android:id="@+id/actionCalendar"
+                                layout="@layout/item_quick_action" />
+
+                            <include
+                                android:id="@+id/actionProject"
+                                layout="@layout/item_quick_action" />
+
+                            <include
+                                android:id="@+id/actionReport"
+                                layout="@layout/item_quick_action" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <include layout="@layout/item_progress_card" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="Ringkasan"
+                        android:textColor="#111827"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:fillViewport="true"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <include
+                                android:id="@+id/cardTotal"
+                                android:layout_width="98dp"
+                                android:layout_height="88dp"
+                                android:layout_weight="0"
+                                layout="@layout/item_summary_total" />
+
+                            <include
+                                android:id="@+id/cardDone"
+                                android:layout_width="98dp"
+                                android:layout_height="88dp"
+                                android:layout_weight="0"
+                                layout="@layout/item_summary_total" />
+
+                            <include
+                                android:id="@+id/cardProgress"
+                                android:layout_width="98dp"
+                                android:layout_height="88dp"
+                                android:layout_weight="0"
+                                layout="@layout/item_summary_total" />
+
+                            <include
+                                android:id="@+id/cardOverdue"
+                                android:layout_width="98dp"
+                                android:layout_height="88dp"
+                                android:layout_weight="0"
+                                layout="@layout/item_summary_total" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fillViewport="true"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <include
+                                android:id="@+id/cardProject"
+                                android:layout_width="98dp"
+                                android:layout_height="88dp"
+                                android:layout_weight="0"
+                                layout="@layout/item_summary_total" />
+
+                            <include
+                                android:id="@+id/cardPic"
+                                android:layout_width="98dp"
+                                android:layout_height="88dp"
+                                android:layout_weight="0"
+                                layout="@layout/item_summary_total" />
+
+                            <include
+                                android:id="@+id/cardCompletion"
+                                android:layout_width="98dp"
+                                android:layout_height="88dp"
+                                android:layout_weight="0"
+                                layout="@layout/item_summary_total" />
+
+                            <include
+                                android:id="@+id/cardDueToday"
+                                android:layout_width="98dp"
+                                android:layout_height="88dp"
+                                android:layout_weight="0"
+                                layout="@layout/item_summary_total" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="Grafik Status"
+                        android:textColor="#111827"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_dashboard_chart_card"
+                        android:elevation="2dp"
+                        android:orientation="vertical"
+                        android:padding="18dp">
+
+                        <com.github.mikephil.charting.charts.PieChart
+                            android:id="@+id/pieChart"
+                            android:layout_width="match_parent"
+                            android:layout_height="218dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvLegendDone"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:paddingVertical="6dp"
+                                    android:text="Done 0%"
+                                    android:textColor="#16A34A"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvLegendProgress"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:paddingVertical="6dp"
+                                    android:text="Progress 0%"
+                                    android:textColor="#CA8A04"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvLegendPending"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:paddingVertical="6dp"
+                                    android:text="Pending 0%"
+                                    android:textColor="#64748B"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/tvLegendOverdue"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:paddingVertical="6dp"
+                                    android:text="Overdue 0%"
+                                    android:textColor="#E11D48"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:gravity="center_vertical"
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/tvLegendDone"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:padding="6dp"
-                            android:text="Done 0%"
-                            android:textColor="#16A34A"
-                            android:textSize="12sp"
+                            android:layout_weight="1"
+                            android:text="Task per Project"
+                            android:textColor="#111827"
+                            android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/tvLegendProgress"
+                            android:id="@+id/btnProjectLihatSemua"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:padding="6dp"
-                            android:text="Progress 0%"
-                            android:textColor="#CA8A04"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvLegendPending"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="6dp"
-                            android:text="Pending 0%"
-                            android:textColor="#64748B"
-                            android:textSize="12sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tvLegendOverdue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:padding="6dp"
-                            android:text="Overdue 0%"
-                            android:textColor="#E11D48"
-                            android:textSize="12sp"
+                            android:text="Lihat Semua"
+                            android:textColor="#0B3BB7"
+                            android:textSize="13sp"
                             android:textStyle="bold" />
                     </LinearLayout>
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvProjectSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:nestedScrollingEnabled="false" />
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:id="@+id/tvEmptyProjectSummary"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Task per Project"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_dashboard_chart_card"
+                        android:gravity="center"
+                        android:padding="18dp"
+                        android:text="Belum ada task project"
+                        android:textColor="#64748B"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="Task Jatuh Tempo 7 Hari"
                         android:textColor="#111827"
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/btnProjectLihatSemua"
-                        android:layout_width="wrap_content"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvDueSoon"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="6dp"
-                        android:text="Lihat Semua"
-                        android:textColor="#0B3BB7"
+                        android:layout_marginTop="8dp"
+                        android:nestedScrollingEnabled="false" />
+
+                    <TextView
+                        android:id="@+id/tvEmptyDueSoon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_dashboard_chart_card"
+                        android:gravity="center"
+                        android:padding="18dp"
+                        android:text="Tidak ada task jatuh tempo dalam 7 hari"
+                        android:textColor="#64748B"
                         android:textSize="13sp"
-                        android:textStyle="bold" />
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Overdue"
+                            android:textColor="#E11D48"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/btnLihatSemua"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="6dp"
+                            android:text="Lihat Semua"
+                            android:textColor="#E11D48"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvOverdue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:nestedScrollingEnabled="false" />
+
+                    <TextView
+                        android:id="@+id/tvEmptyOverdue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_dashboard_chart_card"
+                        android:gravity="center"
+                        android:padding="18dp"
+                        android:text="Tidak ada task overdue"
+                        android:textColor="#64748B"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
+
+                    <!-- HEADER AKTIVITAS TERBARU -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Aktivitas Terbaru"
+                            android:textColor="#111827"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/btnRecentActivityAll"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="6dp"
+                            android:text="Lihat Semua"
+                            android:textColor="#0B3BB7"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <!-- SATU KARTU BESAR UNTUK SELURUH AKTIVITAS -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_dashboard_item_card"
+                        android:elevation="1dp"
+                        android:orientation="vertical"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:paddingTop="4dp"
+                        android:paddingBottom="4dp">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvRecentActivity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false" />
+
+                        <TextView
+                            android:id="@+id/tvEmptyRecentActivity"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:padding="18dp"
+                            android:text="Belum ada aktivitas terbaru"
+                            android:textColor="#64748B"
+                            android:textSize="13sp"
+                            android:visibility="gone" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvProjectSummary"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:nestedScrollingEnabled="false" />
+            </ScrollView>
 
-                <TextView
-                    android:id="@+id/tvEmptyProjectSummary"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_chart_card"
-                    android:gravity="center"
-                    android:padding="18dp"
-                    android:text="Belum ada task project"
-                    android:textColor="#64748B"
-                    android:textSize="13sp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:text="Task Jatuh Tempo 7 Hari"
-                    android:textColor="#111827"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvDueSoon"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:nestedScrollingEnabled="false" />
-
-                <TextView
-                    android:id="@+id/tvEmptyDueSoon"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_chart_card"
-                    android:gravity="center"
-                    android:padding="18dp"
-                    android:text="Tidak ada task jatuh tempo dalam 7 hari"
-                    android:textColor="#64748B"
-                    android:textSize="13sp"
-                    android:visibility="gone" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Overdue"
-                        android:textColor="#E11D48"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/btnLihatSemua"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="6dp"
-                        android:text="Lihat Semua"
-                        android:textColor="#E11D48"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvOverdue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:nestedScrollingEnabled="false" />
-
-                <TextView
-                    android:id="@+id/tvEmptyOverdue"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_chart_card"
-                    android:gravity="center"
-                    android:padding="18dp"
-                    android:text="Tidak ada task overdue"
-                    android:textColor="#64748B"
-                    android:textSize="13sp"
-                    android:visibility="gone" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Aktivitas Terbaru"
-                        android:textColor="#111827"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/btnRecentActivityAll"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="6dp"
-                        android:text="Lihat Semua"
-                        android:textColor="#0B3BB7"
-                        android:textSize="13sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvRecentActivity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:nestedScrollingEnabled="false" />
-
-                <TextView
-                    android:id="@+id/tvEmptyRecentActivity"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_chart_card"
-                    android:gravity="center"
-                    android:padding="18dp"
-                    android:text="Belum ada aktivitas terbaru"
-                    android:textColor="#64748B"
-                    android:textSize="13sp" />
-
-            </LinearLayout>
-
-        </ScrollView>
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@android:color/white"
-            android:elevation="12dp"
-            app:itemIconTint="@color/bottom_nav_color"
-            app:itemTextColor="@color/bottom_nav_color"
-            app:itemIconSize="26dp"
-            app:itemRippleColor="@color/bottom_nav_color"
-            app:labelVisibilityMode="labeled"
-            app:menu="@menu/bottom_nav_menu"/>
-
-    </RelativeLayout>
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNav"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/bg_dashboard_bottom_nav"
+                android:elevation="8dp"
+                app:itemIconTint="@color/bottom_nav_color"
+                app:itemTextColor="@color/bottom_nav_color"
+                app:itemIconSize="23dp"
+                app:itemRippleColor="@android:color/transparent"
+                app:labelVisibilityMode="labeled"
+                app:menu="@menu/bottom_nav_menu" />
+        </RelativeLayout>
 
     </LinearLayout>
 
@@ -582,5 +637,3 @@
         app:itemShapeInsetEnd="12dp" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
-
- 

@@ -57,6 +57,17 @@
             android:textSize="13sp" />
 
         <TextView
+            android:id="@+id/tvHistoryChanges"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="#F3F7F4"
+            android:padding="8dp"
+            android:textColor="#334155"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/tvHistoryMeta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

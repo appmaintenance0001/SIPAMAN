@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -34,6 +36,55 @@ import java.util.Date;
 
 
 public class DetailTaskActivity extends AppCompatActivity {
+
+    private void writeDeletedTaskLog(String id, Task task) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            android.util.Log.w("TaskDeleteLog", "User belum login; log penghapusan tidak ditulis.");
+            return;
+        }
+
+        String uid = user.getUid();
+        String fallbackName = user.getDisplayName();
+        if (fallbackName == null || fallbackName.trim().isEmpty()) {
+            fallbackName = user.getEmail() != null ? user.getEmail() : "Pengguna";
+        }
+        final String defaultName = fallbackName;
+
+        FirebaseDatabase.getInstance().getReference("users").child(uid).child("name").get()
+                .addOnSuccessListener(userSnapshot -> {
+                    String userName = userSnapshot.getValue(String.class);
+                    if (userName == null || userName.trim().isEmpty()) userName = defaultName;
+                    saveDeletedTaskLog(uid, userName, id, task);
+                })
+                .addOnFailureListener(error -> saveDeletedTaskLog(uid, defaultName, id, task));
+    }
+
+    private void saveDeletedTaskLog(String uid, String userName, String id, Task task) {
+        DatabaseReference logsRef = FirebaseDatabase.getInstance().getReference("activity_logs");
+        String logId = logsRef.push().getKey();
+        if (logId == null) return;
+
+        String title = safeLogValue(task.getJudul());
+        String changes = "Judul: " + title
+                + "\nProject: " + safeLogValue(task.getProject())
+                + "\nKode Project: " + safeLogValue(task.getProjectId())
+                + "\nJenis: " + safeLogValue(task.getJenis())
+                + "\nTanggal mulai: " + safeLogValue(task.getMulai())
+                + "\nDue date: " + safeLogValue(task.getDue())
+                + "\nPIC / Teknisi: " + safeLogValue(task.getPic())
+                + "\nPrioritas: " + safeLogValue(task.getPriority());
+
+        ActivityLog log = new ActivityLog(logId, uid, userName, "Task Dihapus",
+                System.currentTimeMillis(), "task", id, title,
+                "Task \"" + title + "\" dihapus.", changes);
+        logsRef.child(logId).setValue(log)
+                .addOnFailureListener(error -> android.util.Log.e("TaskDeleteLog", "Gagal menyimpan riwayat penghapusan task", error));
+    }
+
+    private String safeLogValue(String value) {
+        return value == null || value.trim().isEmpty() ? "(kosong)" : value.trim();
+    }
 
     // 🔥 GLOBAL VIEW (WAJIB)
     private TextView txtProject, txtJenis, txtMulai, txtDue, txtStatus, txtSelesai;
@@ -54,54 +105,42 @@ public class DetailTaskActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (item.getItemId() == R.id.menu_edit) {
-            String id = getIntent().getStringExtra("id");
-
-            if (TextUtils.isEmpty(id)) {
-                Toast.makeText(this, "ID Task tidak valid",
-                        Toast.LENGTH_SHORT).show();
-                return true;
-            }
-
-            Intent intent = new Intent(
-                    DetailTaskActivity.this,
-                    AddTaskActivity.class
-            );
-
-            intent.putExtra("mode", "edit");
-            intent.putExtra("id", id);
-
-            startActivity(intent);
-            return true;
-        }
-
         if (item.getItemId() == R.id.menu_delete) {
+
             new AlertDialog.Builder(this)
                     .setTitle("Hapus Task")
-                    .setMessage("Yakin ingin menghapus task ini?")
-                    .setPositiveButton("Hapus", (dialog, which) -> {
+                    .setMessage("Yakin ingin menghapus?")
+                    .setPositiveButton("Hapus", (d, w) -> {
+
                         String id = getIntent().getStringExtra("id");
 
                         if (TextUtils.isEmpty(id)) {
-                            Toast.makeText(this, "ID Task tidak valid",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "ID Task tidak valid", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
-                        FirebaseDatabase.getInstance()
-                                .getReference("tasks")
-                                .child(id)
-                                .removeValue()
-                                .addOnSuccessListener(unused -> {
-                                    Toast.makeText(this, "Task dihapus",
-                                            Toast.LENGTH_SHORT).show();
-                                    finish();
-                                })
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(this,
-                                                "Gagal menghapus task",
-                                                Toast.LENGTH_SHORT).show()
-                                );
+                        DatabaseReference taskRef = FirebaseDatabase.getInstance()
+                                .getReference("tasks").child(id);
+
+                        // Ambil data task sebelum dihapus agar rincian tetap tersimpan di riwayat.
+                        taskRef.get().addOnSuccessListener(snapshot -> {
+                            if (isFinishing() || isDestroyed()) return;
+                            Task task = snapshot.getValue(Task.class);
+                            if (task == null) {
+                                Toast.makeText(this, "Task tidak ditemukan", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+
+                            taskRef.removeValue()
+                                    .addOnSuccessListener(unused -> {
+                                        writeDeletedTaskLog(id, task);
+                                        Toast.makeText(this, "Task dihapus", Toast.LENGTH_SHORT).show();
+                                        finish();
+                                    })
+                                    .addOnFailureListener(error ->
+                                            Toast.makeText(this, "Gagal menghapus task: " + error.getMessage(), Toast.LENGTH_LONG).show());
+                        }).addOnFailureListener(error ->
+                                Toast.makeText(this, "Gagal membaca data task", Toast.LENGTH_SHORT).show());
                     })
                     .setNegativeButton("Batal", null)
                     .show();
@@ -375,26 +414,26 @@ public class DetailTaskActivity extends AppCompatActivity {
 
 
 
-        // ================= OVERDUE CHECK =================
-        private boolean isOverdue(String dueDate) {
+    // ================= OVERDUE CHECK =================
+    private boolean isOverdue(String dueDate) {
 
-            try {
+        try {
 
-                SimpleDateFormat sdf =
-                        new SimpleDateFormat(
-                                "d/M/yyyy",
-                                Locale.getDefault()
-                        );
+            SimpleDateFormat sdf =
+                    new SimpleDateFormat(
+                            "d/M/yyyy",
+                            Locale.getDefault()
+                    );
 
-                if (TextUtils.isEmpty   (dueDate)) return false;
+            if (TextUtils.isEmpty   (dueDate)) return false;
 
-                Date due = sdf.parse(dueDate);
+            Date due = sdf.parse(dueDate);
 
-                return due != null && due.before(new Date());
+            return due != null && due.before(new Date());
 
-            } catch (Exception e) {
+        } catch (Exception e) {
 
-                return false;
-            }
+            return false;
         }
     }
+}

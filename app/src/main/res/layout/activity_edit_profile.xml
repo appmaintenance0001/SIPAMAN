@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -21,7 +20,8 @@
             android:background="@drawable/bg_icon_button"
             android:padding="10dp"
             android:src="@drawable/ic_arrow_back"
-            app:tint="@android:color/white"/>
+            android:contentDescription="Kembali"
+            app:tint="@android:color/white" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -31,70 +31,138 @@
             android:text="Edit Profil"
             android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:textSize="22sp"/>
-
+            android:textSize="22sp" />
     </RelativeLayout>
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
-            <com.google.android.material.textfield.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nama">
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="No. HP">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtPhone"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="phone"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingBottom="22dp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:hint="Site">
+                    <ImageView
+                        android:id="@+id/imgProfile"
+                        android:layout_width="104dp"
+                        android:layout_height="104dp"
+                        android:background="@drawable/bg_login_feature_icon"
+                        android:contentDescription="Foto profil"
+                        android:padding="4dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_user" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtSite"
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnChangePhoto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="8dp"
+                        android:text="GANTI FOTO PROFIL"
+                        android:textAllCaps="false"
+                        android:textColor="#16803D"
+                        android:backgroundTint="#E3F4E9"
+                        app:cornerRadius="20dp"
+                        app:icon="@drawable/ic_camera"
+                        app:iconTint="#16803D" />
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:hint="Nama">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSave"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="28dp"
-                android:text="SIMPAN PERUBAHAN"
-                android:textAllCaps="false"
-                android:textStyle="bold"
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#212121"
+                        android:textColorHint="#757575"
+                        android:inputType="textPersonName"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="No. HP">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#212121"
+                        android:textColorHint="#757575"
+                        android:inputType="phone"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="Site">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtSite"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="#212121"
+                        android:textColorHint="#757575"
+                        android:inputType="textCapWords"
+                        android:singleLine="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSave"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_marginTop="28dp"
+                    android:text="SIMPAN PERUBAHAN"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:backgroundTint="#2E7D32"
+                    app:cornerRadius="14dp" />
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/profileProgress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#66000000"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:indeterminateTint="@android:color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Memproses..."
                 android:textColor="@android:color/white"
-                android:backgroundTint="#2E7D32"
-                app:cornerRadius="14dp"/>
-
+                android:textStyle="bold" />
         </LinearLayout>
-
-    </ScrollView>
-
+    </FrameLayout>
 </LinearLayout>

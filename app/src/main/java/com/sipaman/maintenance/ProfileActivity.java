@@ -18,6 +18,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class ProfileActivity extends AppCompatActivity {
 
     private ImageView btnBack;
@@ -32,6 +41,8 @@ public class ProfileActivity extends AppCompatActivity {
     private MaterialButton btnChangePassword;
     private TextView tvName;
     private TextView tvRole;
+
+    private ImageView imgProfile;
 
 
 
@@ -80,6 +91,7 @@ public class ProfileActivity extends AppCompatActivity {
         tvProfilePhone = findViewById(R.id.tvProfilePhone);
         tvName = findViewById(R.id.tvName);
         tvRole = findViewById(R.id.tvRole);
+        imgProfile = findViewById(R.id.imgProfile);
 
         btnEditProfile = findViewById(R.id.btnEditProfile);
         btnChangePassword = findViewById(R.id.btnChangePassword);
@@ -120,6 +132,11 @@ public class ProfileActivity extends AppCompatActivity {
                 String site = snapshot.child("site").getValue(String.class);
                 String phone = snapshot.child("phone").getValue(String.class);
 
+                String photoUrl = snapshot.child("photoUrl")
+                        .getValue(String.class);
+
+                loadProfileImage(photoUrl);
+
                 tvProfileName.setText(name == null ? "-" : name);
                 tvName.setText(name == null ? "-" : name);
                 tvProfileEmail.setText(email == null ? "-" : email);
@@ -145,6 +162,55 @@ public class ProfileActivity extends AppCompatActivity {
 
         });
 
+    }
+
+    private final ExecutorService imageExecutor =
+            Executors.newSingleThreadExecutor();
+
+    private void loadProfileImage(String imageUrl) {
+        if (imageUrl == null || imageUrl.trim().isEmpty()) {
+            imgProfile.setImageResource(R.drawable.ic_user);
+            return;
+        }
+
+        imageExecutor.execute(() -> {
+            HttpURLConnection connection = null;
+
+            try {
+                URL url = new URL(imageUrl);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(10000);
+                connection.setInstanceFollowRedirects(true);
+
+                try (InputStream input = connection.getInputStream()) {
+                    Bitmap bitmap = BitmapFactory.decodeStream(input);
+
+                    if (bitmap != null) {
+                        runOnUiThread(() -> {
+                            if (!isFinishing() && !isDestroyed()) {
+                                imgProfile.setImageBitmap(bitmap);
+                            }
+                        });
+                    }
+                }
+            } catch (Exception e) {
+                android.util.Log.e(
+                        "ProfileActivity",
+                        "Gagal memuat foto profil",
+                        e
+                );
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        });
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        imageExecutor.shutdown();
     }
 
 }

@@ -75,10 +75,6 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
     private void setupToolbarActions() {
-        findViewById(R.id.btnCalendarMenu).setOnClickListener(v -> {
-            startActivity(new Intent(this, DashboardActivity.class));
-            finish();
-        });
 
         findViewById(R.id.btnCalendarToday).setOnClickListener(v -> {
             Calendar today = Calendar.getInstance();
@@ -113,6 +109,7 @@ public class CalendarActivity extends AppCompatActivity {
 
     private void setupBottomNav() {
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+        bottomNav.setItemActiveIndicatorEnabled(false);
         bottomNav.setSelectedItemId(R.id.nav_calendar);
 
         bottomNav.setOnItemSelectedListener(item -> {

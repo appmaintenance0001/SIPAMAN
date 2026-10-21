@@ -13,7 +13,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="58dp"
-            android:background="#173A6A"
+            android:background="#16803D"
             android:gravity="center_vertical"
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
@@ -65,8 +65,14 @@
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNav"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#FFFFFF"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_dashboard_bottom_nav"
+            android:elevation="8dp"
+            app:itemBackground="@drawable/bg_bottom_nav_item"
+            app:itemIconTint="@color/bottom_nav_color"
+            app:itemTextColor="@color/bottom_nav_color"
+            app:itemIconSize="23dp"
+            app:itemRippleColor="@android:color/transparent"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav_menu" />
     </LinearLayout>
@@ -79,6 +85,6 @@
         android:layout_marginEnd="18dp"
         android:layout_marginBottom="88dp"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#173A6A"
+        app:backgroundTint="#16803D"
         app:tint="#FFFFFF" />
 </FrameLayout>

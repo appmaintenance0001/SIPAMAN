@@ -931,6 +931,18 @@ public class AddTaskActivity extends AppCompatActivity {
                                         .addOnSuccessListener(unused -> {
                                             if (isActivityUnavailable()) return;
 
+                                            String changes = buildTaskChanges(
+                                                    oldTask, judul, selectedProjectId, project,
+                                                    jenis, mulai, due, spPic.getText().toString(),
+                                                    spPriority.getText().toString(),
+                                                    etDeskripsi.getText().toString()
+                                            );
+                                            writeTaskLog(
+                                                    "Task Diedit", id, judul,
+                                                    "Task \"" + judul + "\" diperbarui.",
+                                                    changes
+                                            );
+
                                             dialog.dismiss();
                                             btnSimpan.setEnabled(true);
 
@@ -995,6 +1007,22 @@ public class AddTaskActivity extends AppCompatActivity {
                             .addOnSuccessListener(aVoid -> {
                                 if (isActivityUnavailable()) return;
 
+                                String detailTask = "Judul: " + judul
+                                        + "\nKode Project: " + selectedProjectId
+                                        + "\nProject: " + project
+                                        + "\nJenis: " + jenis
+                                        + "\nTanggal mulai: " + mulai
+                                        + "\nDue date: " + due
+                                        + "\nPIC / Teknisi: " + spPic.getText().toString()
+                                        + "\nPrioritas: " + spPriority.getText().toString()
+                                        + "\nDeskripsi: " + etDeskripsi.getText().toString()
+                                        + "\nStatus: ON_PROGRESS";
+                                writeTaskLog(
+                                        "Task Dibuat", id, judul,
+                                        "Task \"" + judul + "\" dibuat.",
+                                        detailTask
+                                );
+
                                 dialog.dismiss();
                                 btnSimpan.setEnabled(true);
 
@@ -1042,6 +1070,75 @@ public class AddTaskActivity extends AppCompatActivity {
         });
     }
 
+
+    // ================= RIWAYAT TASK =================
+    private void writeTaskLog(String type, String taskId, String taskName,
+                              String message, String changes) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Log.w("SIPAMAN_HISTORY", "User belum login; riwayat task tidak ditulis.");
+            return;
+        }
+
+        String uid = currentUser.getUid();
+        String fallbackName = currentUser.getDisplayName();
+        if (fallbackName == null || fallbackName.trim().isEmpty()) {
+            fallbackName = currentUser.getEmail() != null ? currentUser.getEmail() : "Pengguna";
+        }
+        final String defaultName = fallbackName;
+
+        FirebaseDatabase.getInstance().getReference("users").child(uid).child("name").get()
+                .addOnSuccessListener(snapshot -> {
+                    String userName = snapshot.getValue(String.class);
+                    if (userName == null || userName.trim().isEmpty()) userName = defaultName;
+                    saveTaskLog(uid, userName, type, taskId, taskName, message, changes);
+                })
+                .addOnFailureListener(error ->
+                        saveTaskLog(uid, defaultName, type, taskId, taskName, message, changes));
+    }
+
+    private void saveTaskLog(String uid, String userName, String type, String taskId,
+                             String taskName, String message, String changes) {
+        DatabaseReference logsRef = FirebaseDatabase.getInstance().getReference("activity_logs");
+        String logId = logsRef.push().getKey();
+        if (logId == null) {
+            Log.e("SIPAMAN_HISTORY", "Gagal membuat ID riwayat task.");
+            return;
+        }
+        ActivityLog log = new ActivityLog(logId, uid, userName, type,
+                System.currentTimeMillis(), "task", taskId, taskName, message, changes);
+        logsRef.child(logId).setValue(log)
+                .addOnFailureListener(error ->
+                        Log.e("SIPAMAN_HISTORY", "Gagal menyimpan riwayat task.", error));
+    }
+
+    private String buildTaskChanges(Task oldTask, String judul, String projectId,
+                                    String project, String jenis, String mulai, String due,
+                                    String pic, String priority, String deskripsi) {
+        StringBuilder changes = new StringBuilder();
+        appendTaskChange(changes, "Judul", oldTask.getJudul(), judul);
+        appendTaskChange(changes, "Kode Project", oldTask.getProjectId(), projectId);
+        appendTaskChange(changes, "Project", oldTask.getProject(), project);
+        appendTaskChange(changes, "Jenis", oldTask.getJenis(), jenis);
+        appendTaskChange(changes, "Tanggal mulai", oldTask.getMulai(), mulai);
+        appendTaskChange(changes, "Due date", oldTask.getDue(), due);
+        appendTaskChange(changes, "PIC / Teknisi", oldTask.getPic(), pic);
+        appendTaskChange(changes, "Prioritas", oldTask.getPriority(), priority);
+        appendTaskChange(changes, "Deskripsi", oldTask.getDeskripsi(), deskripsi);
+        return changes.length() == 0 ? "Tidak ada perubahan field." : changes.toString();
+    }
+
+    private void appendTaskChange(StringBuilder changes, String label,
+                                  String oldValue, String newValue) {
+        String oldText = oldValue == null ? "" : oldValue.trim();
+        String newText = newValue == null ? "" : newValue.trim();
+        if (oldText.equals(newText)) return;
+        if (changes.length() > 0) changes.append("\n");
+        changes.append(label).append(": ")
+                .append(oldText.isEmpty() ? "(kosong)" : oldText)
+                .append(" → ")
+                .append(newText.isEmpty() ? "(kosong)" : newText);
+    }
 
     // ================= UPLOAD =================
     private void uploadImagesCloudinary(
@@ -1662,15 +1759,15 @@ public class AddTaskActivity extends AppCompatActivity {
         }
     }
 
-        private void showDatePicker (EditText editText){
-            Calendar c = Calendar.getInstance();
-            new DatePickerDialog(this,
-                    (view, y, m, d) -> editText.setText(d + "/" + (m + 1) + "/" + y),
-                    c.get(Calendar.YEAR),
-                    c.get(Calendar.MONTH),
-                    c.get(Calendar.DAY_OF_MONTH)
-            ).show();
-        }
+    private void showDatePicker (EditText editText){
+        Calendar c = Calendar.getInstance();
+        new DatePickerDialog(this,
+                (view, y, m, d) -> editText.setText(d + "/" + (m + 1) + "/" + y),
+                c.get(Calendar.YEAR),
+                c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH)
+        ).show();
+    }
 
     @Override
     protected void onDestroy() {
@@ -1680,4 +1777,4 @@ public class AddTaskActivity extends AppCompatActivity {
         listBefore.clear();
         listAfter.clear();
     }
-    }
+}

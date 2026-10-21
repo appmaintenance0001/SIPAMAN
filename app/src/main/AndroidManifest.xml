@@ -4,7 +4,6 @@
     <!-- Kamera -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- Android 13+ -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- Android <= 12 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
@@ -25,9 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SIPAMAN">
         <activity
-            android:name=".SipamanMessagingService"
-            android:exported="false" />
-        <activity
             android:name=".EditProfileActivity"
             android:exported="false" />
         <activity
@@ -41,6 +37,9 @@
             android:exported="false" />
         <activity
             android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AiAssistantActivity"
             android:exported="false" />
         <activity
             android:name=".CalendarActivity"

@@ -37,6 +37,12 @@
             android:title="Pengaturan"
             android:checkable="true" />
 
+        <item
+            android:id="@+id/menu_ai_assistant"
+            android:icon="@android:drawable/ic_menu_help"
+            android:title="AI Assistant"
+            android:checkable="true" />
+
     </group>
 
     <!-- PEMISAH -->

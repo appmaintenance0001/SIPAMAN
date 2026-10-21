@@ -22,6 +22,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -132,6 +135,7 @@ public class ProjectActivity extends AppCompatActivity {
     private void setupBottomNav() {
 
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+        bottomNav.setItemActiveIndicatorEnabled(false);
 
         bottomNav.setSelectedItemId(R.id.nav_project);
 
@@ -428,6 +432,14 @@ public class ProjectActivity extends AppCompatActivity {
                         projectRef.child(project.getId())
                                 .setValue(newProject)
                                 .addOnSuccessListener(unused -> {
+                                    String changes = buildProjectChanges(project, newProject);
+
+                                    writeProjectLog(
+                                            "Project Diedit",
+                                            newProject,
+                                            "Project " + newProject.getName() + " diperbarui.",
+                                            changes
+                                    );
 
                                     Toast.makeText(
                                             ProjectActivity.this,
@@ -436,7 +448,6 @@ public class ProjectActivity extends AppCompatActivity {
                                     ).show();
 
                                     dialog.dismiss();
-
                                 })
                                 .addOnFailureListener(e ->
 
@@ -462,6 +473,17 @@ public class ProjectActivity extends AppCompatActivity {
                                     projectRef.child(code)
                                             .setValue(newProject)
                                             .addOnSuccessListener(unused -> {
+
+                                                writeProjectLog(
+                                                        "Project Dibuat",
+                                                        newProject,
+                                                        "Project " + newProject.getName() + " dibuat.",
+                                                        "Kode: " + newProject.getId()
+                                                                + "\nNama: " + newProject.getName()
+                                                                + "\nLokasi: " + newProject.getLocation()
+                                                                + "\nWarna: " + newProject.getColor()
+                                                                + "\nIkon: " + newProject.getIcon()
+                                                );
 
                                                 Toast.makeText(
                                                         ProjectActivity.this,
@@ -515,30 +537,158 @@ public class ProjectActivity extends AppCompatActivity {
                 )
                 .setPositiveButton("Hapus", (dialog, which) -> {
 
-                    projectRef.child(project.getId())
-                            .removeValue()
-                            .addOnSuccessListener(unused ->
+                    projectRef.child(project.getId()).removeValue()
+                            .addOnSuccessListener(aVoid -> {
 
-                                    Toast.makeText(
-                                            ProjectActivity.this,
-                                            "Project berhasil dihapus",
-                                            Toast.LENGTH_SHORT
-                                    ).show()
+                                // CATAT AKTIVITAS PENGHAPUSAN PROJECT
+                                writeProjectLog(
+                                        "Project Dihapus",
+                                        project,
+                                        "Project " + project.getName() + " dihapus.",
+                                        "Kode: " + project.getId()
+                                                + "\nNama: " + project.getName()
+                                                + "\nLokasi: " + project.getLocation()
+                                );
 
-                            )
-                            .addOnFailureListener(e ->
-
-                                    Toast.makeText(
-                                            ProjectActivity.this,
-                                            e.getMessage(),
-                                            Toast.LENGTH_LONG
-                                    ).show()
-
-                            );
+                                Toast.makeText(this,
+                                        "Project berhasil dihapus",
+                                        Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(this,
+                                        "Gagal menghapus project",
+                                        Toast.LENGTH_SHORT).show();
+                            });
 
                 })
                 .setNegativeButton("Batal", null)
                 .show();
 
+    }
+
+    private void writeProjectLog(
+            String type,
+            Project project,
+            String message,
+            String changes
+    ) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user == null) {
+            android.util.Log.w("ProjectLog", "User belum login; log tidak ditulis.");
+            return;
+        }
+
+        String uid = user.getUid();
+        String fallbackName = user.getDisplayName();
+
+        if (fallbackName == null || fallbackName.trim().isEmpty()) {
+            fallbackName = user.getEmail() != null
+                    ? user.getEmail()
+                    : "Pengguna";
+        }
+
+        final String defaultName = fallbackName;
+
+        FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(uid)
+                .child("name")
+                .get()
+                .addOnSuccessListener(userSnapshot -> {
+                    String userName = userSnapshot.getValue(String.class);
+
+                    if (userName == null || userName.trim().isEmpty()) {
+                        userName = defaultName;
+                    }
+
+                    DatabaseReference logsRef =
+                            FirebaseDatabase.getInstance().getReference("activity_logs");
+
+                    String logId = logsRef.push().getKey();
+                    if (logId == null) return;
+
+                    ActivityLog log = new ActivityLog(
+                            logId,
+                            uid,
+                            userName,
+                            type,
+                            System.currentTimeMillis(),
+                            "project",
+                            project.getId(),
+                            project.getName(),
+                            message,
+                            changes
+                    );
+
+                    logsRef.child(logId).setValue(log)
+                            .addOnFailureListener(error ->
+                                    android.util.Log.e(
+                                            "ProjectLog",
+                                            "Gagal menyimpan log project",
+                                            error
+                                    ));
+                })
+                .addOnFailureListener(error -> {
+                    // Jika nama tidak bisa dibaca, tetap gunakan fallback pengguna.
+                    DatabaseReference logsRef =
+                            FirebaseDatabase.getInstance().getReference("activity_logs");
+
+                    String logId = logsRef.push().getKey();
+                    if (logId == null) return;
+
+                    ActivityLog log = new ActivityLog(
+                            logId,
+                            uid,
+                            defaultName,
+                            type,
+                            System.currentTimeMillis(),
+                            "project",
+                            project.getId(),
+                            project.getName(),
+                            message,
+                            changes
+                    );
+
+                    logsRef.child(logId).setValue(log);
+                });
+    }
+
+    private String buildProjectChanges(Project oldProject, Project newProject) {
+        StringBuilder changes = new StringBuilder();
+
+        appendProjectChange(changes, "Kode",
+                oldProject.getId(), newProject.getId());
+        appendProjectChange(changes, "Nama",
+                oldProject.getName(), newProject.getName());
+        appendProjectChange(changes, "Lokasi",
+                oldProject.getLocation(), newProject.getLocation());
+        appendProjectChange(changes, "Warna",
+                oldProject.getColor(), newProject.getColor());
+        appendProjectChange(changes, "Ikon",
+                oldProject.getIcon(), newProject.getIcon());
+
+        return changes.length() == 0
+                ? "Tidak ada perubahan field."
+                : changes.toString();
+    }
+
+    private void appendProjectChange(
+            StringBuilder changes,
+            String label,
+            String oldValue,
+            String newValue
+    ) {
+        String oldText = oldValue == null ? "" : oldValue.trim();
+        String newText = newValue == null ? "" : newValue.trim();
+
+        if (oldText.equals(newText)) return;
+
+        if (changes.length() > 0) changes.append("\n");
+        changes.append(label)
+                .append(": ")
+                .append(oldText.isEmpty() ? "(kosong)" : oldText)
+                .append(" → ")
+                .append(newText.isEmpty() ? "(kosong)" : newText);
     }
 }

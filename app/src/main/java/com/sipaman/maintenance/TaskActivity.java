@@ -221,6 +221,7 @@ public class TaskActivity extends AppCompatActivity {
 
         // 🔥 BOTTOM NAV
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+        bottomNav.setItemActiveIndicatorEnabled(false);
         bottomNav.setSelectedItemId(R.id.nav_task);
 
         bottomNav.setOnItemSelectedListener(item -> {

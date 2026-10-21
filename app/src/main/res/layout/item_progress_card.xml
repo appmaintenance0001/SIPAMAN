@@ -1,100 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:id="@+id/cardProgressMaintenance"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
+    android:layout_marginTop="2dp"
     app:cardBackgroundColor="#FFFFFF"
-    app:cardCornerRadius="22dp"
+    app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
-    app:strokeColor="#E6EAF2"
+    app:strokeColor="#E4EAF2"
     app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="22dp">
+        android:padding="18dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Progress Maintenance"
-            android:textStyle="bold"
             android:textColor="#111827"
-            android:textSize="18sp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="14dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <FrameLayout
-                android:layout_width="132dp"
-                android:layout_height="132dp"
-                android:padding="7dp">
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:padding="4dp">
 
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/progressCircle"
-                    android:layout_width="118dp"
-                    android:layout_height="118dp"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
                     android:layout_gravity="center"
                     android:max="100"
-                    android:progress="82"
-                    app:indicatorColor="#16A34A"
-                    app:indicatorSize="118dp"
+                    app:indicatorColor="#16803D"
+                    app:indicatorSize="96dp"
                     app:trackColor="#E8EEF6"
-                    app:trackThickness="10dp" />
+                    app:trackThickness="9dp" />
 
                 <TextView
                     android:id="@+id/tvProgressPercent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="82%"
-                    android:textStyle="bold"
-                    android:textSize="28sp"
-                    android:textColor="#111827" />
-
+                    android:textColor="#111827"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
             </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
                 android:layout_weight="1"
-                android:layout_marginStart="22dp"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvProgressTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="#1E293B"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="98 dari 120 Task Selesai"
-                    android:textColor="#1E293B"
-                    android:textStyle="bold"
-                    android:textSize="17sp" />
+                    android:layout_marginTop="6dp"
+                    android:text="Tingkat penyelesaian maintenance"
+                    android:textColor="#64748B"
+                    android:textSize="12sp" />
 
                 <com.google.android.material.progressindicator.LinearProgressIndicator
                     android:id="@+id/progressBar"
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="14dp"
                     android:max="100"
-                    android:progress="82"
-                    app:indicatorColor="#16A34A"
+                    app:indicatorColor="#16803D"
                     app:trackColor="#E8EEF6"
                     app:trackCornerRadius="4dp" />
-
             </LinearLayout>
-
         </LinearLayout>
-
     </LinearLayout>
-
 </com.google.android.material.card.MaterialCardView>

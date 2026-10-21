@@ -23,13 +23,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvHistoryType, tvHistoryMessage, tvHistoryMeta;
+        TextView tvHistoryType, tvHistoryMessage, tvHistoryMeta, tvHistoryChanges;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvHistoryType = itemView.findViewById(R.id.tvHistoryType);
             tvHistoryMessage = itemView.findViewById(R.id.tvHistoryMessage);
             tvHistoryMeta = itemView.findViewById(R.id.tvHistoryMeta);
+            tvHistoryChanges = itemView.findViewById(R.id.tvHistoryChanges);
         }
     }
 
@@ -44,8 +45,20 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ActivityLog log = list.get(position);
         holder.tvHistoryType.setText(log.getType());
-        holder.tvHistoryMessage.setText(log.getMessage());
-        holder.tvHistoryMeta.setText(log.getUserName() + " - " + format.format(new Date(log.getTimestamp())));
+        holder.tvHistoryMessage.setText(log.getMessage() == null ? "" : log.getMessage());
+
+        String changes = log.getChanges();
+        if (changes != null && !changes.trim().isEmpty()) {
+            holder.tvHistoryChanges.setVisibility(View.VISIBLE);
+            holder.tvHistoryChanges.setText("Detail perubahan:\n" + changes.trim());
+        } else {
+            holder.tvHistoryChanges.setText("");
+            holder.tvHistoryChanges.setVisibility(View.GONE);
+        }
+
+        String userName = log.getUserName() == null || log.getUserName().trim().isEmpty()
+                ? "Pengguna" : log.getUserName();
+        holder.tvHistoryMeta.setText(userName + " - " + format.format(new Date(log.getTimestamp())));
     }
 
     @Override

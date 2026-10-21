@@ -74,7 +74,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Firebase BoM: mengatur versi library Firebase agar kompatibel
-    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
+    implementation(platform("com.google.firebase:firebase-bom:35.0.2"))
 
 // Firebase Authentication
     implementation("com.google.firebase:firebase-auth")
@@ -87,6 +87,16 @@ dependencies {
 
 // Firebase Cloud Messaging
     implementation("com.google.firebase:firebase-messaging")
+
+    // Firebase AI Logic - Gemini
+    implementation("com.google.firebase:firebase-ai")
+
+// App Check debug provider untuk pengujian lokal
+    implementation("com.google.firebase:firebase-appcheck-debug")
+
+// Kompatibilitas Firebase AI Logic untuk Java
+    implementation("com.google.guava:guava:31.0.1-android")
+    implementation("org.reactivestreams:reactive-streams:1.0.4")
 
 }
 

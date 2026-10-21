@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "421157543115",
+    "project_id": "sipaman-ai-assistant",
+    "storage_bucket": "sipaman-ai-assistant.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:421157543115:android:ce926138638373ea68cf4e",
+        "android_client_info": {
+          "package_name": "com.sipaman.maintenance"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiWT4gxQkn52N-riXFxKfsjm7soj9v-as"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

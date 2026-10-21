@@ -7,7 +7,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.PopupMenu;
+
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.core.view.GravityCompat;
@@ -108,6 +117,9 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView tvDrawerEmail;
     private TextView tvDrawerRole;
 
+    private final ExecutorService profileImageExecutor =
+            Executors.newSingleThreadExecutor();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +131,6 @@ public class DashboardActivity extends AppCompatActivity {
         setupSummaryCards();
         setupQuickAction();
 
-        loadUserName();
         loadCurrentDate();
 
         loadDashboardData();
@@ -127,6 +138,12 @@ public class DashboardActivity extends AppCompatActivity {
         loadRecentActivities();
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUserName();
     }
 
     private void loadCurrentDate() {
@@ -203,9 +220,12 @@ public class DashboardActivity extends AppCompatActivity {
 
         rvRecentActivity = findViewById(R.id.rvRecentActivity);
         rvRecentActivity.setLayoutManager(new LinearLayoutManager(this));
-        recentActivityAdapter = new RecentActivityDashboardAdapter(recentActivityList);
-        rvRecentActivity.setAdapter(recentActivityAdapter);
+        recentActivityAdapter = new RecentActivityDashboardAdapter(
+                recentActivityList,
+                log -> openActivityFromLog(log)
+        );
 
+        rvRecentActivity.setAdapter(recentActivityAdapter);
         rvProjectSummary =
                 findViewById(R.id.rvProjectSummary);
 
@@ -275,6 +295,10 @@ public class DashboardActivity extends AppCompatActivity {
 
                 startActivity(new Intent(this, SettingsActivity.class));
 
+            } else if (id == R.id.menu_ai_assistant) {
+
+                startActivity(new Intent(this, AiAssistantActivity.class));
+
             } else if (id == R.id.menu_logout) {
 
                 FirebaseAuth.getInstance().signOut();
@@ -293,6 +317,60 @@ public class DashboardActivity extends AppCompatActivity {
 
         chipDate.setText(new SimpleDateFormat("dd MMM yyyy", Locale.US).format(new Date()));
         chipSite.setText("SI-PAMAN");
+    }
+
+
+    private void openActivityFromLog(ActivityLog log) {
+        if (log == null) {
+            startActivity(new Intent(this, HistoryActivity.class));
+            return;
+        }
+
+        String type = log.getType() == null
+                ? ""
+                : log.getType().toLowerCase(Locale.ROOT);
+
+        String entityType = log.getEntityType() == null
+                ? ""
+                : log.getEntityType().toLowerCase(Locale.ROOT);
+
+        String entityId = log.getEntityId();
+
+        // Log penghapusan tidak diarahkan ke detail karena datanya
+        // mungkin sudah tidak tersedia.
+        if (type.contains("hapus")
+                || type.contains("delete")
+                || entityId == null
+                || entityId.trim().isEmpty()) {
+
+            startActivity(new Intent(this, HistoryActivity.class));
+            return;
+        }
+
+        if ("project".equals(entityType)) {
+            Intent intent = new Intent(this, ProjectDetailActivity.class);
+            intent.putExtra("projectId", entityId);
+            startActivity(intent);
+            return;
+        }
+
+        if ("task".equals(entityType)) {
+            Intent intent = new Intent(this, DetailTaskActivity.class);
+            intent.putExtra("id", entityId);
+            startActivity(intent);
+            return;
+        }
+
+        // Kompatibilitas dengan log lama yang belum memiliki entityType.
+        String taskId = log.getTaskId();
+
+        if (taskId != null && !taskId.trim().isEmpty()) {
+            Intent intent = new Intent(this, DetailTaskActivity.class);
+            intent.putExtra("id", taskId);
+            startActivity(intent);
+        } else {
+            startActivity(new Intent(this, HistoryActivity.class));
+        }
     }
 
     private void setupQuickAction() {
@@ -325,6 +403,16 @@ public class DashboardActivity extends AppCompatActivity {
                 "Lihat Laporan"
         );
 
+        // Dashboard-only visual treatment; click actions and destinations remain unchanged.
+        setupQuickActionStyle(R.id.actionAddTask, R.drawable.bg_dashboard_action_blue,
+                R.drawable.bg_dashboard_summary_icon_blue, "#2563EB");
+        setupQuickActionStyle(R.id.actionCalendar, R.drawable.bg_dashboard_action_purple,
+                R.drawable.bg_dashboard_summary_icon_purple, "#7C3AED");
+        setupQuickActionStyle(R.id.actionProject, R.drawable.bg_dashboard_action_green,
+                R.drawable.bg_dashboard_summary_icon_green, "#16803D");
+        setupQuickActionStyle(R.id.actionReport, R.drawable.bg_dashboard_action_orange,
+                R.drawable.bg_dashboard_summary_icon_orange, "#EA580C");
+
         findViewById(R.id.actionAddTask).setOnClickListener(v ->
                 startActivity(new Intent(this, AddTaskActivity.class))
         );
@@ -341,6 +429,22 @@ public class DashboardActivity extends AppCompatActivity {
                 startActivity(new Intent(this, ReportSummaryActivity.class))
         );
 
+    }
+
+    private void setupQuickActionStyle(
+            int actionId,
+            int backgroundRes,
+            int iconBackgroundRes,
+            String iconColor) {
+        View action = findViewById(actionId);
+        action.setBackgroundResource(backgroundRes);
+
+        ImageView icon = action.findViewById(R.id.imgAction);
+        icon.setColorFilter(Color.parseColor(iconColor));
+
+        if (icon.getParent() instanceof View) {
+            ((View) icon.getParent()).setBackgroundResource(iconBackgroundRes);
+        }
     }
 
     private void setupAction(
@@ -392,6 +496,7 @@ public class DashboardActivity extends AppCompatActivity {
 
     private void setupBottomNav() {
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+        bottomNav.setItemActiveIndicatorEnabled(false);
 
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -442,6 +547,34 @@ public class DashboardActivity extends AppCompatActivity {
         findViewById(R.id.cardPic).setBackgroundResource(R.drawable.bg_summary_cyan);
         findViewById(R.id.cardCompletion).setBackgroundResource(R.drawable.bg_summary_blue);
         findViewById(R.id.cardDueToday).setBackgroundResource(R.drawable.bg_summary_orange);
+
+        // Icon accents make the existing Firebase-backed summaries easier to scan.
+        setupSummaryIcon(R.id.cardTotal, R.drawable.ic_task,
+                R.drawable.bg_dashboard_summary_icon_blue, "#2563EB");
+        setupSummaryIcon(R.id.cardDone, R.drawable.ic_check,
+                R.drawable.bg_dashboard_summary_icon_green, "#16803D");
+        setupSummaryIcon(R.id.cardProgress, R.drawable.ic_maintenance,
+                R.drawable.bg_dashboard_summary_icon_orange, "#D97706");
+        setupSummaryIcon(R.id.cardOverdue, R.drawable.ic_flag,
+                R.drawable.bg_dashboard_summary_icon_red, "#E11D48");
+        setupSummaryIcon(R.id.cardProject, R.drawable.ic_project,
+                R.drawable.bg_dashboard_summary_icon_purple, "#7C3AED");
+        setupSummaryIcon(R.id.cardPic, R.drawable.ic_user,
+                R.drawable.bg_dashboard_summary_icon_cyan, "#0891B2");
+        setupSummaryIcon(R.id.cardCompletion, R.drawable.ic_aman,
+                R.drawable.bg_dashboard_summary_icon_blue, "#2563EB");
+        setupSummaryIcon(R.id.cardDueToday, R.drawable.ic_calendar,
+                R.drawable.bg_dashboard_summary_icon_orange, "#D97706");
+    }
+
+    private void setupSummaryIcon(int cardId, int iconRes, int backgroundRes, String tintColor) {
+        ImageView icon = findViewById(cardId).findViewById(R.id.imgSummaryIcon);
+        icon.setImageResource(iconRes);
+        icon.setColorFilter(Color.parseColor(tintColor));
+
+        if (icon.getParent() instanceof View) {
+            ((View) icon.getParent()).setBackgroundResource(backgroundRes);
+        }
     }
 
     private void loadUserName() {
@@ -502,6 +635,16 @@ public class DashboardActivity extends AppCompatActivity {
 
                         String site = snapshot.child("site")
                                 .getValue(String.class);
+
+                        String photoUrl = snapshot.child("photoUrl")
+                                .getValue(String.class);
+
+// Tampilkan foto profil pada header hamburger
+                        if (!isEmpty(photoUrl)) {
+                            loadDrawerProfileImage(photoUrl);
+                        } else {
+                            imgProfile.setImageResource(R.drawable.ic_person);
+                        }
 
                         // Nama pengguna
                         if (!isEmpty(name)) {
@@ -937,6 +1080,49 @@ public class DashboardActivity extends AppCompatActivity {
         activityLogQuery.addValueEventListener(activityLogListener);
     }
 
+    private void loadDrawerProfileImage(String imageUrl) {
+        if (isEmpty(imageUrl)) {
+            imgProfile.setImageResource(R.drawable.ic_person);
+            return;
+        }
+
+        profileImageExecutor.execute(() -> {
+            HttpURLConnection connection = null;
+
+            try {
+                URL url = new URL(imageUrl);
+                connection = (HttpURLConnection) url.openConnection();
+
+                connection.setConnectTimeout(10000);
+                connection.setReadTimeout(10000);
+                connection.setInstanceFollowRedirects(true);
+
+                try (InputStream input = connection.getInputStream()) {
+                    Bitmap bitmap = BitmapFactory.decodeStream(input);
+
+                    if (bitmap != null) {
+                        runOnUiThread(() -> {
+                            if (!isFinishing() && !isDestroyed()) {
+                                imgProfile.setImageBitmap(bitmap);
+                            }
+                        });
+                    }
+                }
+
+            } catch (Exception e) {
+                android.util.Log.e(
+                        "DashboardProfile",
+                        "Gagal memuat foto profil hamburger",
+                        e
+                );
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            }
+        });
+    }
+
     @Override
     protected void onDestroy() {
         // Audit: semua listener realtime Dashboard dilepas untuk mencegah memory leak.
@@ -949,6 +1135,7 @@ public class DashboardActivity extends AppCompatActivity {
         if (activityLogQuery != null && activityLogListener != null) {
             activityLogQuery.removeEventListener(activityLogListener);
         }
+        profileImageExecutor.shutdown();
         super.onDestroy();
     }
 

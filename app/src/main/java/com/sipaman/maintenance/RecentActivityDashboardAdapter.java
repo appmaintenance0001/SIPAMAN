@@ -14,20 +14,35 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class RecentActivityDashboardAdapter extends RecyclerView.Adapter<RecentActivityDashboardAdapter.ViewHolder> {
+public class RecentActivityDashboardAdapter
+        extends RecyclerView.Adapter<RecentActivityDashboardAdapter.ViewHolder> {
 
     private final List<ActivityLog> list;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.US);
+    private final OnActivityClickListener listener;
 
-    public RecentActivityDashboardAdapter(List<ActivityLog> list) {
+    private final SimpleDateFormat dateFormat =
+            new SimpleDateFormat("dd MMM yyyy HH:mm", new Locale("id", "ID"));
+
+    public interface OnActivityClickListener {
+        void onActivityClick(ActivityLog log);
+    }
+
+    public RecentActivityDashboardAdapter(
+            List<ActivityLog> list,
+            OnActivityClickListener listener) {
         this.list = list;
+        this.listener = listener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvActivityIcon, tvActivityMessage, tvActivityUser, tvActivityTime;
+        TextView tvActivityIcon;
+        TextView tvActivityMessage;
+        TextView tvActivityUser;
+        TextView tvActivityTime;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+
             tvActivityIcon = itemView.findViewById(R.id.tvActivityIcon);
             tvActivityMessage = itemView.findViewById(R.id.tvActivityMessage);
             tvActivityUser = itemView.findViewById(R.id.tvActivityUser);
@@ -37,32 +52,70 @@ public class RecentActivityDashboardAdapter extends RecyclerView.Adapter<RecentA
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_recent_activity_dashboard, parent, false);
+    public ViewHolder onCreateViewHolder(
+            @NonNull ViewGroup parent,
+            int viewType) {
+
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_recent_activity_dashboard, parent, false);
+
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ActivityLog log = list.get(position);
-        holder.tvActivityMessage.setText(isEmpty(log.getMessage()) ? log.getType() : log.getMessage());
-        holder.tvActivityUser.setText(isEmpty(log.getUserName()) ? "-" : log.getUserName());
-        holder.tvActivityTime.setText(dateFormat.format(new Date(log.getTimestamp())));
+    public void onBindViewHolder(
+            @NonNull ViewHolder holder,
+            int position) {
 
-        String type = log.getType() == null ? "" : log.getType().toLowerCase();
+        ActivityLog log = list.get(position);
+
+        String message = log.getMessage();
+        if (isEmpty(message)) {
+            message = isEmpty(log.getType()) ? "Aktivitas" : log.getType();
+        }
+
+        holder.tvActivityMessage.setText(message);
+
+        holder.tvActivityUser.setText(
+                isEmpty(log.getUserName()) ? "-" : log.getUserName()
+        );
+
+        holder.tvActivityTime.setText(
+                dateFormat.format(new Date(log.getTimestamp()))
+        );
+
+        String type = log.getType() == null
+                ? ""
+                : log.getType().toLowerCase(Locale.ROOT);
+
         if (type.contains("selesai") || type.contains("done")) {
             holder.tvActivityIcon.setText("OK");
             holder.tvActivityIcon.setTextColor(Color.parseColor("#16A34A"));
-            holder.tvActivityIcon.setBackgroundResource(R.drawable.bg_task_icon_done);
+            holder.tvActivityIcon.setBackgroundResource(
+                    R.drawable.bg_task_icon_done
+            );
+
         } else if (type.contains("overdue")) {
             holder.tvActivityIcon.setText("!");
             holder.tvActivityIcon.setTextColor(Color.parseColor("#E11D48"));
-            holder.tvActivityIcon.setBackgroundResource(R.drawable.bg_task_icon_overdue);
+            holder.tvActivityIcon.setBackgroundResource(
+                    R.drawable.bg_task_icon_overdue
+            );
+
         } else {
             holder.tvActivityIcon.setText("+");
             holder.tvActivityIcon.setTextColor(Color.parseColor("#1D4ED8"));
-            holder.tvActivityIcon.setBackgroundResource(R.drawable.bg_calendar_task_day);
+            holder.tvActivityIcon.setBackgroundResource(
+                    R.drawable.bg_calendar_task_day
+            );
         }
+
+        holder.itemView.setClickable(true);
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onActivityClick(log);
+            }
+        });
     }
 
     private boolean isEmpty(String value) {
